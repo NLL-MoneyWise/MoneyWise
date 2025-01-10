@@ -1,4 +1,4 @@
-package backend.backend.dto.auth;
+package backend.backend.security.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

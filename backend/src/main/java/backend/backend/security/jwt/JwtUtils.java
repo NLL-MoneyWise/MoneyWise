@@ -1,16 +1,15 @@
-package backend.backend.component;
+package backend.backend.security.jwt;
 
-import backend.backend.dto.auth.JWToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 
-
+@Component
 public class JwtUtils {
     private final Key key;
     private static final String BEARER_TYPE = "Bearer";
@@ -45,7 +44,7 @@ public class JwtUtils {
                 .build();
     }
 
-    public String getUserIdFromToken(String token) {
+    public String getUserEmailFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key) //토큰 검증 할 때 사용할 키 지정
                 .build() //설정이 완료된 JWT Parser객체 생성
