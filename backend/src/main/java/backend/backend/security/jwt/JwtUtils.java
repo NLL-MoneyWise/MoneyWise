@@ -13,6 +13,8 @@ import java.util.Date;
 public class JwtUtils {
     private final Key key;
     private static final String BEARER_TYPE = "Bearer";
+
+    //토큰은 밀리초 단위로 계산해야한다. 쿠키는 초단위이다.
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
@@ -21,27 +23,24 @@ public class JwtUtils {
     }
 
     // JWT 토큰 생성
-    public JWToken generateToken(Long userId) {
-        long now = (new Date()).getTime();
+    public String generateAccessToken(String email) {
+        long now = new Date().getTime(); //JJWT의 메서드는 Date만 지원한다. (LocalDateTime사용 불가)
 
-        // Access Token 생성
-        String accessToken = Jwts.builder()
-                .setSubject(String.valueOf(userId)) //JWT의 'sub' 클레임을 설정, 토큰의 주체(대상)를 나타냄(사용자Id)
-                .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME)) //'exp클레임 설정, 토큰 만료시간 설정
-                .signWith(key, SignatureAlgorithm.HS256) //토큰의 서명 방식 지정, HS256알고리즘을 사용함
-                .compact(); //JWT의 헤더, 페이로드, 서명을 Base64URL로 인코딩 후 이 세가지를 점(.)으로 연결 (문자열형태)
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder() //단순히 재발급 용도이기 때문에 sub클레임이 없음
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
+        return Jwts.builder()
+                .setSubject(email)
+                .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
+                .signWith(key)
                 .compact();
+    }
 
-        return JWToken.builder()
-                .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    public String generateRefreshToken(String email) {
+        long now = new Date().getTime();
+
+        return Jwts.builder()
+                .setSubject(email)
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(key)
+                .compact();
     }
 
     public String getUserEmailFromToken(String token) {
