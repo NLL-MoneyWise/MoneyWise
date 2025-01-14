@@ -41,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         //refreshToken을 Cookie에서 찾는 2가지 방식
         //1방식
