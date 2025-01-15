@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,14 +16,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class User {
     @Id
-    String email;
+    private String email;
 
     @Column
-    String password;
+    private String password;
 
     @Column
-    String name;
+    private String name;
 
     @Column
-    String nickname;
+    private String nickname;
 }
