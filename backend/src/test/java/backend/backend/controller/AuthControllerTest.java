@@ -1,6 +1,7 @@
 package backend.backend.controller;
 
 import backend.backend.dto.request.LoginRequest;
+import backend.backend.dto.request.SignupRequest;
 import backend.backend.security.config.SecurityConfig;
 import backend.backend.security.jwt.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,8 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,13 +38,13 @@ class AuthControllerTest {
     void loginSuccess() throws Exception {
         // given
         LoginRequest request = new LoginRequest();
-        request.setEmail("test@naver.com");
-        request.setPassword("password");
+        request.setEmail("test2@naver.com");
+        request.setPassword("testPassword@123");
 
         String accessToken = "new.access.token";
         String refreshToken = "test.refresh.token";
-        when(jwtUtils.generateAccessToken("test@naver.com")).thenReturn(accessToken);
-        when(jwtUtils.generateRefreshToken("test@naver.com")).thenReturn(refreshToken);
+        when(jwtUtils.generateAccessToken("test2@naver.com")).thenReturn(accessToken);
+        when(jwtUtils.generateRefreshToken("test2@naver.com")).thenReturn(refreshToken);
 
         // when & then
         mockMvc.perform(post("/api/auth/login")
@@ -50,7 +53,7 @@ class AuthControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.userInfo.email").value("test@naver.com"))
+                .andExpect(jsonPath("$.userInfo.email").value("test2@naver.com"))
                 .andExpect(cookie().exists("refreshToken"));
     }
 
@@ -77,6 +80,35 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.accessToken").value(newAccessToken))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원가입")
+    void signupSuccess() throws Exception {
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setName("테스트");
+        signupRequest.setNickname("테스트닉네임");
+        signupRequest.setPassword("testPassword@123");
+        signupRequest.setEmail("test2@naver.com");
+
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(signupRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(signupRequest.getEmail()))
+                .andExpect(jsonPath("$.nickname").value(signupRequest.getNickname()))
+                .andExpect(jsonPath("$.name").value(signupRequest.getName()))
+                .andDo(print());
+
+//        MvcResult result = mockMvc.perform(post("/api/auth/signup")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(new ObjectMapper().writeValueAsString(signupRequest)))
+//                .andExpect(status().is4xxClientError())
+//                .andDo(print())
+//                .andReturn();
+//
+//        String responseBody = result.getResponse().getContentAsString();
+//        System.out.println(responseBody);
     }
 
 }

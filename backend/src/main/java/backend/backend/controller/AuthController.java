@@ -1,6 +1,8 @@
 package backend.backend.controller;
 
+import backend.backend.domain.User;
 import backend.backend.dto.request.LoginRequest;
+import backend.backend.dto.request.SignupRequest;
 import backend.backend.dto.response.LoginResponse;
 import backend.backend.dto.response.TokenResponse;
 import backend.backend.exception.LoginException;
@@ -9,6 +11,7 @@ import backend.backend.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,11 @@ import java.util.Arrays;
 public class AuthController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
+
+    @PostMapping("/signup")
+    public ResponseEntity<LoginResponse.UserInfo> signup(@Valid @RequestBody SignupRequest request) {
+        return ResponseEntity.ok(authService.signup(request));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request, HttpServletResponse response) {
