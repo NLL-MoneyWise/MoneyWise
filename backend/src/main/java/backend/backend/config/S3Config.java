@@ -18,17 +18,17 @@ public class S3Config {
     @Value("${aws.s3.region}")
     private String region;
 
-    @Bean
-    public S3Client s3Client() {
-        return S3Client.builder()
-                .region(Region.of(region))
-                //credentialsProvider는 AWS SDK가 AWS서비스에 접근 할 때 필요한 인증 정보를 제공하는 인터페이스
-                //StaticCredentialsProvider는 정적 자격증명 제공자로 자격증명이 변경되지 않고 계속 사용됌
-                .credentialsProvider(StaticCredentialsProvider.create(
-                //AwsBasicCredentials는 AWS의 기본 인증 정보를 나타내는 클래스
-                        AwsBasicCredentials.create(accessKey, secretKey)))
-                .build();
-        }
+//    @Bean
+//    public S3Client s3Client() {
+//        return S3Client.builder()
+//                .region(Region.of(region))
+//                //credentialsProvider는 AWS SDK가 AWS서비스에 접근 할 때 필요한 인증 정보를 제공하는 인터페이스
+//                //StaticCredentialsProvider는 정적 자격증명 제공자로 자격증명이 변경되지 않고 계속 사용됌
+//                .credentialsProvider(StaticCredentialsProvider.create(
+//                //AwsBasicCredentials는 AWS의 기본 인증 정보를 나타내는 클래스
+//                        AwsBasicCredentials.create(accessKey, secretKey)))
+//                .build();
+//        }
 
     @Bean
     public S3Presigner s3Presigner() {

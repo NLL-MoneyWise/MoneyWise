@@ -20,7 +20,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-    private final S3Client s3Client;
+//    private final S3Client s3Client;
     private final S3Presigner s3Presigner;
 
     @Value("${aws.s3.bucket}")
