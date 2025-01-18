@@ -4,13 +4,13 @@ import backend.backend.domain.User;
 import backend.backend.dto.request.LoginRequest;
 import backend.backend.dto.request.SignupRequest;
 import backend.backend.dto.response.LoginResponse;
+import backend.backend.exception.LoginException;
 import backend.backend.exception.SignupException;
 import backend.backend.repository.UserRepository;
 import backend.backend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -23,7 +23,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         if(!optionalUser.isPresent()) {
-            throw new IllegalArgumentException("가입되지 않은 이메일 입니다.");
+            throw new LoginException("가입되지 않은 이메일 입니다.");
         }
 
         User user = optionalUser.get();
@@ -35,7 +35,7 @@ public class AuthService {
 
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호 입니다.");
+            throw new LoginException("잘못된 비밀번호 입니다.");
         }
 
         //JWT accessToken생성
