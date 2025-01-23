@@ -43,7 +43,6 @@ const Toast = ({ children, variant = 'success', onClose }: ToastProps) => {
             animate-toast-slide-in
         `}
         >
-            {/* 아이콘, 텍스트, 닫기 버튼을 Flex로 배치 */}
             <div className="flex items-center w-full gap-3">
                 {Icon}
                 <span className="flex-1 text-center truncate">{children}</span>
