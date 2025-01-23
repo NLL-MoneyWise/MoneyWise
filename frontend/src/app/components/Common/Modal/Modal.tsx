@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { IoMdClose } from 'react-icons/io';
+import { IoMdClose } from '@react-icons/all-files/io/IoMdClose';
 import { ModalContainerProps } from '@/app/types';
 import useClientMount from '@/app/hooks/useClinetMount';
 const closeStyles = 'w-5 h-5 md:w-6 md:h-6 text-gray-500';
