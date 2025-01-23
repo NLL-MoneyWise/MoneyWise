@@ -1,38 +1,38 @@
 # Workflow name
-name: "Chromatic Deployment"
+name: 'Chromatic Deployment'
 
 on:
-  pull_request:
-    branches: [main, develop]
-    paths:
-      - "src/**/*.stories.tsx"
-      - "src/**/*.tsx"
-      - "src/**/*.ts"
+    pull_request:
+        branches: main
+        paths:
+            - 'src/**/*.stories.tsx'
+            - 'src/**/*.tsx'
+            - 'src/**/*.ts'
 
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  chromatic-deployment:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install dependencies
-        run: npm install
+    chromatic-deployment:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Install dependencies
+              run: npm install
 
-      - name: Publish to Chromatic
-        id: publish_chromatic
-        uses: chromaui/action@v1
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN  }}
-          buildScriptName: build-storybook
-          onlyChanged: true
-          ignoreLastBuildOnBranch: true
+            - name: Publish to Chromatic
+              id: publish_chromatic
+              uses: chromaui/action@v1
+              with:
+                  projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN  }}
+                  buildScriptName: build-storybook
+                  onlyChanged: true
+                  ignoreLastBuildOnBranch: true
 
-      - name: comment PR
-        uses: thollander/actions-comment-pull-request@v1
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          message: "🚀 **storybook**: ${{ steps.publish_chromatic.outputs.storybookUrl }}"
-          comment_tag: storybook
-          mode: upsert
+            - name: comment PR
+              uses: thollander/actions-comment-pull-request@v1
+              if: ${{ github.event_name == 'pull_request' }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  message: '🚀 **storybook**: ${{ steps.publish_chromatic.outputs.storybookUrl }}'
+                  comment_tag: storybook
+                  mode: upsert
