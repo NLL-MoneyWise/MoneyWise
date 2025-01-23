@@ -3,6 +3,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import Toast from '../Toast/Toast';
 import { useToastStore } from '@/app/hooks/useToastStore';
+import useClientMount from '@/app/hooks/useClinetMount';
 
 type Toast = {
     id: string;
@@ -12,6 +13,10 @@ type Toast = {
 
 const ToastContainer = () => {
     const { toasts, removeToast } = useToastStore();
+
+    const mounted = useClientMount();
+
+    if (!mounted) return null;
 
     return createPortal(
         <div className="flex flex-col items-center w-full">
