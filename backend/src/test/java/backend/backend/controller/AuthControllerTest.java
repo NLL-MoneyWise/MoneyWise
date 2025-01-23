@@ -38,13 +38,13 @@ class AuthControllerTest {
     void loginSuccess() throws Exception {
         // given
         LoginRequest request = new LoginRequest();
-        request.setEmail("test2@naver.com");
-        request.setPassword("testPassword@123");
+        request.setEmail("test@naver.com");
+        request.setPassword("testPassword@1231");
 
         String accessToken = "new.access.token";
         String refreshToken = "test.refresh.token";
-        when(jwtUtils.generateAccessToken("test2@naver.com")).thenReturn(accessToken);
-        when(jwtUtils.generateRefreshToken("test2@naver.com")).thenReturn(refreshToken);
+        when(jwtUtils.generateAccessToken("test@naver.com")).thenReturn(accessToken);
+        when(jwtUtils.generateRefreshToken("test@naver.com")).thenReturn(refreshToken);
 
         // when & then
         mockMvc.perform(post("/api/auth/login")
@@ -53,7 +53,7 @@ class AuthControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.userInfo.email").value("test2@naver.com"))
+                .andExpect(jsonPath("$.userInfo.email").value("test@naver.com"))
                 .andExpect(cookie().exists("refreshToken"));
     }
 
@@ -88,8 +88,9 @@ class AuthControllerTest {
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setName("테스트");
         signupRequest.setNickname("테스트닉네임");
-        signupRequest.setPassword("testPassword@123");
-        signupRequest.setEmail("test2@naver.com");
+        signupRequest.setPassword("testPassword@1231");
+        signupRequest.setEmail("test@naver.com");
+        System.out.println("sign: " + signupRequest);
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
