@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { IoMdClose } from 'react-icons/io';
@@ -18,7 +19,7 @@ const Modal = ({ children, closeHandler }: ModalProps) => {
                 <div className="px-7">{children}</div>
             </div>
         </div>,
-        document.getElementById('toast-portal') || document.body
+        document.getElementById('modal-portal') || document.body
     );
 };
 
