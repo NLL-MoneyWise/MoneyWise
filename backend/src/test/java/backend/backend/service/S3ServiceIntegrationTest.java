@@ -23,7 +23,7 @@ class S3ServiceIntegrationTest {
     @DisplayName("실제 Pre-signed URL 생성 테스트")
     void generatePreSignedUrlTest() {
         // when
-        PreSignedUrlResponse response = s3Service.generatePreSignedUrl(); //presignedUrl생성
+        PreSignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성
         // then
         assertNotNull(response.getPreSignedUrl());
         assertTrue(response.getPreSignedUrl().startsWith("https://"));

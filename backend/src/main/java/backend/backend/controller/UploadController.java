@@ -16,6 +16,6 @@ public class UploadController {
 
     @GetMapping("presigned-url")
     public ResponseEntity<PreSignedUrlResponse> getPresignedUrl() {
-        return ResponseEntity.ok(s3Service.generatePreSignedUrl());
+        return ResponseEntity.ok(s3Service.generatePutPreSignedUrl());
     }
 }
