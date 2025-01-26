@@ -1,14 +1,7 @@
 import '../src/app/globals.css';
-import { MemoryRouter } from 'react-router-dom';
 
 const preview = {
-    decorators: [
-        (Story) => (
-            <MemoryRouter>
-                <Story />
-            </MemoryRouter>
-        )
-    ],
+    decorators: [(Story) => <Story />],
     parameters: {
         controls: {
             matchers: {

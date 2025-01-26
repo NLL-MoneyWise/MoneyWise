@@ -12,6 +12,13 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
+export const SmallButton: Story = {
+    args: {
+        children: <p>하위</p>,
+        size: 'sm'
+    }
+};
+
 export const MiddleButton: Story = {
     args: {
         children: <p>하위</p>,
