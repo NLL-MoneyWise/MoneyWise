@@ -1,4 +1,4 @@
-import ToastContainer from './components/Common/ToastContainer/ToastContainer';
+import ToastContainer from './components/Common/Toast/ToastContainer';
 import './globals.css';
 
 export default function RootLayout({
