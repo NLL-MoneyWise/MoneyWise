@@ -4,7 +4,7 @@ import Modal from './Modal';
 
 const meta: Meta<typeof Modal> = {
     component: Modal,
-    title: 'Modal',
+    title: 'atoms/Modal',
     tags: ['autodocs'],
     argTypes: {}
 };

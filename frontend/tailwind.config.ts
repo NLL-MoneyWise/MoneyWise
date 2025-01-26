@@ -10,7 +10,8 @@ export default {
         extend: {
             colors: {
                 background: 'var(--background)',
-                foreground: 'var(--foreground)'
+                foreground: 'var(--foreground)',
+                primary: '#6BAF2F'
             },
             keyframes: {
                 'toast-slide-in': {
