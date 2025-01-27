@@ -11,7 +11,8 @@ export default {
             colors: {
                 background: 'var(--background)',
                 foreground: 'var(--foreground)',
-                primary: '#6BAF2F'
+                primary: '#6BAF2F',
+                hilight: '#3C8224'
             },
             keyframes: {
                 'toast-slide-in': {
