@@ -50,4 +50,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
     }
+
+    @ExceptionHandler(OpenAiApiException.class)
+    public ResponseEntity<String> handleOpenAiApiException(OpenAiApiException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(e.getMessage());
+    }
 }

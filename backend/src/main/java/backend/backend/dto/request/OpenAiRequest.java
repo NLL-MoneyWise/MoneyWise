@@ -3,6 +3,7 @@ package backend.backend.dto.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Builder
 public class OpenAiRequest {
     @Builder.Default
-    private String model = "gpt-4o-mini";
+    private String model = "gpt-4o";
     private List<Message> messages;
     private Response_format response_format;
 
@@ -35,8 +36,26 @@ public class OpenAiRequest {
     @Builder
     public static class Content {
         private String type;
-        private Image_url image_url;
+    }
+
+    @Getter
+    @Setter
+    public static class TextContent extends Content{
         private String text;
+        public TextContent(String type, String text) {
+            super(type);
+            this.text = text;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class ImageContent extends Content{
+        private Image_url image_url;
+        public ImageContent(String type, Image_url image_url) {
+            super(type);
+            this.image_url = image_url;
+        }
     }
 
     @Getter

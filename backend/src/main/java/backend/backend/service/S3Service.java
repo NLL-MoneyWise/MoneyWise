@@ -72,6 +72,7 @@ public class S3Service {
     }
 
     public PreSignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
+        System.out.println("Generating GET PreSigned URL for: " + accessUrl);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(accessUrl)

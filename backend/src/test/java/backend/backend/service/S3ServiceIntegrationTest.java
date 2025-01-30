@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -21,7 +24,7 @@ class S3ServiceIntegrationTest {
 
     @Test
     @DisplayName("실제 Pre-signed URL 생성 테스트")
-    void generatePreSignedUrlTest() {
+    void generatePutPreSignedUrlTest() {
         // when
         PreSignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성
         // then
@@ -43,5 +46,17 @@ class S3ServiceIntegrationTest {
         } catch (IOException e) {
             fail("Invalid URL generated");
         }
+    }
+
+    @Test
+    public void testPreSignedUrl() {
+        PreSignedUrlResponse response = s3Service.generateGetPreSignedUrl("receipt.jpeg");
+        String url = response.getPreSignedUrl();
+        System.out.println("Testing URL: " + url);
+
+        // 실제 URL 접근 테스트
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<byte[]> result = restTemplate.getForEntity(url, byte[].class);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 }
