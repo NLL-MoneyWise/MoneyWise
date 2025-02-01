@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,15 +37,22 @@ public class ReceiptService {
         String presignedUrl = s3Service.generateGetPreSignedUrl(accessUrl)
                 .getPreSignedUrl();
 
-        String question = "영수증 사진의 상품들을 보고 카테고리(문구, 식품, 음료, 잡화)별로 분류하고, " +
-                "각 상품들의 카테고리와 가격을 추출하고, 영수증의 총 구매액, 날짜를 추출해주세요, date는 yyyy/MM/dd형식으로 써주세요" +
-                "{ date: 구매날짜," +
-                "  items: [" +
-                "{ category: 카테고리명, name: 상품명, amount: 상품금액}," +
-                "]," +
-                "  totalAmount: 총 금액" +
-                "}" +
-                "위와 같은 json형식으로 주세요";
+        String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
+                "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
+                "2. items: 상품 목록 배열" +
+                "   - category: 다음 중 하나로만 분류 (문구, 식품, 음료, 잡화)" +
+                "   - name: 상품명" +
+                "   - amount: 상품 금액(숫자만)" +
+                "3. totalAmount: 총 구매액(숫자만)" +
+                "\n" +
+                "응답 예시:" +
+                "{\n" +
+                "  \"date\": \"2024/01/30\",\n" +
+                "  \"items\": [\n" +
+                "    {\"category\": \"음료\", \"name\": \"콜라\", \"amount\": 1500}\n" +
+                "  ],\n" +
+                "  \"totalAmount\": 1500\n" +
+                "}";
 
         OpenAiRequest.TextContent textContent = new OpenAiRequest.TextContent("text", question);
 
@@ -69,8 +77,6 @@ public class ReceiptService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-        System.out.println(openAiRequest);
 
         //Http헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -99,10 +105,20 @@ public class ReceiptService {
         if (jsonContent == null || jsonContent.isEmpty()) {
             throw new OpenAiApiException("OpenAI 응답 메시지가 비어있습니다");
         }
+            System.out.println("=== open ai응답 ===");
+            System.out.println(jsonContent);
+
+            Map<String, Object> map = objectMapper.readValue(jsonContent, Map.class);
+
+            System.out.println("\n=== Map 파싱 결과 ===");
+            System.out.println("전체 Map: " + map);
+            System.out.println("date: " + map.get("date") + " " + map.get("date").getClass().getName());
+            System.out.println("totalAmount: " + map.get("totalAmount") + " " + map.get("totalAmount").getClass().getName());
+            System.out.println("items: " + map.get("items") + " " + map.get("items").getClass().getName());
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
         } catch (JsonProcessingException e) {
-            throw new JsonParseException("Json파싱 실패");
+            throw new JsonParseException("Json파싱 실패: " + e.getMessage());
         } catch (RestClientException e) {
             throw new OpenAiApiException("Open AI API 호출 실패 " + e);
         }
