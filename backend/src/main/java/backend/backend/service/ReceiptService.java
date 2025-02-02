@@ -33,7 +33,7 @@ public class ReceiptService {
     @Value("${openai.api.key}")
     private String apiKey;
 
-    public ReceiptAnalyzeResponse receiptAnalyze(String email, String accessUrl) throws JsonParseException {
+    public ReceiptAnalyzeResponse receiptAnalyze(String email, String accessUrl) {
         String presignedUrl = s3Service.generateGetPreSignedUrl(accessUrl)
                 .getPreSignedUrl();
 
