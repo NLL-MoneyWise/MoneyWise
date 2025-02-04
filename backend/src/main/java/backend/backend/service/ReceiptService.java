@@ -40,7 +40,7 @@ public class ReceiptService {
         String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
                 "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
                 "2. items: 상품 목록 배열" +
-                "   - category: 다음 중 하나로만 분류 (문구, 식품, 음료, 잡화)" +
+                "   - category: 다음 중 하나로만 분류 (문구, 식품, 음료, 잡화) 헷갈릴 경우나 담배는 잡화로 분류" +
                 "   - name: 상품명" +
                 "   - amount: 상품 금액(숫자만)" +
                 "3. totalAmount: 총 구매액(숫자만)" +

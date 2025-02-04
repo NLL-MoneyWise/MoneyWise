@@ -31,7 +31,7 @@ public class ReceiptServiceTest {
 
         System.out.println("Date: " + receiptAnalyzeResponse.getDate());
         System.out.println("Total Amount: " + receiptAnalyzeResponse.getTotalAmount());
-        System.out.println("Items: " + receiptAnalyzeResponse.getItems());
+        System.out.println("Items: " + receiptAnalyzeResponse.getItems().get(0));
         System.out.println("Id: " + receiptAnalyzeResponse.getReceiptId());
     }
 }

@@ -56,4 +56,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                 .body(e.getMessage());
     }
+
+    @ExceptionHandler(ConsumptionSaveException.class)
+    public ResponseEntity<String> handleConsumptionSaveException(ConsumptionSaveException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
 }
