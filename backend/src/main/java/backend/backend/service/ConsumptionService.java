@@ -1,7 +1,9 @@
 package backend.backend.service;
 
+import backend.backend.common.ErrorType;
 import backend.backend.domain.Consumption;
 import backend.backend.dto.request.ConsumptionsSaveRequest;
+import backend.backend.dto.response.ErrorResponse;
 import backend.backend.exception.ConsumptionSaveException;
 import backend.backend.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +54,13 @@ public class ConsumptionService {
                 consumptionRepository.save(consumption);
             }
         } catch (DataIntegrityViolationException e) {
-            throw new ConsumptionSaveException("데이터베이스 오류" + e.getMessage());
+            throw new ConsumptionSaveException(
+                    new ErrorResponse("ERROR", ErrorType.DATABASE_ERROR,"데이터베이스 오류" + e.getMessage())
+            );
         } catch (NullPointerException e) {
-            throw new ConsumptionSaveException("아이템이 비어있습니다." + e.getMessage());
+            throw new ConsumptionSaveException(
+                    new ErrorResponse("ERROR",ErrorType.INVALID_INPUT_ERROR, "아이템이 비어있습니다." + e.getMessage())
+            );
         }
         return true;
     }
