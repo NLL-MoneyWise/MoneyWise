@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class ConsumptionService {
-    private ConsumptionRepository consumptionRepository;
+    private final ConsumptionRepository consumptionRepository;
 
     public boolean save(String email, ConsumptionsSaveRequest request) {
         try {
@@ -54,7 +54,7 @@ public class ConsumptionService {
         } catch (DataIntegrityViolationException e) {
             throw new ConsumptionSaveException("데이터베이스 오류" + e.getMessage());
         } catch (NullPointerException e) {
-            throw new ConsumptionSaveException("아이템이 비어있습니다." + e.getMessage())
+            throw new ConsumptionSaveException("아이템이 비어있습니다." + e.getMessage());
         }
         return true;
     }

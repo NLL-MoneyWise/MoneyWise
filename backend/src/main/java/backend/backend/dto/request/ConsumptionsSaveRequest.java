@@ -6,6 +6,8 @@ import java.util.List;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConsumptionsSaveRequest {
     private Long receiptId;
     private String date;
@@ -13,6 +15,8 @@ public class ConsumptionsSaveRequest {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Item {
         private String category;
         private String name;
