@@ -1,30 +1,50 @@
+import Image from 'next/image';
 import React from 'react';
 
-const PrimaryLogo = () => {
+const BLUR_URL =
+    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iNTAiIGZpbGw9IiNFNUU3RUIiLz48L3N2Zz4=';
+
+interface LogoSizeType {
+    width?: number;
+    height?: number;
+}
+const PrimaryLogo = ({ width, height }: LogoSizeType) => {
     return (
-        <>
-            <img src={'/logo.svg'} alt="primary logo"></img>
-        </>
+        <Image
+            src="/logo.svg"
+            alt="primary logo"
+            width={width}
+            height={height}
+            blurDataURL={BLUR_URL}
+            placeholder="blur"
+            unoptimized={true}
+        />
     );
 };
 
-const DarkLogo = () => {
+const DarkLogo = ({ width, height }: LogoSizeType) => {
     return (
-        <>
-            <img src={'/darklogo.svg'} alt="dark logo"></img>
-        </>
+        <Image
+            src="/darklogo.svg"
+            alt="primary logo"
+            width={width}
+            height={height}
+            blurDataURL={BLUR_URL}
+            placeholder="blur"
+            unoptimized={true}
+        />
     );
 };
 
-interface LogoProps {
+interface LogoProps extends LogoSizeType {
     variant: 'primary' | 'dark';
 }
 
-const Logo = ({ variant = 'primary' }: LogoProps) => {
+const Logo = ({ variant = 'primary', ...props }: LogoProps) => {
     if (variant === 'primary') {
-        return <PrimaryLogo></PrimaryLogo>;
+        return <PrimaryLogo {...props}></PrimaryLogo>;
     } else {
-        return <DarkLogo></DarkLogo>;
+        return <DarkLogo {...props}></DarkLogo>;
     }
 };
 
