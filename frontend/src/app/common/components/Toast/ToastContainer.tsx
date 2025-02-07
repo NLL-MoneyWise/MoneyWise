@@ -2,8 +2,8 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import Toast from '../Toast/Toast';
-import { useToastStore } from '@/app/hooks/useToastStore';
-import useClientMount from '@/app/hooks/useClinetMount';
+import { useToastStore } from '@/app/common/hooks/useToastStore';
+import useClientMount from '@/app/common/hooks/useClinetMount';
 
 type Toast = {
     id: string;

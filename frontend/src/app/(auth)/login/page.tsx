@@ -1,7 +1,7 @@
 'use client';
 
-import LoginForm from '@/app/components/auth/LoginForm/LoginForm';
-import Logo from '@/app/components/common/Logo/Logo';
+import LoginForm from '@/app/auth/components/LoginForm/LoginForm';
+import Logo from '@/app/common/components/Logo/Logo';
 
 export default function LoginPage() {
     return (
