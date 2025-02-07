@@ -1,7 +1,8 @@
 'use client';
 import React, { useRef } from 'react';
-import Button from '@/app/components/common/Button/Button';
-import InputField from '@/app/components/common/Input/InputField';
+
+import Button from '@/app/common/components/Button/Button';
+import InputField from '@/app/common/components/Input/InputField';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);

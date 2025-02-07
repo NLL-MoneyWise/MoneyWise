@@ -1,5 +1,4 @@
-// app/layout.tsx
-import ToastContainer from './components/Common/Toast/ToastContainer';
+import ToastContainer from './common/components/Toast/ToastContainer';
 import './globals.css';
 
 import { Noto_Sans_KR } from 'next/font/google';
