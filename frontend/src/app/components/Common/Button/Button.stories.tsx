@@ -14,21 +14,18 @@ type Story = StoryObj<typeof Button>;
 
 export const SmallButton: Story = {
     args: {
-        children: <p>하위</p>,
-        size: 'sm'
+        children: <p>하위</p>
     }
 };
 
 export const MiddleButton: Story = {
     args: {
-        children: <p>하위</p>,
-        size: 'md'
+        children: <p>하위</p>
     }
 };
 
 export const LargeButton: Story = {
     args: {
-        children: <p>하위</p>,
-        size: 'lg'
+        children: <p>하위</p>
     }
 };
