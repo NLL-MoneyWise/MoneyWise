@@ -1,23 +1,20 @@
-import { ReactNode } from '@tanstack/react-router';
+'use client';
 import React from 'react';
 import { clsx } from 'clsx';
+import { ReactNode } from 'react';
 
 interface ButtonProps {
     children: ReactNode;
-    size?: 'sm' | 'md' | 'lg';
+    width: number;
+    height: number;
     handleClick: () => void;
 }
 
-const Button = ({ children, size, handleClick }: ButtonProps) => {
+const Button = ({ children, handleClick }: ButtonProps) => {
     return (
         <button
             className={clsx(
-                'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl w-[100px] text-sm',
-                {
-                    'w-[200px] h-[40px]': size === 'lg',
-                    'w-[60px] h-[30px]': size === 'sm',
-                    'w-[100px] h-[40px]': size === 'md' || !size
-                }
+                'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl text-sm w-full h-[45px]'
             )}
             onClick={handleClick}
         >
