@@ -29,7 +29,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    public PreSignedUrlResponse generatePreSignedUrl() {
+    public PreSignedUrlResponse generatePutPreSignedUrl() {
         try {
             String accessUrl = generateUniqueFileName();
             System.out.println("\n=== Pre-signed URL 생성 시작 ===");
@@ -69,6 +69,28 @@ public class S3Service {
             System.err.println("에러 코드: " + e.awsErrorDetails().errorCode());
             throw new PresignedException("S3 URL 생성 실패: " + e.getMessage());
         }
+    }
+
+    public PreSignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
+        System.out.println("Generating GET PreSigned URL for: " + accessUrl);
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(accessUrl)
+                .build();
+
+        GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+        PresignedGetObjectRequest presignedGetObjectRequest =
+                s3Presigner.presignGetObject(getObjectPresignRequest);
+
+        String presignedUrl = presignedGetObjectRequest.url().toString();
+
+        return PreSignedUrlResponse.builder()
+                .preSignedUrl(presignedUrl)
+                .build();
     }
 
     private String generateUniqueFileName() {

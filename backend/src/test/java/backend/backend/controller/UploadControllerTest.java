@@ -33,7 +33,7 @@ class UploadControllerTest {
     void preSignedUrlSuccess() throws Exception {
         PreSignedUrlResponse response = PreSignedUrlResponse.of("test-presigned-url", "20240116215330");
 
-        Mockito.when(s3Service.generatePreSignedUrl()).thenReturn(response);
+        Mockito.when(s3Service.generatePutPreSignedUrl()).thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/upload/presigned-url"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
