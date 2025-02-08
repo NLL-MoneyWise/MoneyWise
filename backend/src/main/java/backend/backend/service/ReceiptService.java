@@ -1,10 +1,12 @@
 package backend.backend.service;
 import backend.backend.domain.Receipt;
 import backend.backend.dto.request.OpenAiRequest;
+import backend.backend.dto.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.response.OpenAiResponse;
 import backend.backend.dto.response.ReceiptAnalyzeResponse;
-import backend.backend.exception.JsonParseException;
-import backend.backend.exception.OpenAiApiException;
+import backend.backend.exception.BadGateWayException;
+import backend.backend.exception.ExternalServiceException;
+import backend.backend.exception.InternalServerException;
 import backend.backend.repository.ReceiptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +35,8 @@ public class ReceiptService {
     @Value("${openai.api.key}")
     private String apiKey;
 
-    public ReceiptAnalyzeResponse receiptAnalyze(String email, String accessUrl) {
-        String presignedUrl = s3Service.generateGetPreSignedUrl(accessUrl)
+    public ReceiptAnalyzeResponse receiptAnalyze(String email, ReceiptAnalyzeRequest request) {
+        String presignedUrl = s3Service.generateGetPreSignedUrl(request.getAccessUrl())
                 .getPreSignedUrl();
 
         String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
@@ -97,13 +99,13 @@ public class ReceiptService {
 
         List<OpenAiResponse.Choice> choices = openAiResponse.getChoices();
         if (choices == null || choices.isEmpty()) {
-            throw new OpenAiApiException("OpenAI 응답에 선택 항목이 없습니다");
+            throw new BadGateWayException("OpenAI 응답에 선택 항목이 없습니다");
         }
 
 
         String jsonContent = openAiResponse.getChoices().get(0).getMessage().getContent();
         if (jsonContent == null || jsonContent.isEmpty()) {
-            throw new OpenAiApiException("OpenAI 응답 메시지가 비어있습니다");
+            throw new BadGateWayException("OpenAI 응답 메시지가 비어있습니다");
         }
             System.out.println("=== open ai응답 ===");
             System.out.println(jsonContent);
@@ -118,16 +120,16 @@ public class ReceiptService {
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
         } catch (JsonProcessingException e) {
-            throw new JsonParseException("Json파싱 실패: " + e.getMessage());
+            throw new InternalServerException("Open Ai Response Json파싱 실패: " + e.getMessage());
         } catch (RestClientException e) {
-            throw new OpenAiApiException("Open AI API 호출 실패 " + e);
+            throw new ExternalServiceException("Open AI API 호출 실패 " + e);
         }
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate(), dateTimeFormatter);
 
         Receipt receipt = Receipt.builder()
-                .access_url(accessUrl)
+                .access_url(request.getAccessUrl())
                 .email(email)
                 .date(localDate)
                 .total_amount(receiptAnalyzeResponse.getTotalAmount())

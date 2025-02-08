@@ -1,10 +1,13 @@
 package backend.backend.controller;
 
+import backend.backend.dto.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.response.ReceiptAnalyzeResponse;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ReceiptService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +29,6 @@ class ReceiptControllerTest {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @Autowired
-    private ReceiptController receiptController;
-
     @MockitoBean
     private ReceiptService receiptService;
 
@@ -36,16 +36,20 @@ class ReceiptControllerTest {
     @DisplayName("ReceiptControllerTest")
     void receiptControllerTest() throws Exception {
         String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
         String accessUrl = "receipt.jpeg";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email);
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
-        ReceiptAnalyzeResponse mockResponse = new ReceiptAnalyzeResponse();
-        when(receiptService.receiptAnalyze(email, accessUrl)).thenReturn(mockResponse);
-
+        ReceiptAnalyzeRequest request = ReceiptAnalyzeRequest.builder().accessUrl(accessUrl).build();
+        ReceiptAnalyzeResponse mockResponse = ReceiptAnalyzeResponse.builder().receiptId(1010L).build();
+        when(receiptService.receiptAnalyze(ArgumentMatchers.any(String.class), ArgumentMatchers.any(ReceiptAnalyzeRequest.class))).thenReturn(mockResponse);
+//ArgumentMatchers.eq(email) : receiptService.receiptAnalyze를 컨트롤러에서 호출 할 때 email의 값을 확인함 객체가 동등한지는 확인안함
+//Json 파싱에는 기본생성자 및 setter가 필요하다.
         mockMvc.perform(post("/api/receipts/analyze")
                 .header("Authorization", accessToken)
-                .param("accessUrl", accessUrl)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

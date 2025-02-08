@@ -1,11 +1,10 @@
 package backend.backend.service;
 
 import backend.backend.dto.response.PreSignedUrlResponse;
-import backend.backend.exception.PresignedException;
+import backend.backend.exception.ExternalServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -67,7 +66,7 @@ public class S3Service {
             System.err.println("\n=== S3 에러 발생 ===");
             System.err.println("에러 메시지: " + e.getMessage());
             System.err.println("에러 코드: " + e.awsErrorDetails().errorCode());
-            throw new PresignedException("S3 URL 생성 실패: " + e.getMessage());
+            throw new ExternalServiceException("S3 URL 생성 실패: " + e.getMessage());
         }
     }
 

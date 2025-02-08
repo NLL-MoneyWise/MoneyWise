@@ -1,10 +1,9 @@
 package backend.backend.service;
 
-import backend.backend.common.ErrorType;
 import backend.backend.domain.Consumption;
 import backend.backend.dto.request.ConsumptionsSaveRequest;
-import backend.backend.dto.response.ErrorResponse;
-import backend.backend.exception.ConsumptionSaveException;
+import backend.backend.exception.DatabaseException;
+import backend.backend.exception.InvalidInputException;
 import backend.backend.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +19,7 @@ import java.util.List;
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
 
-    public boolean save(String email, ConsumptionsSaveRequest request) {
+    public void save(String email, ConsumptionsSaveRequest request) {
         try {
             //request의 date는 String이므로 localDate로 변환 필요
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -54,15 +51,12 @@ public class ConsumptionService {
                 consumptionRepository.save(consumption);
             }
         } catch (DataIntegrityViolationException e) {
-            throw new ConsumptionSaveException(
-                    new ErrorResponse("ERROR", ErrorType.DATABASE_ERROR,"데이터베이스 오류" + e.getMessage())
-            );
+            throw new DatabaseException(
+                    "데이터베이스 오류" + e.getMessage());
         } catch (NullPointerException e) {
-            throw new ConsumptionSaveException(
-                    new ErrorResponse("ERROR",ErrorType.INVALID_INPUT_ERROR, "아이템이 비어있습니다." + e.getMessage())
-            );
+            throw new InvalidInputException(
+                    "아이템이 비어있습니다." + e.getMessage());
         }
-        return true;
     }
 
 }

@@ -21,8 +21,8 @@ public class ConsumptionController {
     public ResponseEntity<ConsumptionsSaveResponse> consumptionSave(@AuthenticationPrincipal String email
             ,@RequestBody ConsumptionsSaveRequest request) {
         consumptionService.save(email, request);
-        ConsumptionsSaveResponse consumptionsSaveResponse = new ConsumptionsSaveResponse();
-        consumptionsSaveResponse.setStatus("Success");
+        ConsumptionsSaveResponse consumptionsSaveResponse = ConsumptionsSaveResponse.builder()
+                .message("소비내역 저장이 완료되었습니다.").build();
         return ResponseEntity.ok(consumptionsSaveResponse);
     }
 

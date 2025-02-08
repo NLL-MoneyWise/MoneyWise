@@ -1,14 +1,10 @@
 package backend.backend.dto.response;
 
-
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.util.List;
-
-@Getter
 @Builder
-public class ConsumptionsSaveResponse {
+@Getter
+public class SignupResponse {
     private String message;
 }

@@ -12,22 +12,9 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ErrorResponse> handleJwtException(JwtException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) //401
-                .body(e.getErrorResponse());  // 여기서 getMessage() 사용
-    }
-
-    @ExceptionHandler(LoginException.class)
-    public ResponseEntity<ErrorResponse> handleLoginException(LoginException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) //401
-                .body(e.getErrorResponse());
-    }
-
-    @ExceptionHandler(SignupException.class)
-    public ResponseEntity<String> handleSignupException(SignupException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(e.getMessage());
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        return ResponseEntity.status(e.getStatus()).body(e.getResponse());
     }
 
     //@valid 검증 실패시 MethodArgumentNotValidException이 발생하고 이에따른 에러 처리임
@@ -43,23 +30,5 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    }
-
-    @ExceptionHandler(PresignedException.class)
-    public ResponseEntity<String> handlePresignedException(PresignedException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
-    }
-
-    @ExceptionHandler(OpenAiApiException.class)
-    public ResponseEntity<String> handleOpenAiApiException(OpenAiApiException e) {
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                .body(e.getMessage());
-    }
-
-    @ExceptionHandler(ConsumptionSaveException.class)
-    public ResponseEntity<ErrorResponse> handleConsumptionSaveException(ConsumptionSaveException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(e.getErrorResponse());
     }
 }

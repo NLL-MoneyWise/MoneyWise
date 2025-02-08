@@ -1,13 +1,11 @@
 package backend.backend.security.jwt;
 
-import backend.backend.common.ErrorType;
-import backend.backend.dto.response.ErrorResponse;
+import backend.backend.exception.AuthenticationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import backend.backend.exception.JwtException;
 
 import java.security.Key;
 import java.util.Date;
@@ -26,11 +24,13 @@ public class JwtUtils {
     }
 
     // JWT 토큰 생성
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String email, String name, String nickName) {
         long now = new Date().getTime(); //JJWT의 메서드는 Date만 지원한다. (LocalDateTime사용 불가)
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("name", name)
+                .claim("nickName", nickName)
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key)
                 .compact();
@@ -56,6 +56,15 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
+    public String getUserNameFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("name", String.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -64,14 +73,12 @@ public class JwtUtils {
                     .parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            throw new JwtException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "잘못된 서명입니다."));
+            throw new AuthenticationException("잘못된 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw new JwtException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "만료된 인증 입니다."));
+            throw new AuthenticationException("만료된 인증 입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new JwtException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "지원하지 않는 인증입니다."));
+            throw new AuthenticationException("지원하지 않는 인증입니다.");
         } catch (IllegalArgumentException e) {
-            throw new JwtException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "잘못된 인증입니다."));
-        }
+            throw new AuthenticationException("잘못된 인증입니다.");        }
     }
-
 }

@@ -30,8 +30,6 @@ class ConsumptionControllerTest {
     MockMvc mockMvc;
     @Autowired
     JwtUtils jwtUtils;
-    @Autowired
-    ConsumptionController consumptionController;
     @MockitoBean
     ConsumptionService consumptionService;
 
@@ -39,7 +37,9 @@ class ConsumptionControllerTest {
     @DisplayName("ConsumptionControllerSuccess")
     void ConsumptionControllerSuccess() throws Exception {
         String email = "test@naver.com";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email);
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
                 .receiptId(1019L)
@@ -47,7 +47,7 @@ class ConsumptionControllerTest {
                 .items(List.of(ConsumptionsSaveRequest.Item.builder().name("말보로레드").amount(4500L).category("잡화").build()))
                 .build();
 
-        Mockito.when(consumptionService.save(email, request)).thenReturn(true);
+        Mockito.doNothing().when(consumptionService).save(email, request);//void반한타입 모킹법
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/consumptions/save")
                 .header("Authorization", accessToken)

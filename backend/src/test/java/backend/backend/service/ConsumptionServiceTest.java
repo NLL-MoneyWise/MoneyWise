@@ -21,12 +21,12 @@ class ConsumptionServiceTest {
     void ConsumptionSaveSuccess() {
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
                 .receiptId(1019L)
-                .date("2015/11/19")
+                .date("2015/12/19")
                 .items(List.of(ConsumptionsSaveRequest.Item.builder().name("말보로레드").amount(4500L).category("잡화").build()))
                 .build();
 
-        boolean TF = consumptionService.save("test@naver.com", request);
-
-        Assertions.assertThat(TF).isTrue();
+        Assertions.assertThatCode(() -> {
+            consumptionService.save("test@naver.com", request);
+        }).doesNotThrowAnyException();
     }
 }

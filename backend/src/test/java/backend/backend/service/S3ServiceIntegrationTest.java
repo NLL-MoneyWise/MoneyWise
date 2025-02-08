@@ -25,13 +25,12 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class S3ServiceIntegrationTest {
     @Autowired
     private S3Service s3Service;  // 실제 S3Service 사용
 
     @Test
-    @DisplayName("실제 Pre-signed URL 생성 테스트")
+    @DisplayName("실제 Put-Pre-signed URL 생성 테스트")
     void generatePutPreSignedUrlTest() {
         // when
         PreSignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성

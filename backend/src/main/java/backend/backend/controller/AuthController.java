@@ -1,15 +1,16 @@
 package backend.backend.controller;
 
-import backend.backend.common.ErrorType;
 import backend.backend.domain.User;
 import backend.backend.dto.request.LoginRequest;
 import backend.backend.dto.request.SignupRequest;
-import backend.backend.dto.response.ErrorResponse;
 import backend.backend.dto.response.LoginResponse;
+import backend.backend.dto.response.SignupResponse;
 import backend.backend.dto.response.TokenResponse;
-import backend.backend.exception.LoginException;
+import backend.backend.dto.response.TokenValidationResponse;
+import backend.backend.exception.AuthenticationException;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
+import backend.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -27,15 +29,21 @@ import java.util.Arrays;
 public class AuthController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<LoginResponse.UserInfo> signup(@Valid @RequestBody SignupRequest request) {
-        return ResponseEntity.ok(authService.signup(request));
+    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
+        authService.signup(request);
+        return ResponseEntity.ok(SignupResponse.builder().message("회원가입이 완료되었습니다.").build());
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request, HttpServletResponse response) {
-        LoginResponse loginResponse = authService.login(request);
+        String accessToken = authService.login(request);
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(accessToken)
+                .message("반갑습니다 " + jwtUtils.getUserNameFromToken(accessToken) + "님").build();
+
         Cookie refreshTokenCookie = new Cookie("refreshToken", jwtUtils.generateRefreshToken(request.getEmail()));
         refreshTokenCookie.setHttpOnly(true); //JavaScript에서 접근 불가능하게 설정
         refreshTokenCookie.setSecure(true); //HTTPS에서만 전송되도록 설정
@@ -59,7 +67,7 @@ public class AuthController {
                 .filter(cookie -> cookie.getName().equals("refrechToken"))
                 .findFirst()
                 .map(Cookie::getValue)
-                .orElseThrow(() -> new LoginException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "refreshToken을 찾지 못했습니다.")));
+                .orElseThrow(() -> new AuthenticationException("refreshToken을 찾지 못했습니다."));
         //2방식
 //        Cookie[] cookies = request.getCookies();
 //        String refreshToken = null;
@@ -75,9 +83,15 @@ public class AuthController {
 
         if(jwtUtils.validateToken(refreshToken)) {
             String email = jwtUtils.getUserEmailFromToken(refreshToken);
-            String accessToken = jwtUtils.generateAccessToken(email);
-            return ResponseEntity.ok(new TokenResponse("Bearer", accessToken));
+            User user = userService.findByEmail(email);
+            String accessToken = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
+
+            return ResponseEntity.ok(new TokenResponse(accessToken));
         }
-        throw new LoginException(new ErrorResponse("ERROR", ErrorType.AUTHENTICATION_ERROR, "refreshToken검증에 실패했습니다."));
+        throw new AuthenticationException("refreshToken검증에 실패했습니다.");
+    }
+    @GetMapping("/validate")
+    public ResponseEntity<TokenValidationResponse> getMyInfo(@AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(TokenValidationResponse.builder().message("유효한 토큰입니다.").build());
     }
 }
