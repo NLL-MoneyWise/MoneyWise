@@ -14,6 +14,7 @@ public class ReceiptAnalyzeResponse {
     private String date;
     private Long totalAmount;
     private List<Item> items;
+    private String message;
 
     @Getter
     @Builder

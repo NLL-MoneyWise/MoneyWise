@@ -1,19 +1,15 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.PreSignedUrlResponse;
+import backend.backend.dto.response.GetPresignedUrlResponse;
+import backend.backend.dto.response.PutPresignedUrlResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -33,7 +29,7 @@ class S3ServiceIntegrationTest {
     @DisplayName("실제 Put-Pre-signed URL 생성 테스트")
     void generatePutPreSignedUrlTest() {
         // when
-        PreSignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성
+        PutPresignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성
         // then
         assertNotNull(response.getPreSignedUrl());
         assertTrue(response.getPreSignedUrl().startsWith("https://"));
@@ -56,8 +52,9 @@ class S3ServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("실제 Get-Pre-signed URL 접속 테스트")
     public void testPreSignedUrl() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
-        PreSignedUrlResponse response = s3Service.generateGetPreSignedUrl("receipt.jpeg");
+        GetPresignedUrlResponse response = s3Service.generateGetPreSignedUrl("receipt.jpeg");
         String url = response.getPreSignedUrl();
         System.out.println("Testing URL: " + url);
 

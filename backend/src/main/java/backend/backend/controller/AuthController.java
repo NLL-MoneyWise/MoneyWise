@@ -86,7 +86,8 @@ public class AuthController {
             User user = userService.findByEmail(email);
             String accessToken = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
 
-            return ResponseEntity.ok(new TokenResponse(accessToken));
+            return ResponseEntity.ok(TokenResponse.builder().accessToken(accessToken)
+                    .message("accessToken이 재발급 되었습니다.").build());
         }
         throw new AuthenticationException("refreshToken검증에 실패했습니다.");
     }

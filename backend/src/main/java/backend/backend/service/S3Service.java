@@ -1,6 +1,7 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.PreSignedUrlResponse;
+import backend.backend.dto.response.GetPresignedUrlResponse;
+import backend.backend.dto.response.PutPresignedUrlResponse;
 import backend.backend.exception.ExternalServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    public PreSignedUrlResponse generatePutPreSignedUrl() {
+    public PutPresignedUrlResponse generatePutPreSignedUrl() {
         try {
             String accessUrl = generateUniqueFileName();
             System.out.println("\n=== Pre-signed URL 생성 시작 ===");
@@ -58,9 +59,10 @@ public class S3Service {
 //        response.setPreSignedUrl(presignedRequest.url().toString());
 //        response.setAccessUrl(accessUrl);
 
-            return PreSignedUrlResponse.builder()
+            return PutPresignedUrlResponse.builder()
                     .preSignedUrl(presignedUrl)
                     .accessUrl(accessUrl)
+                    .message("Presigned Url이 생성되었습니다.")
                     .build();
         } catch (S3Exception e) {
             System.err.println("\n=== S3 에러 발생 ===");
@@ -70,7 +72,7 @@ public class S3Service {
         }
     }
 
-    public PreSignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
+    public GetPresignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
         System.out.println("Generating GET PreSigned URL for: " + accessUrl);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -87,8 +89,9 @@ public class S3Service {
 
         String presignedUrl = presignedGetObjectRequest.url().toString();
 
-        return PreSignedUrlResponse.builder()
+        return GetPresignedUrlResponse.builder()
                 .preSignedUrl(presignedUrl)
+                .message("Presigned Url이 생성되었습니다.")
                 .build();
     }
 
