@@ -2,6 +2,7 @@ package backend.backend.controller;
 
 import backend.backend.dto.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.response.ReceiptAnalyzeResponse;
+import backend.backend.exception.JsonParseException;
 import backend.backend.service.ReceiptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
