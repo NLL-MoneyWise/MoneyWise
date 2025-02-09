@@ -1,20 +1,17 @@
-package backend.backend.dto.response;
+package backend.backend.dto.request;
 
 import lombok.*;
 
 import java.util.List;
 
-@Getter
 @Builder
-@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptAnalyzeResponse {
+public class ConsumptionsSaveRequest {
     private Long receiptId;
     private String date;
-    private Long totalAmount;
     private List<Item> items;
-    private String message;
 
     @Getter
     @Builder
