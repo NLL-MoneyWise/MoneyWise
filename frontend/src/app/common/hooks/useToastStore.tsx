@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Toast {
     id: number;
@@ -14,7 +15,7 @@ interface ToastStore {
         message: string,
         variant: 'success' | 'warning' | 'error'
     ) => void;
-    removeToast: (id: number) => void;
+    removeToast: (id: string) => void;
 }
 
 /**
@@ -28,7 +29,7 @@ interface ToastStore {
 export const useToastStore = create<ToastStore>((set) => ({
     toasts: [],
     addToast: (message, variant) => {
-        const id = Date.now();
+        const id = uuidv4();
         set((state) => ({
             toasts: [...state.toasts, { id, message, variant }]
         }));
