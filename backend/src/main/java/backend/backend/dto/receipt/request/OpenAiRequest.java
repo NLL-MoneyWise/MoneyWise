@@ -1,4 +1,4 @@
-package backend.backend.dto.request;
+package backend.backend.dto.receipt.request;
 
 import lombok.Builder;
 import lombok.Getter;

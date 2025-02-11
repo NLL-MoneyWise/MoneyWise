@@ -1,7 +1,7 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.GetPresignedUrlResponse;
-import backend.backend.dto.response.PutPresignedUrlResponse;
+import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import backend.backend.exception.ExternalServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package backend.backend.dto.response;
+package backend.backend.dto.receipt.response;
 
 import lombok.*;
 

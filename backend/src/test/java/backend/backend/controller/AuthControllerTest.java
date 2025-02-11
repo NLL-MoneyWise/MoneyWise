@@ -1,16 +1,14 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.LoginRequest;
-import backend.backend.dto.request.SignupRequest;
+import backend.backend.dto.auth.request.LoginRequest;
+import backend.backend.dto.auth.request.SignupRequest;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

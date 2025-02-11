@@ -1,7 +1,9 @@
 package backend.backend.service;
 
 import backend.backend.domain.Consumption;
-import backend.backend.dto.request.ConsumptionsSaveRequest;
+import backend.backend.dto.consumption.model.ByCategory;
+import backend.backend.dto.consumption.model.TopExpense;
+import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.InvalidInputException;
 import backend.backend.repository.ConsumptionRepository;
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +61,20 @@ public class ConsumptionService {
             throw new InvalidInputException(
                     "아이템이 비어있습니다." + e.getMessage());
         }
+    }
+
+    public Long getTotalAmountByEmail(String email) {
+        return consumptionRepository.sumAmountByEmail(email).orElse(0L);
+    }
+
+    public List<ByCategory> getTotalAmountByEmailAndCategory(String email) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email);
+        return result != null ? result : Collections.emptyList();
+    }
+
+    public List<TopExpense> getMaxAmountByEmailAndItemName(String email) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email);
+        return result != null ? result : Collections.emptyList();
     }
 
 }

@@ -1,15 +1,14 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.ConsumptionsSaveRequest;
-import backend.backend.dto.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
+import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.response.ConsumptionsSummaryResponse;
 import backend.backend.service.ConsumptionService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,4 +25,15 @@ public class ConsumptionController {
         return ResponseEntity.ok(consumptionsSaveResponse);
     }
 
+    @GetMapping("/summary")
+    public ResponseEntity<ConsumptionsSummaryResponse> consumptionSummary(@AuthenticationPrincipal String email) {
+        ConsumptionsSummaryResponse response = ConsumptionsSummaryResponse.builder()
+                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email))
+                .totalAmount(consumptionService.getTotalAmountByEmail(email))
+                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email))
+                .message("전체 기간 소비 내역 분석이 완료되었습니다.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }

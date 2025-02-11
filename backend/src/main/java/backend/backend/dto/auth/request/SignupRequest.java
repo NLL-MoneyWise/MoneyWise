@@ -1,4 +1,4 @@
-package backend.backend.dto.request;
+package backend.backend.dto.auth.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

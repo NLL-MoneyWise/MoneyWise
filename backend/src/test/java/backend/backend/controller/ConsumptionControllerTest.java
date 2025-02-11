@@ -1,10 +1,8 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.ConsumptionsSaveRequest;
-import backend.backend.dto.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ConsumptionService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

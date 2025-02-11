@@ -1,9 +1,9 @@
 package backend.backend.service;
 import backend.backend.domain.Receipt;
-import backend.backend.dto.request.OpenAiRequest;
-import backend.backend.dto.request.ReceiptAnalyzeRequest;
-import backend.backend.dto.response.OpenAiResponse;
-import backend.backend.dto.response.ReceiptAnalyzeResponse;
+import backend.backend.dto.receipt.request.OpenAiRequest;
+import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
+import backend.backend.dto.receipt.response.OpenAiResponse;
+import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
 import backend.backend.exception.ExternalServiceException;
 import backend.backend.exception.InternalServerException;
