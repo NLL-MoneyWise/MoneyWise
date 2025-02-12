@@ -1,7 +1,8 @@
 import ToastContainer from './common/components/Toast/ToastContainer';
 import './globals.css';
-
 import { Noto_Sans_KR } from 'next/font/google';
+import { QueryProviders } from './QueryProvider';
+import MSWProvider from './MockingProiver';
 
 const notoSansKr = Noto_Sans_KR({
     subsets: ['latin'],
@@ -18,8 +19,9 @@ export default function RootLayout({
     return (
         <html>
             <body lang="ko" className={notoSansKr.className}>
-                <main
-                    className="min-w-[375px] 
+                <QueryProviders>
+                    <main
+                        className="min-w-[375px] 
                              max-w-[475px] 
                              w-full 
                              h-screen
@@ -31,12 +33,14 @@ export default function RootLayout({
                              box-border
                              border-x
                              border-gray-200"
-                >
-                    {children}
-                </main>
+                    >
+                        <MSWProvider />
+                        {children}
+                    </main>
+                </QueryProviders>
+                <ToastContainer />
                 <div id="toast-portal"></div>
                 <div id="modal-portal"></div>
-                <ToastContainer />
             </body>
         </html>
     );
