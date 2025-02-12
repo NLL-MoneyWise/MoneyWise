@@ -5,8 +5,7 @@ import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
-import backend.backend.exception.ExternalServiceException;
-import backend.backend.exception.InternalServerException;
+import backend.backend.exception.APIException;
 import backend.backend.repository.ReceiptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -120,9 +119,9 @@ public class ReceiptService {
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
         } catch (JsonProcessingException e) {
-            throw new InternalServerException("Open Ai Response Json파싱 실패: " + e.getMessage());
+            throw new APIException("Open Ai Response Json파싱 실패: " + e.getMessage());
         } catch (RestClientException e) {
-            throw new ExternalServiceException("Open AI API 호출 실패 " + e);
+            throw new BadGateWayException("Open AI API 호출 실패 " + e);
         }
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");

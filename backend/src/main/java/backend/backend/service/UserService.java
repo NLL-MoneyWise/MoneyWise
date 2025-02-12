@@ -1,7 +1,7 @@
 package backend.backend.service;
 
 import backend.backend.domain.User;
-import backend.backend.exception.UserNotFoundException;
+import backend.backend.exception.NotFoundException;
 import backend.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,6 @@ public class UserService {
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("이메일을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("이메일을 찾을 수 없습니다."));
     }
 }

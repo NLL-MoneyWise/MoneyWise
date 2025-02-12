@@ -4,8 +4,8 @@ import backend.backend.common.ErrorType;
 import lombok.Getter;
 
 @Getter
-public class AuthenticationException extends BaseException{
-    public AuthenticationException(String message) {
+public class AuthException extends BaseException{
+    public AuthException(String message) {
         super(ErrorType.AUTHENTICATION_ERROR, message);
     }
 }

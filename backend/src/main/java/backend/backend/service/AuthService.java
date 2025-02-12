@@ -3,10 +3,10 @@ package backend.backend.service;
 import backend.backend.domain.User;
 import backend.backend.dto.auth.request.LoginRequest;
 import backend.backend.dto.auth.request.SignupRequest;
-import backend.backend.exception.AuthenticationException;
+import backend.backend.exception.AuthException;
 import backend.backend.exception.ConflictException;
 import backend.backend.exception.DatabaseException;
-import backend.backend.exception.UserNotFoundException;
+import backend.backend.exception.NotFoundException;
 import backend.backend.repository.UserRepository;
 import backend.backend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AuthService {
     public String login(LoginRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         if(!optionalUser.isPresent()) {
-            throw new UserNotFoundException("가입되지 않은 이메일 입니다.");
+            throw new NotFoundException("가입되지 않은 이메일 입니다.");
         }
 
         User user = optionalUser.get();
@@ -38,7 +38,7 @@ public class AuthService {
 
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new AuthenticationException("잘못된 비밀번호 입니다.");
+            throw new AuthException("잘못된 비밀번호 입니다.");
         }
 
         //JWT accessToken생성

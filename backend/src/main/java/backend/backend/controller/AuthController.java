@@ -7,7 +7,7 @@ import backend.backend.dto.auth.response.LoginResponse;
 import backend.backend.dto.auth.response.SignupResponse;
 import backend.backend.dto.auth.response.TokenResponse;
 import backend.backend.dto.auth.response.TokenValidationResponse;
-import backend.backend.exception.AuthenticationException;
+import backend.backend.exception.AuthException;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
 import backend.backend.service.UserService;
@@ -67,7 +67,7 @@ public class AuthController {
                 .filter(cookie -> cookie.getName().equals("refrechToken"))
                 .findFirst()
                 .map(Cookie::getValue)
-                .orElseThrow(() -> new AuthenticationException("refreshToken을 찾지 못했습니다."));
+                .orElseThrow(() -> new AuthException("refreshToken을 찾지 못했습니다."));
         //2방식
 //        Cookie[] cookies = request.getCookies();
 //        String refreshToken = null;
@@ -89,7 +89,7 @@ public class AuthController {
             return ResponseEntity.ok(TokenResponse.builder().accessToken(accessToken)
                     .message("accessToken이 재발급 되었습니다.").build());
         }
-        throw new AuthenticationException("refreshToken검증에 실패했습니다.");
+        throw new AuthException("refreshToken검증에 실패했습니다.");
     }
     @GetMapping("/validate")
     public ResponseEntity<TokenValidationResponse> getMyInfo(@AuthenticationPrincipal String email) {

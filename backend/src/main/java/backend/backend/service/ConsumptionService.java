@@ -5,7 +5,7 @@ import backend.backend.dto.consumption.model.ByCategory;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
-import backend.backend.exception.InvalidInputException;
+import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -58,7 +58,7 @@ public class ConsumptionService {
             throw new DatabaseException(
                     "데이터베이스 오류" + e.getMessage());
         } catch (NullPointerException e) {
-            throw new InvalidInputException(
+            throw new ValidationException(
                     "아이템이 비어있습니다." + e.getMessage());
         }
     }
