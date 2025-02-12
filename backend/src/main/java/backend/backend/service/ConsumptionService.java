@@ -76,5 +76,4 @@ public class ConsumptionService {
         List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email);
         return result != null ? result : Collections.emptyList();
     }
-
 }

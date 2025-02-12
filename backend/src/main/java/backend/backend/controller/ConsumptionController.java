@@ -5,7 +5,6 @@ import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
 import backend.backend.dto.consumption.response.ConsumptionsSummaryResponse;
 import backend.backend.service.ConsumptionService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
