@@ -30,7 +30,7 @@ const Toast = ({ children, variant = 'success', onClose }: ToastProps) => {
             mb-2 px-6 md:px-8
             rounded-lg text-white
             font-sans font-normal
-            text-sm md:text-[22px]
+            text-[12px] md:text-[16px]
             leading-[16px] md:leading-[26px]
             shadow-md 
             ${

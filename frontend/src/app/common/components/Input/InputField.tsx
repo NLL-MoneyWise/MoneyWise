@@ -1,11 +1,13 @@
+import clsx from 'clsx';
 import React, { forwardRef } from 'react';
 
 // 기본 공통 props
 interface BaseInputFieldProps {
     element: 'input' | 'textarea';
-    label: string;
+    label?: string;
     type?: React.HTMLInputTypeAttribute;
     placeholder?: string;
+    isError?: boolean;
 }
 
 // 제어 컴포넌트용 props
@@ -14,25 +16,23 @@ interface ControlledInputProps extends BaseInputFieldProps {
     onChange: (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
-    defaultValue?: never;
 }
 
-// 비제어 컴포넌트용 props
-interface UncontrolledInputProps extends BaseInputFieldProps {
-    value?: never;
-    onChange?: never;
-    defaultValue?: string;
-}
-
-type InputFieldProps = ControlledInputProps | UncontrolledInputProps;
+type InputFieldProps = ControlledInputProps | BaseInputFieldProps;
 
 const InputField = forwardRef<
     HTMLInputElement | HTMLTextAreaElement,
     InputFieldProps
->(({ element = 'input', label, type, placeholder, ...rest }, ref) => {
+>(({ element = 'input', label, type, placeholder, isError, ...rest }, ref) => {
     return (
         <div className="flex flex-col gap-2">
-            <label htmlFor={type} className="text-sm font-medium text-primary">
+            <label
+                htmlFor={type}
+                className={clsx(
+                    'text-sm font-medium text-primary h-4',
+                    `${isError && 'invisible'}`
+                )}
+            >
                 {label}
             </label>
             {element === 'input' ? (

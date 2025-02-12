@@ -18,7 +18,9 @@ const TopBar = () => {
     return (
         <div className="flex w-full justify-between">
             <IoIosArrowBack onClick={handleGoBack} />
-            <Button handleClick={handleConfirm}> {'확인'}</Button>
+            <Button handleClick={handleConfirm} width={10} height={16}>
+                {'확인'}
+            </Button>
         </div>
     );
 };
