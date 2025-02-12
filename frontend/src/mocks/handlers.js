@@ -7,7 +7,8 @@ export const handlers = [
         if (!data.email || !data.password) {
             return new HttpResponse(
                 JSON.stringify({
-                    message: '이메일과 비밀번호를 입력해주세요'
+                    message: '이메일과 비밀번호를 입력해주세요.',
+                    typeName: 'VALIDATION_ERROR'
                 }),
                 { status: 400 }
             );
@@ -29,7 +30,8 @@ export const handlers = [
 
         return new HttpResponse(
             JSON.stringify({
-                message: '이메일 또는 비밀번호가 일치하지 않습니다'
+                message: '이메일 또는 비밀번호가 일치하지 않습니다.',
+                typeName: 'VALIDATION_ERROR'
             }),
             { status: 401 }
         );
