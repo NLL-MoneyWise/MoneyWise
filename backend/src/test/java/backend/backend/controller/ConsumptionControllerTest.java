@@ -26,7 +26,8 @@ class ConsumptionControllerTest {
     MockMvc mockMvc;
     @Autowired
     JwtUtils jwtUtils;
-    @MockitoBean
+    @Autowired
+    //@MockitoBean
     ConsumptionService consumptionService;
 
     @Test
@@ -49,6 +50,20 @@ class ConsumptionControllerTest {
                 .header("Authorization", accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("사용자의 전체 소비내역 분석")
+    void consumptionSummaryTest() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email,name, nickName);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/summary")
+                .header("Authorization", accessToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
