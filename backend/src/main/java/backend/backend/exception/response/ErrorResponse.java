@@ -1,4 +1,4 @@
-package backend.backend.dto.response;
+package backend.backend.exception.response;
 
 import backend.backend.common.ErrorType;
 import lombok.AllArgsConstructor;

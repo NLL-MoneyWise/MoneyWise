@@ -1,7 +1,7 @@
 package backend.backend.exception;
 
 import backend.backend.common.ErrorType;
-import backend.backend.dto.response.ErrorResponse;
+import backend.backend.exception.response.ErrorResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

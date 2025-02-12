@@ -1,6 +1,6 @@
 package backend.backend.exception;
 
-import backend.backend.dto.response.ErrorResponse;
+import backend.backend.exception.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;

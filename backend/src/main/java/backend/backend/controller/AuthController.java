@@ -1,12 +1,12 @@
 package backend.backend.controller;
 
 import backend.backend.domain.User;
-import backend.backend.dto.request.LoginRequest;
-import backend.backend.dto.request.SignupRequest;
-import backend.backend.dto.response.LoginResponse;
-import backend.backend.dto.response.SignupResponse;
-import backend.backend.dto.response.TokenResponse;
-import backend.backend.dto.response.TokenValidationResponse;
+import backend.backend.dto.auth.request.LoginRequest;
+import backend.backend.dto.auth.request.SignupRequest;
+import backend.backend.dto.auth.response.LoginResponse;
+import backend.backend.dto.auth.response.SignupResponse;
+import backend.backend.dto.auth.response.TokenResponse;
+import backend.backend.dto.auth.response.TokenValidationResponse;
 import backend.backend.exception.AuthenticationException;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;

@@ -1,7 +1,7 @@
 package backend.backend.service;
 
-import backend.backend.dto.request.ReceiptAnalyzeRequest;
-import backend.backend.dto.response.ReceiptAnalyzeResponse;
+import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
+import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,8 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.ConsumptionsSaveRequest;
-import backend.backend.dto.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ConsumptionService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class ConsumptionControllerTest {
@@ -30,7 +25,8 @@ class ConsumptionControllerTest {
     MockMvc mockMvc;
     @Autowired
     JwtUtils jwtUtils;
-    @MockitoBean
+    @Autowired
+    //@MockitoBean
     ConsumptionService consumptionService;
 
     @Test
@@ -53,6 +49,20 @@ class ConsumptionControllerTest {
                 .header("Authorization", accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("사용자의 전체 소비내역 분석")
+    void consumptionSummaryTest() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email,name, nickName);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/summary")
+                .header("Authorization", accessToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

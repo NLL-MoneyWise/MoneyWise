@@ -1,4 +1,4 @@
-package backend.backend.dto.response;
+package backend.backend.dto.auth.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

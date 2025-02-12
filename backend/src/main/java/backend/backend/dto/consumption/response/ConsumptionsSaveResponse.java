@@ -1,4 +1,4 @@
-package backend.backend.dto.response;
+package backend.backend.dto.consumption.response;
 
 
 import lombok.Builder;

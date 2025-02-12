@@ -1,7 +1,7 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.GetPresignedUrlResponse;
-import backend.backend.dto.response.PutPresignedUrlResponse;
+import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;

@@ -1,6 +1,6 @@
 package backend.backend.service;
 
-import backend.backend.dto.request.LoginRequest;
+import backend.backend.dto.auth.request.LoginRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,8 @@
 package backend.backend.service;
 
 import backend.backend.domain.User;
-import backend.backend.dto.request.LoginRequest;
-import backend.backend.dto.request.SignupRequest;
-import backend.backend.dto.response.LoginResponse;
+import backend.backend.dto.auth.request.LoginRequest;
+import backend.backend.dto.auth.request.SignupRequest;
 import backend.backend.exception.AuthenticationException;
 import backend.backend.exception.ConflictException;
 import backend.backend.exception.DatabaseException;

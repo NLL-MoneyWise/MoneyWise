@@ -1,6 +1,6 @@
 package backend.backend.controller;
 
-import backend.backend.dto.response.PutPresignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import backend.backend.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

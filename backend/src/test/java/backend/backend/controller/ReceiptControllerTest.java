@@ -1,7 +1,7 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.ReceiptAnalyzeRequest;
-import backend.backend.dto.response.ReceiptAnalyzeResponse;
+import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
+import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ReceiptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
