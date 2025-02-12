@@ -7,16 +7,21 @@ interface ButtonProps {
     children: ReactNode;
     width: number;
     height: number;
-    handleClick: () => void;
+    handleClick?: () => void;
 }
 
-const Button = ({ children, handleClick }: ButtonProps) => {
+const Button = ({
+    children,
+    handleClick,
+    ...rest
+}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
     return (
         <button
             className={clsx(
                 'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl text-sm w-full h-[45px]'
             )}
             onClick={handleClick}
+            {...rest}
         >
             {children}
         </button>

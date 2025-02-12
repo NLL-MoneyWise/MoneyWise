@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Toast {
-    id: number;
+    id: string;
     variant: 'success' | 'warning' | 'error';
     message: string;
 }

@@ -1,5 +1,3 @@
-'use client';
-
 import LoginForm from '@/app/auth/components/LoginForm/LoginForm';
 import Logo from '@/app/common/components/Logo/Logo';
 
