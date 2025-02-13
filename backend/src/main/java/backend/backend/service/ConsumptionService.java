@@ -56,7 +56,7 @@ public class ConsumptionService {
             }
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(
-                    "데이터베이스 오류" + e.getMessage());
+                    "데이터베이스 오류가 발생했습니다." + e.getMessage());
         } catch (NullPointerException e) {
             throw new ValidationException(
                     "아이템이 비어있습니다." + e.getMessage());
@@ -68,12 +68,12 @@ public class ConsumptionService {
     }
 
     public List<ByCategory> getTotalAmountByEmailAndCategory(String email) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email);
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null);
         return result != null ? result : Collections.emptyList();
     }
 
     public List<TopExpense> getMaxAmountByEmailAndItemName(String email) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email);
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null);
         return result != null ? result : Collections.emptyList();
     }
 }

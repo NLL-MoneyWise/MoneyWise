@@ -79,6 +79,7 @@ public class JwtUtils {
         } catch (UnsupportedJwtException e) {
             throw new AuthException("지원하지 않는 인증입니다.");
         } catch (IllegalArgumentException e) {
-            throw new AuthException("잘못된 인증입니다.");        }
+            throw new AuthException("잘못된 인증입니다.");
+        }
     }
 }

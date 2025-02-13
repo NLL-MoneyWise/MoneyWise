@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 public class AuthException extends BaseException{
     public AuthException(String message) {
-        super(ErrorType.AUTHENTICATION_ERROR, message);
+        super(ErrorType.AUTH_ERROR, message);
     }
 }

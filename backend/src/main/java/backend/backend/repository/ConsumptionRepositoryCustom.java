@@ -6,6 +6,6 @@ import backend.backend.dto.consumption.model.TopExpense;
 import java.util.List;
 
 public interface ConsumptionRepositoryCustom {
-    List<ByCategory> findByCategoryAndEmail(String email);
-    List<TopExpense> findTopExpenseByEmail(String email);
+    List<ByCategory> findByCategoryAndEmail(String email, Long year);
+    List<TopExpense> findTopExpenseByEmail(String email, Long year);
 }

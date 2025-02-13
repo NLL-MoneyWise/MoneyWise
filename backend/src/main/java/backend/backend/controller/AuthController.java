@@ -89,7 +89,7 @@ public class AuthController {
             return ResponseEntity.ok(TokenResponse.builder().accessToken(accessToken)
                     .message("accessToken이 재발급 되었습니다.").build());
         }
-        throw new AuthException("refreshToken검증에 실패했습니다.");
+        throw new AuthException("refreshToken 검증에 실패했습니다.");
     }
     @GetMapping("/validate")
     public ResponseEntity<TokenValidationResponse> getMyInfo(@AuthenticationPrincipal String email) {

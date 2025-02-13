@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ConsumptionRepository extends JpaRepository<Consumption, Long>, ConsumptionRepositoryCustom {
     @Query("SELECT SUM(c.amount) FROM Consumption c WHERE c.email = :email")
     Optional<Long> sumAmountByEmail(String email);
+    //@Query는 JPQL이므로 테이블 이름이 아닌 객체를 사용해야한다.
+    @Query("SELECT SUM(c.amount) FROM Consumption c WHERE c.email = :email AND EXTRACT(YEAR FROM c.consumption_date) = :year")
+    Optional<Long> sumAmountByEmailAndYear(String email, Long year);
 }

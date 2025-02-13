@@ -12,7 +12,7 @@ public enum ErrorType {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DATABASE_ERROR"),               // 500: DB 관련 에러
     NETWORK_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "NETWORK_ERROR"),                   // 503: 네트워크 통신 문제
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR"),                     // 400: 잘못된 입력값
-    AUTH_ERROR(HttpStatus.UNAUTHORIZED, "AUTH_ERROR"),                      // 401: 인증 실패
+    AUTH_ERROR(HttpStatus.UNAUTHORIZED, "AUTH_ERROR"),                                // 401: 인증 실패
     NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "NOT_FOUND_ERROR"),                         // 404: 리소스 없음
     CONFLICT_ERROR(HttpStatus.CONFLICT, "CONFLICT_ERROR"),                            // 409: 리소스 충돌
     API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "API_ERROR"),                         // 500: 서버 내부 오류
