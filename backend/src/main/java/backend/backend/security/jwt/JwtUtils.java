@@ -1,6 +1,6 @@
 package backend.backend.security.jwt;
 
-import backend.backend.exception.AuthenticationException;
+import backend.backend.exception.AuthException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -73,12 +73,13 @@ public class JwtUtils {
                     .parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            throw new AuthenticationException("잘못된 서명입니다.");
+            throw new AuthException("잘못된 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw new AuthenticationException("만료된 인증 입니다.");
+            throw new AuthException("만료된 인증 입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new AuthenticationException("지원하지 않는 인증입니다.");
+            throw new AuthException("지원하지 않는 인증입니다.");
         } catch (IllegalArgumentException e) {
-            throw new AuthenticationException("잘못된 인증입니다.");        }
+            throw new AuthException("잘못된 인증입니다.");
+        }
     }
 }

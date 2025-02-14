@@ -5,13 +5,14 @@ import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
-import backend.backend.exception.ExternalServiceException;
-import backend.backend.exception.InternalServerException;
+import backend.backend.exception.APIException;
+import backend.backend.exception.DatabaseException;
 import backend.backend.repository.ReceiptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,13 +73,6 @@ public class ReceiptService {
                         .build())
                 .build();
 
-        try {
-            String requestJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(openAiRequest);
-            System.out.println("Request JSON:");
-            System.out.println(requestJson);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
 
         //Http헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -120,9 +114,9 @@ public class ReceiptService {
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
         } catch (JsonProcessingException e) {
-            throw new InternalServerException("Open Ai Response Json파싱 실패: " + e.getMessage());
+            throw new BadGateWayException("Open Ai Response Json파싱 실패");
         } catch (RestClientException e) {
-            throw new ExternalServiceException("Open AI API 호출 실패 " + e);
+            throw new BadGateWayException("Open AI API 호출 실패");
         }
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -135,9 +129,12 @@ public class ReceiptService {
                 .total_amount(receiptAnalyzeResponse.getTotalAmount())
                 .build();
 
-        receipt = receiptRepository.save(receipt);
-
-        receiptAnalyzeResponse.setReceiptId(receipt.getId());
+        try {
+            receipt = receiptRepository.save(receipt);
+            receiptAnalyzeResponse.setReceiptId(receipt.getId());
+        } catch (DataAccessException e) {
+            throw new DatabaseException("영수증 저장 중 오류가 발생했습니다.");
+        }
 
         return receiptAnalyzeResponse;
     }

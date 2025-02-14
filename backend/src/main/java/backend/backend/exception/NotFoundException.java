@@ -2,8 +2,8 @@ package backend.backend.exception;
 
 import backend.backend.common.ErrorType;
 
-public class UserNotFoundException extends BaseException {
-    public UserNotFoundException(String message) {
+public class NotFoundException extends BaseException {
+    public NotFoundException(String message) {
         super(ErrorType.NOT_FOUND_ERROR, message);
     }
 }

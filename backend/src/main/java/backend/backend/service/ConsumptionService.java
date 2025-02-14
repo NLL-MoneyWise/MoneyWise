@@ -5,7 +5,7 @@ import backend.backend.dto.consumption.model.ByCategory;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
-import backend.backend.exception.InvalidInputException;
+import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -56,9 +56,9 @@ public class ConsumptionService {
             }
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(
-                    "데이터베이스 오류" + e.getMessage());
+                    "데이터베이스 오류가 발생했습니다." + e.getMessage());
         } catch (NullPointerException e) {
-            throw new InvalidInputException(
+            throw new ValidationException(
                     "아이템이 비어있습니다." + e.getMessage());
         }
     }
@@ -66,14 +66,41 @@ public class ConsumptionService {
     public Long getTotalAmountByEmail(String email) {
         return consumptionRepository.sumAmountByEmail(email).orElse(0L);
     }
+    public Long getTotalAmountByEmailAndYear(String email, Long year) {
+        return consumptionRepository.sumAmountByEmailAndYear(email, year).orElse(0L);
+    }
+
+    public Long getTotalAmountByEmailAndYearAndMonth(String email, Long year, Long month) {
+        return consumptionRepository.sumAmountByEmailAndYearAndMonthToQuerydsl(email, year, month).orElse(0L);
+    }
 
     public List<ByCategory> getTotalAmountByEmailAndCategory(String email) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email);
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null, null);
         return result != null ? result : Collections.emptyList();
     }
 
+    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYear(String email, Long year) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, null);
+        return result;
+    }
+
+    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYearAndMonth(String email, Long year, Long month) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month);
+        return result;
+    }
+
     public List<TopExpense> getMaxAmountByEmailAndItemName(String email) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email);
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null, null);
         return result != null ? result : Collections.emptyList();
+    }
+
+    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYear(String email, Long year) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, null);
+        return result;
+    }
+
+    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYearAndMonth(String email, Long year, Long month) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month);
+        return result;
     }
 }

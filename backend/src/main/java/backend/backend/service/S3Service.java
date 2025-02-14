@@ -2,7 +2,7 @@ package backend.backend.service;
 
 import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
 import backend.backend.dto.upload.response.PutPresignedUrlResponse;
-import backend.backend.exception.ExternalServiceException;
+import backend.backend.exception.BadGateWayException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class S3Service {
             System.err.println("\n=== S3 에러 발생 ===");
             System.err.println("에러 메시지: " + e.getMessage());
             System.err.println("에러 코드: " + e.awsErrorDetails().errorCode());
-            throw new ExternalServiceException("S3 URL 생성 실패: " + e.getMessage());
+            throw new BadGateWayException("S3 URL 생성 실패: " + e.getMessage());
         }
     }
 
