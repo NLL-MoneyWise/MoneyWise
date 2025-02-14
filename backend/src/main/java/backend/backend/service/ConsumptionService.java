@@ -67,13 +67,41 @@ public class ConsumptionService {
         return consumptionRepository.sumAmountByEmail(email).orElse(0L);
     }
 
+    public Long getTotalAmountByEmailAndYear(String email, Long year) {
+        return consumptionRepository.sumAmountByEmailAndYear(email, year).orElse(0L);
+    }
+
+    public Long getTotalAmountByEmailAndYearAndMonth(String email, Long year, Long month) {
+        return consumptionRepository.sumAmountByEmailAndYearAndMonthToQuerydsl(email, year, month).orElse(0L);
+    }
+
     public List<ByCategory> getTotalAmountByEmailAndCategory(String email) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null);
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null, null);
         return result != null ? result : Collections.emptyList();
     }
 
+    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYear(String email, Long year) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, null);
+        return result;
+    }
+
+    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYearAndMonth(String email, Long year, Long month) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month);
+        return result;
+    }
+
     public List<TopExpense> getMaxAmountByEmailAndItemName(String email) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null);
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null, null);
         return result != null ? result : Collections.emptyList();
+    }
+
+    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYear(String email, Long year) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, null);
+        return result;
+    }
+
+    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYearAndMonth(String email, Long year, Long month) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month);
+        return result;
     }
 }

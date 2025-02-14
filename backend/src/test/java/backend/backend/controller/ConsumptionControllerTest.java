@@ -66,4 +66,32 @@ class ConsumptionControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @DisplayName("사용자의 년도별 소비 내역 분석 성공")
+    void consumptionsYearTest() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/{year}", 2015)
+                .header("Authorization", accessToken))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("사용자의 년 월 별 소비 내역 분석 성공")
+    void consumptionsYearMonthTest() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/{year}/{month}", 2015, 12)
+                        .header("Authorization", accessToken))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

@@ -18,7 +18,7 @@ class ConsumptionRepositoryTest {
     @Test
     void findByCategoryAndEmailTest() {
         String email = "test@naver.com";
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null);
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null, null);
         for (int i = 0; i < result.size(); i++) {
             System.out.println("Category Result: " + result.get(i).getName() + ", " + result.get(i).getAmount());
         }
@@ -27,7 +27,7 @@ class ConsumptionRepositoryTest {
     @Test
     void findTopExpenseByEmailTest() {
         String email = "test@naver.com";
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null);
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null, null);
         for (int i = 0; i < result.size(); i++) {
             System.out.println("Category Result: " + result.get(i).getName() + ", " + result.get(i).getAmount());
         }
