@@ -3,67 +3,64 @@ package Controller;
 import Domain.Memo;
 import Service.MemoService;
 import backend.backend.security.jwt.JwtUtils;
+import dto.memo.request.CreateMemoRequest;
+import dto.memo.request.UpdateMemoRequest;
+import dto.memo.response.CreateMemoResponse;
+import dto.memo.response.GetAllMemosResponse;
+import dto.memo.response.UpdateMemoResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/memos") // 메모와 관련된 API 경로
+@RequestMapping("/api/memos")
 public class MemoController {
 
     private final MemoService memoService;
-    private final JwtUtils jwtUtils; // JwtUtils 추가
+    private final JwtUtils jwtUtils;
 
-    public MemoController(MemoService memoService, JwtUtils jwtUtils) { // MemoService 및 JwtUtils 주입
+    public MemoController(MemoService memoService, JwtUtils jwtUtils) {
         this.memoService = memoService;
         this.jwtUtils = jwtUtils;
     }
 
-    @PostMapping // 메모 생성 API
-    public ResponseEntity<Memo> createMemo(
-            @RequestHeader("Authorization") String bearerToken, // Authorization 헤더에서 토큰 추출
+    @PostMapping("/save")
+    public ResponseEntity<CreateMemoResponse> createMemo(
+            @RequestHeader("Authorization") String bearerToken,
             @RequestBody CreateMemoRequest request) {
-        String token = bearerToken.substring(7); // "Bearer " 부분 제거
-        String email = jwtUtils.getUserEmailFromToken(token); // JWT 토큰에서 이메일 추출
-        Memo memo = memoService.createMemo(request.getContent(), email); // 이메일과 content로 메모 생성
-        return ResponseEntity.ok(memo); // 생성된 메모 반환
+        String token = bearerToken.substring(7);
+        String email = jwtUtils.getUserEmailFromToken(token);
+        Memo memo = memoService.createMemo(request.getContent(), email);
+        return ResponseEntity.ok(new CreateMemoResponse(memo.getId(), "Memo successfully created"));
     }
 
-    @PutMapping("/{memoId}") // 메모 수정 API
-    public ResponseEntity<Memo> updateMemo(
-            @RequestHeader("Authorization") String bearerToken, // Authorization 헤더에서 토큰 추출
-            @PathVariable Long memoId, // URL 경로에서 메모 ID 추출
+    @PutMapping("/{memoId}")
+    public ResponseEntity<UpdateMemoResponse> updateMemo(
+            @RequestHeader("Authorization") String bearerToken,
+            @PathVariable Long memoId,
             @RequestBody UpdateMemoRequest request) {
-        String token = bearerToken.substring(7); // "Bearer " 부분 제거
-        String email = jwtUtils.getUserEmailFromToken(token); // JWT 토큰에서 이메일 추출
-        Memo memo = memoService.updateMemo(memoId, request.getContent(), email); // 이메일과 content로 메모 수정
-        return ResponseEntity.ok(memo); // 수정된 메모 반환
+        String token = bearerToken.substring(7);
+        String email = jwtUtils.getUserEmailFromToken(token);
+        memoService.updateMemo(memoId, request.getContent(), email);
+        return ResponseEntity.ok(new UpdateMemoResponse("Memo successfully updated"));
+    }
+    // 메모 조회 기능 추가
+    @GetMapping("/find")
+    public ResponseEntity<GetAllMemosResponse> getAllMemos(
+            @RequestHeader("Authorization") String bearerToken) {
+        String token = bearerToken.substring(7);
+        String email = jwtUtils.getUserEmailFromToken(token);
+
+        // 사용자의 모든 메모를 조회
+        List<Memo> memos = memoService.getAllMemos(email);
+
+        // 응답 객체 생성 후 반환
+        if (!memos.isEmpty()) {
+            return ResponseEntity.ok(new GetAllMemosResponse("Success", memos));
+       } else {
+            return ResponseEntity.ok(new GetAllMemosResponse("No memos found", memos));
+        }
     }
 
-    @GetMapping // 모든 메모 조회 API
-    public ResponseEntity<List<Memo>> getAllMemos() {
-        List<Memo> memos = memoService.getAllMemos(); // 모든 메모 조회
-        return ResponseEntity.ok(memos); // 조회된 메모 목록 반환
-    }
-}
-
-class CreateMemoRequest { // 메모 생성 요청 객체
-    private String content;
-    public String getContent() {
-        return content;
-    }
-    public void setContent(String content) {
-        this.content = content;
-    }
-}
-
-class UpdateMemoRequest { // 메모 수정 요청 객체
-    private String content;
-    public String getContent() {
-        return content;
-    }
-    public void setContent(String content) {
-        this.content = content;
-    }
 }
