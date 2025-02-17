@@ -10,7 +10,7 @@ const useAuthMutation = () => {
 
     const loginMutation = useMutation({
         mutationFn: authRepository.login.bind(authRepository),
-        onSuccess: () => {
+        onSuccess: async () => {
             addToast('로그인에 성공했습니다.', 'success');
             router.push('/');
         }
