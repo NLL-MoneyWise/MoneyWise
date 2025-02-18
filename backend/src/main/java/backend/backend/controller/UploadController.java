@@ -1,6 +1,6 @@
 package backend.backend.controller;
 
-import backend.backend.dto.response.PreSignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import backend.backend.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ public class UploadController {
     private final S3Service s3Service;
 
     @GetMapping("presigned-url")
-    public ResponseEntity<PreSignedUrlResponse> getPresignedUrl() {
-        return ResponseEntity.ok(s3Service.generatePreSignedUrl());
+    public ResponseEntity<PutPresignedUrlResponse> getPresignedUrl() {
+        return ResponseEntity.ok(s3Service.generatePutPreSignedUrl());
     }
 }

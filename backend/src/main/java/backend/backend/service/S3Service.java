@@ -1,11 +1,11 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.PreSignedUrlResponse;
-import backend.backend.exception.PresignedException;
+import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
+import backend.backend.exception.BadGateWayException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -29,7 +29,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    public PreSignedUrlResponse generatePreSignedUrl() {
+    public PutPresignedUrlResponse generatePutPreSignedUrl() {
         try {
             String accessUrl = generateUniqueFileName();
             System.out.println("\n=== Pre-signed URL 생성 시작 ===");
@@ -59,16 +59,40 @@ public class S3Service {
 //        response.setPreSignedUrl(presignedRequest.url().toString());
 //        response.setAccessUrl(accessUrl);
 
-            return PreSignedUrlResponse.builder()
+            return PutPresignedUrlResponse.builder()
                     .preSignedUrl(presignedUrl)
                     .accessUrl(accessUrl)
+                    .message("Presigned Url이 생성되었습니다.")
                     .build();
         } catch (S3Exception e) {
             System.err.println("\n=== S3 에러 발생 ===");
             System.err.println("에러 메시지: " + e.getMessage());
             System.err.println("에러 코드: " + e.awsErrorDetails().errorCode());
-            throw new PresignedException("S3 URL 생성 실패: " + e.getMessage());
+            throw new BadGateWayException("S3 URL 생성 실패: " + e.getMessage());
         }
+    }
+
+    public GetPresignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
+        System.out.println("Generating GET PreSigned URL for: " + accessUrl);
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(accessUrl)
+                .build();
+
+        GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+        PresignedGetObjectRequest presignedGetObjectRequest =
+                s3Presigner.presignGetObject(getObjectPresignRequest);
+
+        String presignedUrl = presignedGetObjectRequest.url().toString();
+
+        return GetPresignedUrlResponse.builder()
+                .preSignedUrl(presignedUrl)
+                .message("Presigned Url이 생성되었습니다.")
+                .build();
     }
 
     private String generateUniqueFileName() {

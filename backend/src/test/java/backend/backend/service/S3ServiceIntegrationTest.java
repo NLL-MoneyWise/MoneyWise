@@ -1,29 +1,38 @@
 package backend.backend.service;
 
-import backend.backend.dto.response.PreSignedUrlResponse;
+import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
+import backend.backend.dto.upload.response.PutPresignedUrlResponse;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class S3ServiceIntegrationTest {
     @Autowired
     private S3Service s3Service;  // 실제 S3Service 사용
 
     @Test
-    @DisplayName("실제 Pre-signed URL 생성 테스트")
-    void generatePreSignedUrlTest() {
+    @DisplayName("실제 Put-Pre-signed URL 생성 테스트")
+    void generatePutPreSignedUrlTest() {
         // when
-        PreSignedUrlResponse response = s3Service.generatePreSignedUrl(); //presignedUrl생성
+        PutPresignedUrlResponse response = s3Service.generatePutPreSignedUrl(); //presignedUrl생성
         // then
         assertNotNull(response.getPreSignedUrl());
         assertTrue(response.getPreSignedUrl().startsWith("https://"));
@@ -43,5 +52,35 @@ class S3ServiceIntegrationTest {
         } catch (IOException e) {
             fail("Invalid URL generated");
         }
+    }
+
+    @Test
+    @DisplayName("실제 Get-Pre-signed URL 접속 테스트")
+    public void testPreSignedUrl() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+        GetPresignedUrlResponse response = s3Service.generateGetPreSignedUrl("receipt.jpeg");
+        String url = response.getPreSignedUrl();
+        System.out.println("Testing URL: " + url);
+
+        // 실제 URL 접근 테스트 - 신뢰할 수 없는 인증서일 경우
+//        CloseableHttpClient httpClient = HttpClients.custom() //HttpClient의 사용자 정의 시작
+//                        .setSSLContext(SSLContexts.custom() //SSL/TSL연결에 대한 사용자 정의 시작
+//                                //null: 기본 신뢰 저장소 사용, (x509Certificates, s) -> true모든 인증서 신뢰, 보안상 위험하지만 사용해야될 경우도 존재
+//                                .loadTrustMaterial(null, (x509Certificates, s) -> true)
+//                                .build())
+//                        .build();
+
+        //신뢰할 수 있는 경우
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(url);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            assertEquals(200, httpResponse.getStatusLine().getStatusCode());
+        }
+
+
+
+        //RestTemplate사용 - s3설정이 https만 허용하는데 restTemplate는 http요청이라 사용 불가
+//        RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<byte[]> result = restTemplate.getForEntity(url, byte[].class);
+//        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 }

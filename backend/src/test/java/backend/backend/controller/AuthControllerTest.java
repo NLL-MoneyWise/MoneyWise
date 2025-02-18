@@ -1,25 +1,21 @@
 package backend.backend.controller;
 
-import backend.backend.dto.request.LoginRequest;
-import backend.backend.dto.request.SignupRequest;
-import backend.backend.security.config.SecurityConfig;
+import backend.backend.dto.auth.request.LoginRequest;
+import backend.backend.dto.auth.request.SignupRequest;
 import backend.backend.security.jwt.JwtUtils;
+import backend.backend.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,28 +28,37 @@ class AuthControllerTest {
     private MockMvc mockMvc; //HTTP요청을 테스트하기 위한 객체임
 
     @MockitoBean
+    private AuthService authService;
+    @MockitoBean
     private JwtUtils jwtUtils;
 
     @Test
     void loginSuccess() throws Exception {
         // given
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+
         LoginRequest request = new LoginRequest();
-        request.setEmail("test@naver.com");
+        request.setEmail(email);
         request.setPassword("testPassword@1231");
 
         String accessToken = "new.access.token";
         String refreshToken = "test.refresh.token";
-        when(jwtUtils.generateAccessToken("test@naver.com")).thenReturn(accessToken);
-        when(jwtUtils.generateRefreshToken("test@naver.com")).thenReturn(refreshToken);
+
+        when(authService.login(ArgumentMatchers.any(LoginRequest.class))).thenReturn(accessToken);//any가 없으면 객체 동등성이 성립되지 않아 null을 반환하는 에러 발생
+        System.out.println("Generated access token: " + authService.login(request));
+        when(jwtUtils.generateRefreshToken(email)).thenReturn(refreshToken);
+        when(jwtUtils.getUserNameFromToken(accessToken)).thenReturn(name);
+        System.out.println(jwtUtils.getUserNameFromToken(accessToken));
 
         // when & then
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
-                .andDo(print())
+                        .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.userInfo.email").value("test@naver.com"))
                 .andExpect(cookie().exists("refreshToken"));
     }
 
@@ -63,12 +68,14 @@ class AuthControllerTest {
         // given
         String validRefreshToken = "valid.refresh.token";
         String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
         String newAccessToken = "new.access.token";
 
         // JwtUtils 동작 정의
         when(jwtUtils.validateToken(validRefreshToken)).thenReturn(true);
         when(jwtUtils.getUserEmailFromToken(validRefreshToken)).thenReturn(email);
-        when(jwtUtils.generateAccessToken(email)).thenReturn(newAccessToken);
+        when(jwtUtils.generateAccessToken(email, name, nickName)).thenReturn(newAccessToken);
 
         // Cookie 설정
         Cookie refreshTokenCookie = new Cookie("refrechToken", validRefreshToken);
@@ -77,7 +84,6 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/auth/refresh")
                         .cookie(refreshTokenCookie))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tokenType").value("Bearer"))
                 .andExpect(jsonPath("$.accessToken").value(newAccessToken))
                 .andDo(print());
     }
@@ -92,14 +98,13 @@ class AuthControllerTest {
         signupRequest.setEmail("test@naver.com");
         System.out.println("sign: " + signupRequest);
 
+        Mockito.doNothing().when(authService).signup(signupRequest);
+
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(signupRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(signupRequest.getEmail()))
-                .andExpect(jsonPath("$.nickname").value(signupRequest.getNickname()))
-                .andExpect(jsonPath("$.name").value(signupRequest.getName()))
-                .andDo(print());
+                        .andExpect(status().isOk())
+                        .andDo(print());
 
 //        MvcResult result = mockMvc.perform(post("/api/auth/signup")
 //                .contentType(MediaType.APPLICATION_JSON)

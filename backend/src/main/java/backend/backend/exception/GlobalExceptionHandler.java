@@ -1,36 +1,23 @@
 package backend.backend.exception;
 
+import backend.backend.exception.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(JwtException.class)
-    public ResponseEntity<String> handleJwtException(JwtException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) //401
-                .body(e.getMessage());  // 여기서 getMessage() 사용
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        return ResponseEntity.status(e.getStatus()).body(e.getResponse());
     }
 
-    @ExceptionHandler(LoginException.class)
-    public ResponseEntity<String> handleLoginException(LoginException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED) //401
-                .body(e.getMessage());
-    }
-
-    @ExceptionHandler(SignupException.class)
-    public ResponseEntity<String> handleSignupException(SignupException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(e.getMessage());
-    }
-
+    //@valid 검증 실패시 MethodArgumentNotValidException이 발생하고 이에따른 에러 처리임
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
@@ -43,11 +30,5 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    }
-
-    @ExceptionHandler(PresignedException.class)
-    public ResponseEntity<String> handlePresignedException(PresignedException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
     }
 }
