@@ -3,10 +3,23 @@ import React, { useRef } from 'react';
 import Button from '@/app/common/components/Button/Button';
 import InputField from '@/app/common/components/Input/InputField';
 import useAuthMutation from '../../hooks/useAuthMutation';
+import useAuthMutation from '../../hooks/useAuthMutation';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
+
+    const { loginMutation } = useAuthMutation();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const loginData = {
+            email: emailRef.current!.value.trim(),
+            password: passwordRef.current!.value.trim()
+        };
+
+        loginMutation.mutate(loginData);
+    };
 
     const { loginMutation } = useAuthMutation();
 
