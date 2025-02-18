@@ -6,14 +6,24 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
+    networks:
+      - app-network
 
   backend:
     container_name: backend
     build: .
     ports:
       - "8080:8080"
+    volumes:
+      - ./wallet:/app/wallet
     env_file:
       - .env
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
