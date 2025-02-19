@@ -5,7 +5,6 @@ import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
-import backend.backend.exception.APIException;
 import backend.backend.exception.DatabaseException;
 import backend.backend.repository.ReceiptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
