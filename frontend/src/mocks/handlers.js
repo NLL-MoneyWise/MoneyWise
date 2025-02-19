@@ -14,15 +14,16 @@ export const handlers = [
             );
         }
 
-        if (
-            data.email === 'test@naver.com' &&
-            data.password === 'password123'
-        ) {
+        if (data.email === 'a' && data.password === 'a') {
             return HttpResponse.json(
                 {
                     accessToken:
                         'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG5hdmVyLmNvbSIsIm5hbWUiOiLthYzsiqTtirgiLCJuaWNrTmFtZSI6Iu2FjOyKpO2KuOuLieuEpOyehCIsImV4cCI6MTczOTEwODQ4MH0.ZaMBUEGyEf0vs2ebstGvIiBH0AhE2eWLBacn7Ex1TRA',
-                    message: '반갑습니다 테스트님'
+                    refreshToken:
+                        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG5hdmVyLmNvbSIsIm5hbWUiOiLthYzsiqTtirgiLCJuaWNrTmFtZSI6Iu2FjOyKpO2KuOuLieuEpOyehCIsImV4cCI6MTczOTEwODQ4MH0.ZaMBUEGyEf0vs2ebstGvIiBH0AhE2eWLBacn7Ex1TRA',
+                    message: '반갑습니다 테스트님',
+                    nickName: '테스트',
+                    email: 'test@naver.com'
                 },
                 { status: 200 }
             );
