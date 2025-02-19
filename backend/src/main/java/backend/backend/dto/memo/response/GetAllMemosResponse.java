@@ -1,6 +1,6 @@
-package dto.memo.response;
+package backend.backend.dto.memo.response;
 
-import Domain.Memo;
+import backend.backend.domain.Memo;
 import java.util.List;
 
 public class GetAllMemosResponse {

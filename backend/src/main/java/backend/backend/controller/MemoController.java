@@ -1,14 +1,15 @@
-package Controller;
+package backend.backend.controller;
 
-import Domain.Memo;
-import Service.MemoService;
+import backend.backend.domain.Memo;
+import backend.backend.service.MemoService;
 import backend.backend.security.jwt.JwtUtils;
-import dto.memo.request.CreateMemoRequest;
-import dto.memo.request.UpdateMemoRequest;
-import dto.memo.response.CreateMemoResponse;
-import dto.memo.response.GetAllMemosResponse;
-import dto.memo.response.UpdateMemoResponse;
+import backend.backend.dto.memo.request.CreateMemoRequest;
+import backend.backend.dto.memo.request.UpdateMemoRequest;
+import backend.backend.dto.memo.response.CreateMemoResponse;
+import backend.backend.dto.memo.response.GetAllMemosResponse;
+import backend.backend.dto.memo.response.UpdateMemoResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,39 +28,32 @@ public class MemoController {
 
     @PostMapping("/save")
     public ResponseEntity<CreateMemoResponse> createMemo(
-            @RequestHeader("Authorization") String bearerToken,
+            @AuthenticationPrincipal String email,
             @RequestBody CreateMemoRequest request) {
-        String token = bearerToken.substring(7);
-        String email = jwtUtils.getUserEmailFromToken(token);
         Memo memo = memoService.createMemo(request.getContent(), email);
-        return ResponseEntity.ok(new CreateMemoResponse(memo.getId(), "Memo successfully created"));
+        return ResponseEntity.ok(new CreateMemoResponse(memo.getId(), "메모가 저장되었습니다."));
     }
 
     @PutMapping("/{memoId}")
     public ResponseEntity<UpdateMemoResponse> updateMemo(
-            @RequestHeader("Authorization") String bearerToken,
+            @AuthenticationPrincipal String email,
             @PathVariable Long memoId,
             @RequestBody UpdateMemoRequest request) {
-        String token = bearerToken.substring(7);
-        String email = jwtUtils.getUserEmailFromToken(token);
         memoService.updateMemo(memoId, request.getContent(), email);
-        return ResponseEntity.ok(new UpdateMemoResponse("Memo successfully updated"));
+        return ResponseEntity.ok(new UpdateMemoResponse("메모가 수정되었습니다."));
     }
     // 메모 조회 기능 추가
     @GetMapping("/find")
     public ResponseEntity<GetAllMemosResponse> getAllMemos(
-            @RequestHeader("Authorization") String bearerToken) {
-        String token = bearerToken.substring(7);
-        String email = jwtUtils.getUserEmailFromToken(token);
-
+            @AuthenticationPrincipal String email) {
         // 사용자의 모든 메모를 조회
         List<Memo> memos = memoService.getAllMemos(email);
 
         // 응답 객체 생성 후 반환
         if (!memos.isEmpty()) {
-            return ResponseEntity.ok(new GetAllMemosResponse("Success", memos));
+            return ResponseEntity.ok(new GetAllMemosResponse("모든 메모 내역을 불러왔습니다.", memos));
        } else {
-            return ResponseEntity.ok(new GetAllMemosResponse("No memos found", memos));
+            return ResponseEntity.ok(new GetAllMemosResponse("메모 내역이 없습니다.", memos));
         }
     }
 

@@ -1,4 +1,4 @@
-package dto.memo.response;
+package backend.backend.dto.memo.response;
 
 import lombok.Getter;
 import lombok.Setter;

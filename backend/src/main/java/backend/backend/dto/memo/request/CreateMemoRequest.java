@@ -1,10 +1,10 @@
-package dto.memo.request;
+package backend.backend.dto.memo.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateMemoRequest {
+public class CreateMemoRequest {
     private String content;
 }
