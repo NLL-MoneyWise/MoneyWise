@@ -18,6 +18,7 @@ const loginSchema = zod
 
 const useValidateForm = () => {
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isValid, setIsValid] = useState<boolean>(false);
 
     /**
      * 검증을 통해 올바른 값을 입력했는지 확인 후 참/거짓을 반환합니다.
@@ -25,11 +26,11 @@ const useValidateForm = () => {
      */
     const validateForm = (
         data: LoginRequest & { confirmpassword?: string }
-    ) => {
+    ): void => {
         try {
             loginSchema.parse(data);
             setErrors({});
-            return true;
+            setIsValid(true);
         } catch (error) {
             if (error instanceof zod.ZodError) {
                 const newErrors = error.errors.reduce(
@@ -42,9 +43,8 @@ const useValidateForm = () => {
                 );
 
                 setErrors(newErrors);
-                return false;
+                setIsValid(false);
             }
-            throw error;
         }
     };
 
@@ -52,7 +52,8 @@ const useValidateForm = () => {
 
     return {
         validateForm,
-        getFieldError
+        getFieldError,
+        isValid
     };
 };
 

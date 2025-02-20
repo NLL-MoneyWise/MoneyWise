@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import useValidateForm from '../../hooks/useValidateForm';
 import useAuthMutation from '../../hooks/useAuthMutation';
 import { SignUpRequest } from '../../types/request/request-signUp';
+import debounce from '@/app/common/util/debounce';
 
 interface User extends SignUpRequest {
     confirmpassword: string;
@@ -38,28 +39,27 @@ const SignUpForm = () => {
     });
 
     const { signUpMutation } = useAuthMutation();
-    const { getFieldError, validateForm } = useValidateForm();
+    const { getFieldError, validateForm, isValid } = useValidateForm();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const { confirmpassword, ...requestUserData } = userData;
-        if (
-            validateForm({
-                email: userData.email,
-                password: userData.password,
-                confirmpassword: userData.confirmpassword
-            })
-        ) {
+        if (isValid) {
             signUpMutation.mutate(requestUserData);
         }
     };
 
     useEffect(() => {
-        validateForm({
-            email: userData.email,
-            password: userData.password,
-            confirmpassword: userData.confirmpassword
-        });
+        const debouceValidForm = debounce(
+            () =>
+                validateForm({
+                    email: userData.email,
+                    password: userData.password,
+                    confirmpassword: userData.confirmpassword
+                }),
+            200
+        );
+        debouceValidForm();
     }, [userData.email, userData.confirmpassword, userData.password]);
 
     return (
