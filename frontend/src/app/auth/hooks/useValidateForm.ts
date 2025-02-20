@@ -9,18 +9,22 @@ const loginSchema = zod
             .email('유효한 이메일을 입력하세요')
             .min(1, '이메일을 입력하세요'),
         password: zod.string().min(8, '비밀번호는 8자 이상 입력하세요'),
-        confirmPassword: zod.string()
+        confirmpassword: zod.string()
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.password === data.confirmpassword, {
         message: '비밀번호가 일치하지 않습니다.',
-        path: ['confirmPassword']
+        path: ['confirmpassword']
     });
 
 const useValidateForm = () => {
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    /**
+     * 검증을 통해 올바른 값을 입력했는지 확인 후 참/거짓을 반환합니다.
+     * @returns
+     */
     const validateForm = (
-        data: LoginRequest & { confirmPassword?: string }
+        data: LoginRequest & { confirmpassword?: string }
     ) => {
         try {
             loginSchema.parse(data);
@@ -46,12 +50,9 @@ const useValidateForm = () => {
 
     const getFieldError = (field: string) => errors[field] || '';
 
-    const hasFieldError = (field: string) => Boolean(errors[field]);
-
     return {
         validateForm,
-        getFieldError,
-        hasFieldError
+        getFieldError
     };
 };
 
