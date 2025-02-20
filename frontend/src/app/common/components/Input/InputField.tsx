@@ -26,15 +26,17 @@ const InputField = forwardRef<
 >(({ element = 'input', label, type, placeholder, isError, ...rest }, ref) => {
     return (
         <div className="flex flex-col gap-2">
-            <label
-                htmlFor={type}
-                className={clsx(
-                    'text-sm font-medium text-primary h-4',
-                    `${isError && 'invisible'}`
-                )}
-            >
-                {label}
-            </label>
+            {label && (
+                <label
+                    htmlFor={type}
+                    className={clsx(
+                        'text-sm font-medium text-primary relative',
+                        `${isError && 'opacity-0'}`
+                    )}
+                >
+                    {label}
+                </label>
+            )}
             {element === 'input' ? (
                 <input
                     ref={ref as React.RefObject<HTMLInputElement>}
