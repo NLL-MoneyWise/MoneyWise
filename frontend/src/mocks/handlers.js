@@ -35,5 +35,37 @@ export const handlers = [
             }),
             { status: 401 }
         );
+    }),
+    http.post('/api/auth/signup', async ({ request }) => {
+        const data = await request.json();
+
+        // 필요 입력데이터 검증
+        if (!data.email || !data.password || !data.nickname || !data.name) {
+            return new HttpResponse(
+                JSON.stringify({
+                    message: '필요 정보를 입력해주세요.',
+                    typeName: 'VALIDATION_ERROR'
+                }),
+                { status: 400 }
+            );
+        }
+
+        // 이미 존재하는 이메일 검증
+        if (data.email === 'test@naver.com') {
+            return new HttpResponse(
+                JSON.stringify({
+                    message: '이미 가입된 이메일입니다.',
+                    typeName: 'VALIDATION_ERROR'
+                }),
+                { status: 409 }
+            );
+        }
+
+        return new HttpResponse(
+            JSON.stringify({
+                message: '회원가입에 성공했습니다.'
+            }),
+            { status: 200 }
+        );
     })
 ];
