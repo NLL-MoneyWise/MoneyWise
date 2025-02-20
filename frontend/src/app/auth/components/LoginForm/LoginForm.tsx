@@ -28,7 +28,6 @@ const LoginForm = () => {
                 placeholder="이메일을 입력해주세요"
                 type="email"
                 ref={emailRef}
-                isError={false}
                 aria-required="true"
                 aria-label="이메일 입력"
             />
@@ -38,7 +37,6 @@ const LoginForm = () => {
                 placeholder="비밀번호를 입력해주세요"
                 type="password"
                 ref={passwordRef}
-                isError={false}
                 aria-required="true"
                 aria-label="비밀번호 입력"
             />

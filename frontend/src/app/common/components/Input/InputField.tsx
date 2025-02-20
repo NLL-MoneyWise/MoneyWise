@@ -7,7 +7,6 @@ interface BaseInputFieldProps {
     label?: string;
     type?: React.HTMLInputTypeAttribute;
     placeholder?: string;
-    isError?: boolean;
 }
 
 // 제어 컴포넌트용 props
@@ -23,15 +22,14 @@ type InputFieldProps = ControlledInputProps | BaseInputFieldProps;
 const InputField = forwardRef<
     HTMLInputElement | HTMLTextAreaElement,
     InputFieldProps
->(({ element = 'input', label, type, placeholder, isError, ...rest }, ref) => {
+>(({ element = 'input', label, type, placeholder, ...rest }, ref) => {
     return (
         <div className="flex flex-col gap-2">
             {label && (
                 <label
                     htmlFor={type}
                     className={clsx(
-                        'text-sm font-medium text-primary relative',
-                        `${isError && 'opacity-0'}`
+                        'text-sm font-medium text-primary relative'
                     )}
                 >
                     {label}

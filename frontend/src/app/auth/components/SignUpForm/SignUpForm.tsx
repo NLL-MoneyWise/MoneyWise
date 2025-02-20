@@ -1,95 +1,94 @@
 'use client';
 import Button from '@/app/common/components/Button/Button';
 import InputField from '@/app/common/components/Input/InputField';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useValidateForm from '../../hooks/useValidateForm';
+import useAuthMutation from '../../hooks/useAuthMutation';
+import { SignUpRequest } from '../../types/request/request-signUp';
+
+interface User extends SignUpRequest {
+    confirmpassword: string;
+    [key: string]: string;
+}
+
+const UserDataKorean: User = {
+    email: '이메일',
+    password: '비밀번호',
+    confirmpassword: '확인 비밀번호',
+    name: '이름',
+    nickname: '닉네임'
+};
+
+Object.freeze(UserDataKorean);
+
+const checkInputType = (value: string): string => {
+    if (value === 'email' || 'password') {
+        return value;
+    }
+    return 'text';
+};
 
 const SignUpForm = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [userData, setUserData] = useState<User>({
+        email: '',
+        password: '',
+        confirmpassword: '',
+        name: '',
+        nickname: ''
+    });
+
+    const { signUpMutation } = useAuthMutation();
+    const { getFieldError, validateForm } = useValidateForm();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        validateForm({ email, password, confirmPassword });
+        const { confirmpassword, ...requestUserData } = userData;
+        if (
+            validateForm({
+                email: userData.email,
+                password: userData.password,
+                confirmpassword: userData.confirmpassword
+            })
+        ) {
+            signUpMutation.mutate(requestUserData);
+        }
     };
 
-    const { getFieldError, hasFieldError, validateForm } = useValidateForm();
+    useEffect(() => {
+        validateForm({
+            email: userData.email,
+            password: userData.password,
+            confirmpassword: userData.confirmpassword
+        });
+    }, [userData.email, userData.confirmpassword, userData.password]);
 
     return (
         <form className="w-[80%] m-auto" onSubmit={handleSubmit}>
-            <div className="flex items-end justify-center ">
-                <div className="w-4/5 mr-3">
-                    <InputField
-                        element="input"
-                        placeholder="이메일을 입력해주세요"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        isError={hasFieldError('email')}
-                        label={getFieldError('email')}
-                        aria-required="true"
-                        aria-label="이메일 입력"
-                    />
-                </div>
-                <div className="w-1/5">
-                    <Button height={42}>{'확인'}</Button>
-                </div>
+            <div className="flex  flex-col">
+                {Object.keys(userData).map((val, idx) => (
+                    <div key={idx}>
+                        <InputField
+                            element="input"
+                            placeholder={`${UserDataKorean[val]}를 입력해주세요`}
+                            type={checkInputType(val)}
+                            value={userData[val]}
+                            onChange={(e) =>
+                                setUserData({
+                                    ...userData,
+                                    [val]: e.target.value
+                                })
+                            }
+                            label={getFieldError(val)}
+                            aria-required="true"
+                            aria-label={`${UserDataKorean[val]} 입력`}
+                        />
+                        <div className="mt-5" />
+                    </div>
+                ))}
             </div>
 
-            <div className="mt-4" />
-            <InputField
-                element="input"
-                placeholder="비밀번호를 입력해주세요"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                isError={hasFieldError('confirmPassword')}
-                label={getFieldError('confirmPassword')}
-                aria-required="true"
-                aria-label="비밀번호 입력"
-            />
-
-            <div className="mt-4" />
-            <InputField
-                element="input"
-                placeholder="비밀번호를 확인 해주세요"
-                type="text"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                isError={hasFieldError('password')}
-                label={getFieldError('password')}
-                aria-required="true"
-                aria-label="비밀번호 입력"
-            />
-
-            <div className="mt-4" />
-            <InputField
-                element="input"
-                placeholder="이름를 입력해주세요"
-                type="text"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                isError={false}
-                aria-required="true"
-                aria-label="이름 입력"
-            />
-
-            <div className="mt-4" />
-            <InputField
-                element="input"
-                placeholder="닉네임을 입력해주세요"
-                type="text"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                isError={false}
-                aria-required="true"
-                aria-lable="닉네임 입력"
-            />
-
-            <div className="mt-6"></div>
             <Button height={41} type="submit">
-                {'회원가입'}
+                회원가입
             </Button>
         </form>
     );
