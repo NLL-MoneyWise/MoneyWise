@@ -38,7 +38,7 @@ const LoginForm = () => {
                 isError={false}
             />
             <div className="mt-6"></div>
-            <Button width={320} height={41} type="submit">
+            <Button width={380} height={41} type="submit">
                 {'로그인'}
             </Button>
         </form>
