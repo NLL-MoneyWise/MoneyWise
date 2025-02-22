@@ -1,13 +1,18 @@
 package backend.backend.service;
 
 import backend.backend.domain.Memo;
+import backend.backend.dto.memo.model.MemoDTO;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.repository.MemoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,7 +25,7 @@ public class MemoService {
         this.memoRepository = memoRepository;
     }
 
-    public Memo createMemo(String content, String userEmail) {
+    public Long createMemo(String content, String userEmail) {
         Memo memo = new Memo();
         memo.setContent(content);
         memo.setEmail(userEmail);
@@ -28,7 +33,7 @@ public class MemoService {
         memo.setDate(date);
 
         try {
-            return memoRepository.save(memo);
+            return memoRepository.save(memo).getId();
         } catch (Exception e) {
             throw new DatabaseException("메모 저장 중 오류가 발생했습니다.");
         }
@@ -48,7 +53,21 @@ public class MemoService {
     }
 
     // 이메일을 기준으로 메모를 조회하는 메서드
-    public List<Memo> getAllMemos(String userEmail) {
-        return memoRepository.findByEmail(userEmail);  // 이메일로 메모 조회
+    public List<MemoDTO> getAllMemos(String userEmail) {
+        List<Memo> memos = memoRepository.findByEmail(userEmail);  // 이메일로 메모 조회
+        List<MemoDTO> memoDTOList = new ArrayList<>();
+
+        for(Memo memo : memos) {
+            MemoDTO memoDTO = new MemoDTO();
+            memoDTO.setContent(memo.getContent());
+            memoDTO.setId(memo.getId());
+            memoDTO.setEmail(memo.getEmail());
+            String date = memo.getDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            memoDTO.setDate(date);
+
+            memoDTOList.add(memoDTO);
+        }
+
+        return memoDTOList;
     }
 }

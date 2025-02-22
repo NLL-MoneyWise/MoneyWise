@@ -1,33 +1,22 @@
 package backend.backend.dto.memo.response;
 
 import backend.backend.domain.Memo;
+import backend.backend.dto.memo.model.MemoDTO;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class GetAllMemosResponse {
 
     private String message;
-    private List<Memo> memos;
+    private List<MemoDTO> memoDTOList;
 
     // 생성자
-    public GetAllMemosResponse(String message, List<Memo> memos) {
+    public GetAllMemosResponse(String message, List<MemoDTO> memoDTOList) {
         this.message = message;
-        this.memos = memos;
-    }
-
-    // Getter & Setter
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public List<Memo> getMemos() {
-        return memos;
-    }
-
-    public void setMemos(List<Memo> memos) {
-        this.memos = memos;
+        this.memoDTOList = memoDTOList;
     }
 }
