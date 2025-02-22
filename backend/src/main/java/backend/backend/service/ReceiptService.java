@@ -115,7 +115,7 @@ public class ReceiptService {
         } catch (JsonProcessingException e) {
             throw new BadGateWayException("Open Ai Response Json파싱 실패");
         } catch (RestClientException e) {
-            throw new BadGateWayException("Open AI API 호출 실패");
+            throw new BadGateWayException("Open AI API 호출 실패" + e.getMessage());
         }
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
