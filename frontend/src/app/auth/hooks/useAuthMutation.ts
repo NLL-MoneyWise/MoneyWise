@@ -32,8 +32,17 @@ const useAuthMutation = () => {
         }
     });
 
+    const signUpMutation = useMutation({
+        mutationFn: authRepository.signUp.bind(authRepository),
+        onSuccess: () => {
+            addToast('회원가입에 성공했습니다.', 'success');
+            router.push('/login');
+        }
+    });
+
     return {
-        loginMutation
+        loginMutation,
+        signUpMutation
     };
 };
 

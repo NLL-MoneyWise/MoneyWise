@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import Button from '@/app/common/components/Button/Button';
 import InputField from '@/app/common/components/Input/InputField';
 import useAuthMutation from '../../hooks/useAuthMutation';
+import Link from 'next/link';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -25,22 +26,31 @@ const LoginForm = () => {
             <InputField
                 element="input"
                 placeholder="이메일을 입력해주세요"
-                type="text"
+                type="email"
                 ref={emailRef}
-                isError={false}
+                aria-required="true"
+                aria-label="이메일 입력"
             />
-            <div className="mt-2"></div>
+            <div className="mt-6"></div>
             <InputField
                 element="input"
                 placeholder="비밀번호를 입력해주세요"
-                type="text"
+                type="password"
                 ref={passwordRef}
-                isError={false}
+                aria-required="true"
+                aria-label="비밀번호 입력"
             />
             <div className="mt-6"></div>
-            <Button width={380} height={41} type="submit">
+            <Button height={41} type="submit">
                 {'로그인'}
             </Button>
+            <div className="mt-1"></div>
+            <Link
+                href={'/join'}
+                className="flex justify-center items-center text-xs text-gray-500"
+            >
+                {'회원 가입'}
+            </Link>
         </form>
     );
 };
