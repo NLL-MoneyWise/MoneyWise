@@ -66,6 +66,7 @@ public class ConsumptionService {
     public Long getTotalAmountByEmail(String email) {
         return consumptionRepository.sumAmountByEmail(email).orElse(0L);
     }
+
     public Long getTotalAmountByEmailAndYear(String email, Long year) {
         return consumptionRepository.sumAmountByEmailAndYear(email, year).orElse(0L);
     }
