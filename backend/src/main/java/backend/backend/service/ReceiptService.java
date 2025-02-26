@@ -1,5 +1,6 @@
 package backend.backend.service;
 import backend.backend.domain.Receipt;
+import backend.backend.dto.receipt.model.ReceiptUrlInfo;
 import backend.backend.dto.receipt.request.OpenAiRequest;
 import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +38,7 @@ public class ReceiptService {
     private String apiKey;
 
     public ReceiptAnalyzeResponse receiptAnalyze(String email, ReceiptAnalyzeRequest request) {
-        String presignedUrl = s3Service.generateGetPreSignedUrl(request.getAccessUrl())
-                .getPreSignedUrl();
+        String presignedUrl = s3Service.generateGetPreSignedUrl(request.getAccessUrl());
 
         String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
                 "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
@@ -81,35 +82,24 @@ public class ReceiptService {
         ReceiptAnalyzeResponse receiptAnalyzeResponse;
         try {
         //Http요청 보내기
-        ResponseEntity<OpenAiResponse> response = restTemplate.exchange(
-                "https://api.openai.com/v1/chat/completions", //요청 URL
-                HttpMethod.POST, //요청 형식 메서드
-                new HttpEntity<>(openAiRequest, headers), //요청 바디와 헤더를 포함한 엔티티
-                OpenAiResponse.class //응답을 변환할 클래스 타입
-        );
+            ResponseEntity<OpenAiResponse> response = restTemplate.exchange(
+                    "https://api.openai.com/v1/chat/completions", //요청 URL
+                    HttpMethod.POST, //요청 형식 메서드
+                    new HttpEntity<>(openAiRequest, headers), //요청 바디와 헤더를 포함한 엔티티
+                    OpenAiResponse.class //응답을 변환할 클래스 타입
+            );
 
-        OpenAiResponse openAiResponse = response.getBody(); //http는 헤더와 바디로 구성되어 있다.
+            OpenAiResponse openAiResponse = response.getBody(); //http는 헤더와 바디로 구성되어 있다.
 
-        List<OpenAiResponse.Choice> choices = openAiResponse.getChoices();
-        if (choices == null || choices.isEmpty()) {
-            throw new BadGateWayException("OpenAI 응답에 선택 항목이 없습니다");
-        }
+            List<OpenAiResponse.Choice> choices = openAiResponse.getChoices();
+            if (choices == null || choices.isEmpty()) {
+                throw new BadGateWayException("OpenAI 응답에 선택 항목이 없습니다");
+            }
 
-
-        String jsonContent = openAiResponse.getChoices().get(0).getMessage().getContent();
-        if (jsonContent == null || jsonContent.isEmpty()) {
-            throw new BadGateWayException("OpenAI 응답 메시지가 비어있습니다");
-        }
-            System.out.println("=== open ai응답 ===");
-            System.out.println(jsonContent);
-
-            Map<String, Object> map = objectMapper.readValue(jsonContent, Map.class);
-
-            System.out.println("\n=== Map 파싱 결과 ===");
-            System.out.println("전체 Map: " + map);
-            System.out.println("date: " + map.get("date") + " " + map.get("date").getClass().getName());
-            System.out.println("totalAmount: " + map.get("totalAmount") + " " + map.get("totalAmount").getClass().getName());
-            System.out.println("items: " + map.get("items") + " " + map.get("items").getClass().getName());
+            String jsonContent = openAiResponse.getChoices().get(0).getMessage().getContent();
+            if (jsonContent == null || jsonContent.isEmpty()) {
+                throw new BadGateWayException("OpenAI 응답 메시지가 비어있습니다");
+            }
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
         } catch (JsonProcessingException e) {
@@ -136,5 +126,22 @@ public class ReceiptService {
         }
 
         return receiptAnalyzeResponse;
+    }
+
+    public List<ReceiptUrlInfo> getAllReceiptPresignedUrl(String email) {
+        List<Receipt> receipts = receiptRepository.findByEmail(email);
+        List<ReceiptUrlInfo> allReceiptUrlInfo = new ArrayList<>();
+
+        for(Receipt receipt : receipts) {
+            String accessUrl = receipt.getAccess_url();
+            ReceiptUrlInfo receiptUrlInfo = ReceiptUrlInfo.builder()
+                    .accessUrl(accessUrl)
+                    .preSignedUrl(s3Service.generateGetPreSignedUrl(accessUrl))
+                    .build();
+
+            allReceiptUrlInfo.add(receiptUrlInfo);
+        }
+
+        return allReceiptUrlInfo;
     }
 }

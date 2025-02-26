@@ -1,6 +1,5 @@
 package backend.backend.service;
 
-import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
 import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import backend.backend.exception.BadGateWayException;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +61,6 @@ public class S3Service {
             return PutPresignedUrlResponse.builder()
                     .preSignedUrl(presignedUrl)
                     .accessUrl(accessUrl)
-                    .message("Presigned Url이 생성되었습니다.")
                     .build();
         } catch (S3Exception e) {
             System.err.println("\n=== S3 에러 발생 ===");
@@ -72,7 +70,7 @@ public class S3Service {
         }
     }
 
-    public GetPresignedUrlResponse generateGetPreSignedUrl(String accessUrl) {
+    public String generateGetPreSignedUrl(String accessUrl) {
         System.out.println("Generating GET PreSigned URL for: " + accessUrl);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -87,12 +85,7 @@ public class S3Service {
         PresignedGetObjectRequest presignedGetObjectRequest =
                 s3Presigner.presignGetObject(getObjectPresignRequest);
 
-        String presignedUrl = presignedGetObjectRequest.url().toString();
-
-        return GetPresignedUrlResponse.builder()
-                .preSignedUrl(presignedUrl)
-                .message("Presigned Url이 생성되었습니다.")
-                .build();
+        return presignedGetObjectRequest.url().toString();
     }
 
     private String generateUniqueFileName() {

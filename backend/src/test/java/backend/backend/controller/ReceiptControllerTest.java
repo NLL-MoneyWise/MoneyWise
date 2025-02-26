@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -29,7 +30,8 @@ class ReceiptControllerTest {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @MockitoBean
+//    @MockitoBean
+    @Autowired
     private ReceiptService receiptService;
 
     @Test
@@ -50,6 +52,20 @@ class ReceiptControllerTest {
                 .header("Authorization", accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("모든 영수증 사진 불러오기")
+    void imagesSuccess() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/receipts/images")
+                .header("Authorization", accessToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

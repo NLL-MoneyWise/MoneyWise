@@ -1,6 +1,5 @@
 package backend.backend.service;
 
-import backend.backend.dto.receipt.response.GetPresignedUrlResponse;
 import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -10,9 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -57,8 +53,7 @@ class S3ServiceIntegrationTest {
     @Test
     @DisplayName("실제 Get-Pre-signed URL 접속 테스트")
     public void testPreSignedUrl() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
-        GetPresignedUrlResponse response = s3Service.generateGetPreSignedUrl("receipt.jpeg");
-        String url = response.getPreSignedUrl();
+        String url = s3Service.generateGetPreSignedUrl("receipt.jpeg");
         System.out.println("Testing URL: " + url);
 
         // 실제 URL 접근 테스트 - 신뢰할 수 없는 인증서일 경우
