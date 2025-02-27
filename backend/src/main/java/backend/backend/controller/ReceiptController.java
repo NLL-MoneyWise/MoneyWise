@@ -27,7 +27,7 @@ public class ReceiptController {
 
     @GetMapping("/images")
     public ResponseEntity<GetAllReceiptPresignedUrlResponse> images(@AuthenticationPrincipal String email) {
-        List<ReceiptUrlInfo> allReceiptUrlInfo = receiptService.getAllReceiptPresignedUrl(email);
+        List<ReceiptUrlInfo> allReceiptUrlInfo = receiptService.getAllReceiptCloudFrontSignedUrl(email);
 
         return ResponseEntity.ok(GetAllReceiptPresignedUrlResponse.builder()
                 .allReceiptUrlInfo(allReceiptUrlInfo).message("모든 이미지를 불러왔습니다.").build());

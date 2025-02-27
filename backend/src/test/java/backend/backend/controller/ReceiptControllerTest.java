@@ -35,7 +35,7 @@ class ReceiptControllerTest {
     private ReceiptService receiptService;
 
     @Test
-    @DisplayName("ReceiptControllerTest")
+    @DisplayName("ReceiptAnalyze성공")
     void receiptControllerTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";

@@ -39,6 +39,10 @@ dependencies {
 	//AWS S3 의존성
 	implementation 'software.amazon.awssdk:s3:2.20.52'
 
+	//AWS cloud front 의존성
+	implementation 'com.amazonaws:aws-java-sdk-cloudfront:1.12.529'
+	implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+
 	implementation 'com.oracle.database.security:oraclepki:21.5.0.0'  // 전자지갑 관련
 	implementation 'com.oracle.database.security:osdt_core:21.5.0.0'  // 전자지갑 관련
 	implementation 'com.oracle.database.security:osdt_cert:21.5.0.0'  // 전자지갑 관련

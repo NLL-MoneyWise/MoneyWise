@@ -7,5 +7,5 @@ import lombok.Getter;
 @Builder
 public class ReceiptUrlInfo {
     private String accessUrl;
-    private String preSignedUrl;
+    private String cdnSignedUrl;
 }

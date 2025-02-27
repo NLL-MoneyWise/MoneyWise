@@ -51,9 +51,9 @@ class S3ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("실제 Get-Pre-signed URL 접속 테스트")
-    public void testPreSignedUrl() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
-        String url = s3Service.generateGetPreSignedUrl("receipt.jpeg");
+    @DisplayName("실제 Get-Cloud-Front URL 접속 테스트")
+    public void testCloudFrontSignedUrl() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+        String url = s3Service.generateGetSignedUrlWithCloudFront("receipt.jpeg");
         System.out.println("Testing URL: " + url);
 
         // 실제 URL 접근 테스트 - 신뢰할 수 없는 인증서일 경우
@@ -77,5 +77,11 @@ class S3ServiceIntegrationTest {
 //        RestTemplate restTemplate = new RestTemplate();
 //        ResponseEntity<byte[]> result = restTemplate.getForEntity(url, byte[].class);
 //        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("CDN Signed Url 생성 성공")
+    public void generateSignedUrlWithCloudFrontSuccess() {
+        System.out.println(s3Service.generateGetSignedUrlWithCloudFront("receipt.jpeg"));
     }
 }

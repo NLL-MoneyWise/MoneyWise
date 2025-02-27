@@ -38,7 +38,7 @@ public class ReceiptService {
     private String apiKey;
 
     public ReceiptAnalyzeResponse receiptAnalyze(String email, ReceiptAnalyzeRequest request) {
-        String presignedUrl = s3Service.generateGetPreSignedUrl(request.getAccessUrl());
+        String presignedUrl = s3Service.generateGetSignedUrlWithCloudFront(request.getAccessUrl());
 
         String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
                 "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
@@ -128,7 +128,7 @@ public class ReceiptService {
         return receiptAnalyzeResponse;
     }
 
-    public List<ReceiptUrlInfo> getAllReceiptPresignedUrl(String email) {
+    public List<ReceiptUrlInfo> getAllReceiptCloudFrontSignedUrl(String email) {
         List<Receipt> receipts = receiptRepository.findByEmail(email);
         List<ReceiptUrlInfo> allReceiptUrlInfo = new ArrayList<>();
 
@@ -136,7 +136,7 @@ public class ReceiptService {
             String accessUrl = receipt.getAccess_url();
             ReceiptUrlInfo receiptUrlInfo = ReceiptUrlInfo.builder()
                     .accessUrl(accessUrl)
-                    .preSignedUrl(s3Service.generateGetPreSignedUrl(accessUrl))
+                    .cdnSignedUrl(s3Service.generateGetSignedUrlWithCloudFront(accessUrl))
                     .build();
 
             allReceiptUrlInfo.add(receiptUrlInfo);
