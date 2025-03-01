@@ -20,20 +20,7 @@ export default function RootLayout({
         <html>
             <body lang="ko" className={notoSansKr.className}>
                 <QueryProviders>
-                    <main
-                        className="min-w-[375px] 
-                             max-w-[475px] 
-                             w-full 
-                             h-screen
-                             min-h-screen
-                             bg-white
-                             flex
-                             flex-col
-                             mx-auto
-                             box-border
-                             border-x
-                             border-gray-200"
-                    >
+                    <main>
                         <MSWProvider />
                         {children}
                     </main>
