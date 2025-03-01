@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // 추가예정
-const protectedRoutes = ['/'];
+const protectedRoutes = ['/test'];
 
 export function middleware(request: NextRequest) {
     const accessToken = request.cookies.has('accessToken');
@@ -23,5 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/']
+    matcher: ['/test']
 };
