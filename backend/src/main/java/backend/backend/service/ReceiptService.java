@@ -1,6 +1,7 @@
 package backend.backend.service;
 import backend.backend.domain.Receipt;
 import backend.backend.dto.receipt.model.ReceiptUrlInfo;
+
 import backend.backend.dto.receipt.request.OpenAiRequest;
 import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;

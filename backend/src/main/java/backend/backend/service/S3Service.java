@@ -4,6 +4,7 @@ import backend.backend.dto.upload.response.PutPresignedUrlResponse;
 import backend.backend.exception.BadGateWayException;
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
