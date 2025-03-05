@@ -1,5 +1,6 @@
 package backend.backend.controller;
 
+import backend.backend.dto.consumption.model.ConsumptionItem;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ConsumptionService;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -40,7 +40,7 @@ class ConsumptionControllerTest {
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
                 .receiptId(1019L)
                 .date("2015/11/19")
-                .items(List.of(ConsumptionsSaveRequest.Item.builder().name("말보로레드").amount(4500L).category("잡화").build()))
+                .items(List.of(ConsumptionItem.builder().name("말보로레드").amount(4500L).category("잡화").build()))
                 .build();
 
         Mockito.doNothing().when(consumptionService).save(email, request);//void반한타입 모킹법

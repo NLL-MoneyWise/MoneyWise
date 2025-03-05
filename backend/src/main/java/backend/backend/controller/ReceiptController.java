@@ -20,7 +20,7 @@ public class ReceiptController {
     private final ReceiptService receiptService;
     @PostMapping("/analyze")
     public ResponseEntity<ReceiptAnalyzeResponse> analyze(@AuthenticationPrincipal String email, @RequestBody ReceiptAnalyzeRequest request) {
-        ReceiptAnalyzeResponse response = receiptService.receiptAnalyze(email, request);
+        ReceiptAnalyzeResponse response = receiptService.receiptAnalyze(email, request.getAccessUrl());
         response.setMessage("영수증 분석이 완료되었습니다.");
         return ResponseEntity.ok(response);
     }

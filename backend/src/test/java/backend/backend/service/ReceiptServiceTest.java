@@ -18,8 +18,7 @@ public class ReceiptServiceTest {
     void realOpenAiApiTest() {
         String email = "test@naver.com";
         String accessUrl = "receipt.jpeg";
-        ReceiptAnalyzeRequest request = ReceiptAnalyzeRequest.builder().accessUrl(accessUrl).build();
-        ReceiptAnalyzeResponse receiptAnalyzeResponse = receiptService.receiptAnalyze(email, request);
+        ReceiptAnalyzeResponse receiptAnalyzeResponse = receiptService.receiptAnalyze(email, accessUrl);
 
         Assertions.assertNotNull(receiptAnalyzeResponse);
         Assertions.assertNotNull(receiptAnalyzeResponse.getDate());
