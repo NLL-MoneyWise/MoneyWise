@@ -7,6 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
     width?: string | number;
     height?: string | number;
+    fontSize?: string | number;
     handleClick?: () => void;
 }
 
@@ -16,18 +17,21 @@ const Button = ({
     handleClick,
     width = '100%',
     height = '45px',
+    fontSize = '14px',
     className,
     ...rest
 }: ButtonProps) => {
     return (
         <button
             className={clsx(
-                'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl text-sm',
+                'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl',
                 className
             )}
             style={{
                 width: typeof width === 'number' ? `${width}px` : width,
-                height: typeof height === 'number' ? `${height}px` : height
+                height: typeof height === 'number' ? `${height}px` : height,
+                fontSize:
+                    typeof fontSize === 'number' ? `${fontSize}px` : fontSize
             }}
             onClick={handleClick}
             {...rest}
