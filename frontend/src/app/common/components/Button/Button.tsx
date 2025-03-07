@@ -24,7 +24,7 @@ const Button = ({
     return (
         <button
             className={clsx(
-                'bg-primary text-white flex justify-center items-center py-[10px] rounded-xl',
+                'bg-gray-300 flex justify-center items-center py-[10px] rounded-xl',
                 className
             )}
             style={{

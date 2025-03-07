@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -13,7 +14,7 @@ export default {
                 foreground: 'var(--foreground)',
                 primary: '#6BAF2F',
                 hilight: '#3C8224',
-                mockupbg: '#99A3FF'
+                mockupbg: '#D1DCFF'
             },
             keyframes: {
                 'toast-slide-in': {
@@ -33,5 +34,6 @@ export default {
             }
         }
     },
-    plugins: []
+
+    plugins: [require('tailwindcss-animated')]
 } satisfies Config;
