@@ -15,7 +15,9 @@ public class UploadController {
     private final S3Service s3Service;
 
     @GetMapping("presigned-url")
-    public ResponseEntity<PutPresignedUrlResponse> getPresignedUrl() {
-        return ResponseEntity.ok(s3Service.generatePutPreSignedUrl());
+    public ResponseEntity<PutPresignedUrlResponse> getPutPresignedUrl() {
+        PutPresignedUrlResponse response = s3Service.generatePutPreSignedUrl();
+        response.setMessage("PresignedUrl이 생성되었습니다.");
+        return ResponseEntity.ok(response);
     }
 }
