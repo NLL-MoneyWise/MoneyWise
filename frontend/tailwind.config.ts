@@ -31,6 +31,12 @@ export default {
             animation: {
                 fadeIn: 'fadeIn 2s ease forwards',
                 'toast-slide-in': 'toast-slide-in 2s ease forwards'
+            },
+            screens: {
+                sm: '640px',
+                md: '768px',
+                lg: '1024px',
+                xl: '1280px'
             }
         }
     },

@@ -4,18 +4,18 @@ import DeviceImg from '../../DeviceImg/DeviceImg';
 
 const IntroduceArticle = () => {
     return (
-        <figure className="flex py-[300px] gap-[60px] relative justify-center h-screen overflow-hidden no-scrollbar">
+        <figure className="flex items-center gap-[150px] relative justify-center h-screen overflow-hidden ">
             <figcaption className="text-black animate-fade-up animate-duration-1000 animate-delay-1000 animate-ease-out z-20 ">
-                <h2 className="text-[90px] font-bold leading-[1.2] mb-6 ">
+                <h2 className="whitespace-nowrap font-bold leading-[1.2] mb-6 text-[50px] sm:text-[70px] md:text-[90px] ">
                     <span className="text-primary">M</span>oney Talks, <br />
                     <span className="text-primary">W</span>ise Listens
                 </h2>
                 <p className="mb-6">Money Wise에서 소비습관을 분석하세요</p>
-                <Button width={200} height={50} fontSize={16}>
+                <Button width={200} height={50}>
                     분석하러 가기
                 </Button>
             </figcaption>
-            <div className="flex w-[600px]">
+            <div className="hidden lg:flex  w-[600px]">
                 <div className="-rotate-[4deg] absolute">
                     <div className=" animate-fade-right animate-once animate-duration-1000 animate-ease-out animate-normal">
                         <DeviceImg />

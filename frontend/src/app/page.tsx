@@ -11,7 +11,7 @@ export default function Home() {
             <IntroduceArticle />
             <InstructionArticle />
             <div className="fixed bottom-[3%] left-1/2 -translate-x-1/2 z-10">
-                <ArrowIcon className="animate-bounce" color="white" />
+                <ArrowIcon className="animate-bounce " color="#b0aeae" />
             </div>
         </div>
     );

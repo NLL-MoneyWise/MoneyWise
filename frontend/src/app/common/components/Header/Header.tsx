@@ -6,11 +6,11 @@ const Header = () => {
     return (
         <header className=" py-6 fixed left-0 right-0 top-0  bg-white shadow-md z-50">
             <div className=" max-w-[1200px] m-auto">
-                <div className="flex justify-between w-full px-1">
-                    <h1 aria-label="로고" className="flex items-center">
+                <div className="items-center flex justify-center sm:justify-between w-full px-1 ">
+                    <h1 aria-label="로고" className="">
                         <Logo variant="dark" width={250} height={40} />
                     </h1>
-                    <Button width={120} height={40} fontSize={16}>
+                    <Button width={120} height={40} className="hidden sm:block">
                         시작하기
                     </Button>
                 </div>
