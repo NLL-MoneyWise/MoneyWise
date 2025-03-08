@@ -1,15 +1,16 @@
 package backend.backend.controller;
 
+import backend.backend.component.AuthServiceFactory;
 import backend.backend.domain.User;
-import backend.backend.dto.auth.request.LoginRequest;
-import backend.backend.dto.auth.request.SignupRequest;
-import backend.backend.dto.auth.response.LoginResponse;
-import backend.backend.dto.auth.response.SignupResponse;
-import backend.backend.dto.auth.response.TokenResponse;
-import backend.backend.dto.auth.response.TokenValidationResponse;
+import backend.backend.dto.auth.request.KakaoLoginRequest;
+import backend.backend.dto.auth.request.KakaoSignupRequest;
+import backend.backend.dto.auth.request.LocalLoginRequest;
+import backend.backend.dto.auth.request.LocalSignupRequest;
+import backend.backend.dto.auth.response.*;
 import backend.backend.exception.AuthException;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
+import backend.backend.service.LocalAuthService;
 import backend.backend.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,23 +23,26 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
+    private final AuthServiceFactory authServiceFactory;
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody LocalSignupRequest request) {
+        AuthService<LocalLoginRequest, LocalSignupRequest> authService = authServiceFactory.getLocalAuthService();
         authService.signup(request);
         return ResponseEntity.ok(SignupResponse.builder().message("회원가입이 완료되었습니다.").build());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login (@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login (@Valid @RequestBody LocalLoginRequest request, HttpServletResponse response) {
+        AuthService<LocalLoginRequest, LocalSignupRequest> authService = authServiceFactory.getLocalAuthService();
         String accessToken = authService.login(request);
         LoginResponse loginResponse = LoginResponse.builder()
                 .accessToken(accessToken)
@@ -56,6 +60,27 @@ public class AuthController {
         //두 방식은 동일한 결과임
         return ResponseEntity.status(HttpStatus.OK)
                 .body(loginResponse);
+    }
+
+    @PostMapping("/kakaoLogin")
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(@RequestBody KakaoLoginRequest request, HttpServletResponse response) {
+        AuthService<KakaoLoginRequest, KakaoSignupRequest> authService = authServiceFactory.getKakaoAuthService();
+        String accessToken = authService.login(request);
+
+        KakaoLoginResponse kakaoLoginResponse = KakaoLoginResponse.builder()
+                .accessToken(accessToken)
+                .message("반갑습니다 " + jwtUtils.getUserNameFromToken(accessToken) + "님")
+                .build();
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtUtils.generateRefreshToken(jwtUtils.getUserEmailFromToken(accessToken)));
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok(kakaoLoginResponse);
     }
 
     @PostMapping("/refresh")
