@@ -5,10 +5,7 @@ import backend.backend.dto.auth.request.KakaoLoginRequest;
 import backend.backend.dto.auth.request.KakaoSignupRequest;
 import backend.backend.dto.auth.response.KakaoTokenApiResponse;
 import backend.backend.dto.auth.response.KakaoUserInfoApiResponse;
-import backend.backend.exception.AuthException;
-import backend.backend.exception.ConflictException;
-import backend.backend.exception.DatabaseException;
-import backend.backend.exception.NotFoundException;
+import backend.backend.exception.*;
 import backend.backend.repository.UserRepository;
 import backend.backend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -44,8 +43,14 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
         KakaoTokenApiResponse kakaoTokenApiResponse = getKakaoTokenResponse(request.getCode());
         KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccessToken());
         Long kakaoUserId = kakaoUserInfoApiResponse.getId();
+        if (kakaoUserId == null) {
+            throw new AuthException("카카오 사용자 id가 비어있습니다.");
+        }
 
         String nickName = kakaoUserInfoApiResponse.getProperties().getNickName();
+        if (nickName == null) {
+            throw new AuthException("카카오 사용자 nickname이 비어있습니다.");
+        }
 
         User user = userRepository.findByKakaoId(kakaoUserId)
                 .orElseThrow(() -> new NotFoundException("추가정보 입력이 필요합니다. kakaoId: " + kakaoUserId + ", nickname: " + nickName));
@@ -93,48 +98,62 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
         body.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        try {
+            ResponseEntity<KakaoTokenApiResponse> response = restTemplate.exchange(
+                    tokenUrl,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<KakaoTokenApiResponse>() {
+                    }
+            );
 
-        ResponseEntity<KakaoTokenApiResponse> response = restTemplate.exchange(
-                tokenUrl,
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<KakaoTokenApiResponse>() {}
-        );
-
-        if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
-        } else {
-            throw new AuthException("카카오 액세스 토큰 획득에 실패했습니다.");
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new AuthException("잘못된 요청입니다.");
+            }
+            throw new AuthException("카카오 API호출에 실패했습니다.");
+        } catch (ResourceAccessException e) {
+            throw new NetworkException("카카오 서버에 연결할 수 없습니다.");
         }
     }
 
     private KakaoUserInfoApiResponse getKakaoUserInfo(String accessToken) {
-        String bearerToken = "Bearer " + accessToken;
+        try {
+            String bearerToken = "Bearer " + accessToken;
 
-        String infoUrl = "https://kapi.kakao.com/v2/user/me";
+            String infoUrl = "https://kapi.kakao.com/v2/user/me";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", bearerToken);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set("Authorization", bearerToken);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("property_keys", "[\"properties.nickname\"]");
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("property_keys", "[\"properties.nickname\"]");
 
-        HttpEntity<MultiValueMap<String, String>> requestEntity =
-                new HttpEntity<>(body, headers);
+            HttpEntity<MultiValueMap<String, String>> requestEntity =
+                    new HttpEntity<>(body, headers);
 
-        ResponseEntity<KakaoUserInfoApiResponse> response = restTemplate.exchange(
-                infoUrl,
-                HttpMethod.GET,
-                requestEntity,
-                new ParameterizedTypeReference<KakaoUserInfoApiResponse>() {
-                }
-        );
+            ResponseEntity<KakaoUserInfoApiResponse> response = restTemplate.exchange(
+                    infoUrl,
+                    HttpMethod.GET,
+                    requestEntity,
+                    new ParameterizedTypeReference<KakaoUserInfoApiResponse>() {
+                    }
+            );
 
-        if(response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
-        } else {
-            throw new AuthException("사용자 id를 불러오지 못했습니다.");
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new AuthException("유효하지 않은 accessToken입니다.");
+            } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new AuthException("잘못된 요청입니다.");
+            }
+            throw new AuthException("카카오 API호출에 실패했습니다.");
+        } catch (ResourceAccessException e) {
+            throw new NetworkException("카카오 서버에 연결할 수 없습니다.");
         }
     }
 }

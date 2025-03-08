@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,6 +39,14 @@ public class AuthController {
         AuthService<LocalLoginRequest, LocalSignupRequest> authService = authServiceFactory.getLocalAuthService();
         authService.signup(request);
         return ResponseEntity.ok(SignupResponse.builder().message("회원가입이 완료되었습니다.").build());
+    }
+
+    @PostMapping("/kakaoSignup")
+    public ResponseEntity<KakaoSignupResponse> kakaoSignup(@RequestBody KakaoSignupRequest request) {
+        AuthService<KakaoLoginRequest, KakaoSignupRequest> authService = authServiceFactory.getKakaoAuthService();
+
+        authService.signup(request);
+        return ResponseEntity.ok(KakaoSignupResponse.builder().message("회원가입이 완료되었습니다.").build());
     }
 
     @PostMapping("/login")
