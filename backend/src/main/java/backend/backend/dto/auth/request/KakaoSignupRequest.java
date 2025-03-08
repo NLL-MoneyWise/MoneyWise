@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class KakaoSignupRequest implements BaseSignupRequest{
-    private String code;
+    private String kakaoId;
     private String email;
     private String name;
     private String nickName;

@@ -62,21 +62,23 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
 
     @Override
     public void signup(KakaoSignupRequest request) {
-        if(userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("이미 가입된 이메일 입니다.");
         }
 
-        KakaoTokenApiResponse kakaoTokenApiResponse = getKakaoTokenResponse(request.getCode());
-        KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccessToken());
-        Long kakaoUserId = kakaoUserInfoApiResponse.getId();
+        Long kakaoId = null;
 
-        String nickName = kakaoUserInfoApiResponse.getProperties().getNickName();
+        try {
+            kakaoId = Long.parseLong(request.getKakaoId());
+        } catch (NumberFormatException e) {
+            throw new AuthException("유효하지 않은 카카오 ID 형식입니다.");
+        }
 
         User user = new User();
-        user.setKakaoId(kakaoUserId);
+        user.setKakaoId(kakaoId);
         user.setName(request.getName());
         user.setProvider("kakao");
-        user.setNickname(nickName);
+        user.setNickname(request.getNickName());
         user.setEmail(request.getEmail());
 
         try {
