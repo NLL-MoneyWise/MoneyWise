@@ -8,10 +8,17 @@ import backend.backend.dto.auth.request.LocalLoginRequest;
 import backend.backend.dto.auth.request.LocalSignupRequest;
 import backend.backend.dto.auth.response.*;
 import backend.backend.exception.AuthException;
+import backend.backend.exception.response.ErrorResponse;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
 import backend.backend.service.LocalAuthService;
 import backend.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,6 +41,16 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
+    @Operation(summary = "로컬 회원 가입")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원가입이 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = SignupResponse.class))),
+            @ApiResponse(responseCode = "409", description = "이미 가입된 이메일 입니다.",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(value = "{\n\"typeName\": \"CONFLICT_ERROR\",\n \"message\": \"이미 가입된 이메일 입니다.\"\n}")))
+    })
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody LocalSignupRequest request) {
         AuthService<LocalLoginRequest, LocalSignupRequest> authService = authServiceFactory.getLocalAuthService();
