@@ -1,5 +1,6 @@
 package backend.backend.controller;
 
+import backend.backend.dto.facade.request.FacadeConsumptionsAnalyzeRequest;
 import backend.backend.dto.facade.request.FacadeReceiptProcessRequest;
 import backend.backend.security.jwt.JwtUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,8 +37,48 @@ class FacadeControllerTest {
         FacadeReceiptProcessRequest request = FacadeReceiptProcessRequest.builder().accessUrl("receipt.jpeg").build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/workflows/receipt-process")
+                        .header("Authorization", accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("consumptionsProcessSuccess")
+    void consumptionsProcessSuccess() throws Exception {
+        String email = "test@naver.com";
+        String name = "테스트";
+        String nickName = "테스트닉네임";
+        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+
+        FacadeConsumptionsAnalyzeRequest allRequest = FacadeConsumptionsAnalyzeRequest.builder()
+                .period("all").build();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
+                .header("Authorization", accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(allRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        FacadeConsumptionsAnalyzeRequest yearRequest = FacadeConsumptionsAnalyzeRequest.builder()
+                .period("year").year(2015L).build();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
+                        .header("Authorization", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(yearRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        FacadeConsumptionsAnalyzeRequest monthRequest = FacadeConsumptionsAnalyzeRequest.builder()
+                .period("month").year(2015L).month(11L).build();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
+                        .header("Authorization", accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(monthRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

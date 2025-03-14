@@ -8,8 +8,10 @@ import backend.backend.dto.facade.response.FacadeReceiptProcessResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class FacadeService {
     private final ReceiptService receiptService;

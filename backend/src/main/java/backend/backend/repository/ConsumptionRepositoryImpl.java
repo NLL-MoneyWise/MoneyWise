@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import static backend.backend.domain.QConsumption.consumption;
 import static backend.backend.domain.QCategory.category;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,6 +95,10 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                 .groupBy(consumption.item_name)
                 .orderBy(totalAmount.desc())
                 .fetch();
+
+        if (maxAmountList.isEmpty()) {
+            return Collections.emptyList(); // 또는 Collections.emptyList();
+        }
 
         List<TopExpense> result = queryFactory
                 .select(Projections.constructor(TopExpense.class,
