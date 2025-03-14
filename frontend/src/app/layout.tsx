@@ -1,5 +1,15 @@
-import ToastContainer from './components/Common/Toast/ToastContainer';
+import ToastContainer from './common/components/Toast/ToastContainer';
 import './globals.css';
+import { Noto_Sans_KR } from 'next/font/google';
+import { QueryProviders } from './QueryProvider';
+import MSWProvider from './MockingProiver';
+
+const notoSansKr = Noto_Sans_KR({
+    subsets: ['latin'],
+    weight: ['400', '500', '700'],
+    display: 'swap',
+    preload: true
+});
 
 export default function RootLayout({
     children
@@ -7,12 +17,17 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body>
-                {children}
+        <html>
+            <body lang="ko" className={notoSansKr.className}>
+                <QueryProviders>
+                    <main>
+                        <MSWProvider />
+                        {children}
+                    </main>
+                </QueryProviders>
+                <ToastContainer />
                 <div id="toast-portal"></div>
                 <div id="modal-portal"></div>
-                <ToastContainer />
             </body>
         </html>
     );
