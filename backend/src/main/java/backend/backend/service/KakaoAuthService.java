@@ -41,7 +41,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
     @Override
     public String login(KakaoLoginRequest request) {
         KakaoTokenApiResponse kakaoTokenApiResponse = getKakaoTokenResponse(request.getCode());
-        KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccessToken());
+        KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccess_token());
         Long kakaoUserId = kakaoUserInfoApiResponse.getId();
         if (kakaoUserId == null) {
             throw new AuthException("카카오 사용자 id가 비어있습니다.");
@@ -139,7 +139,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
 
             ResponseEntity<KakaoUserInfoApiResponse> response = restTemplate.exchange(
                     infoUrl,
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     requestEntity,
                     new ParameterizedTypeReference<KakaoUserInfoApiResponse>() {
                     }
@@ -149,7 +149,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
 
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthException("유효하지 않은 accessToken입니다.");
+                throw new AuthException("유효하지 않은 accessToken입니다." + accessToken);
             } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 throw new AuthException("잘못된 요청입니다.");
             }

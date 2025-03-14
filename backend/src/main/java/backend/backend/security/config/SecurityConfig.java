@@ -17,15 +17,15 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtUtils jwtUtils;  // 생성자 주입
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtils);
+    public SecurityConfig(JwtUtils jwtUtils, CustomAuthenticationEntryPoint authenticationEntryPoint) {
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session //세션을 사용하지 않게 설정
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //스프링 security의 인증 필터 앞에 jwtAuthenticationFilter추가
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                 // /api/auth/* 에는 누구나 인증없이 접근 가능 그 외 모든 요청은 인증되어야 접근가능함
                 .authorizeHttpRequests(auth -> auth

@@ -38,17 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request,response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        return path.startsWith("/swagger-ui") ||
-                path.startsWith("/v3/api-docs") ||
-                path.contains("api-docs") ||
-                path.startsWith("/swagger-resources") ||
-                path.startsWith("/webjars") ||
-                path.startsWith("/api/auth");
-    }
-
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         //bearerToken이 널이거나 공백이 아닌지 확인 && 토큰이 Bearer로 시작하는지 확인
