@@ -37,7 +37,12 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
                 // /api/auth/* 에는 누구나 인증없이 접근 가능 그 외 모든 요청은 인증되어야 접근가능함
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/signup", "/api/auth/refresh",
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/signup",
+                                "/api/auth/refresh",
+                                "/api/auth/kakaoLogin",
+                                "/api/auth/kakaoSignup",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
