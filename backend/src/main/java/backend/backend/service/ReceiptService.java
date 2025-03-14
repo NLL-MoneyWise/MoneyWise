@@ -1,9 +1,7 @@
 package backend.backend.service;
 import backend.backend.domain.Receipt;
 import backend.backend.dto.receipt.model.ReceiptUrlInfo;
-
 import backend.backend.dto.receipt.request.OpenAiRequest;
-import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.OpenAiResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
@@ -24,7 +22,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +35,8 @@ public class ReceiptService {
     @Value("${openai.api.key}")
     private String apiKey;
 
-    public ReceiptAnalyzeResponse receiptAnalyze(String email, ReceiptAnalyzeRequest request) {
-        String presignedUrl = s3Service.generateGetSignedUrlWithCloudFront(request.getAccessUrl());
+    public ReceiptAnalyzeResponse receiptAnalyze(String email, String accessUrl) {
+        String presignedUrl = s3Service.generateGetSignedUrlWithCloudFront(accessUrl);
 
         String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
                 "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
@@ -113,7 +110,7 @@ public class ReceiptService {
         LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate(), dateTimeFormatter);
 
         Receipt receipt = Receipt.builder()
-                .access_url(request.getAccessUrl())
+                .access_url(accessUrl)
                 .email(email)
                 .date(localDate)
                 .total_amount(receiptAnalyzeResponse.getTotalAmount())

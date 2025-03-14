@@ -2,6 +2,7 @@ package backend.backend.service;
 
 import backend.backend.domain.Consumption;
 import backend.backend.dto.consumption.model.ByCategory;
+import backend.backend.dto.consumption.model.ConsumptionItem;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
@@ -36,7 +37,7 @@ public class ConsumptionService {
                     .email(email)
                     .build();
 
-            for (ConsumptionsSaveRequest.Item item : request.getItems()) {
+            for (ConsumptionItem item : request.getItems()) {
                 Long categoryId;
                 //Request는 카테고리를 String 으로 주지만 Consumption은 Id로 입력해야함
                 if (item.getCategory().equals("문구")) {

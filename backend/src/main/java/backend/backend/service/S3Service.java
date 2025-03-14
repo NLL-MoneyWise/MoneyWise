@@ -115,7 +115,9 @@ public class S3Service {
             PrivateKey privateKey = loadPrivateKeyFromDER();
 
             String signedUrl = CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-                    cloudFrontDomain + "/" + accessUrl,
+
+                    cloudFrontDomain + accessUrl,
+
                     keyPairId,
                     privateKey,
                     expirationTime
