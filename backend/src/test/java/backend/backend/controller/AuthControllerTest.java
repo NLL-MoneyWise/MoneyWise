@@ -1,9 +1,9 @@
 package backend.backend.controller;
 
-import backend.backend.dto.auth.request.LoginRequest;
-import backend.backend.dto.auth.request.SignupRequest;
+import backend.backend.dto.auth.request.LocalLoginRequest;
+import backend.backend.dto.auth.request.LocalSignupRequest;
 import backend.backend.security.jwt.JwtUtils;
-import backend.backend.service.AuthService;
+import backend.backend.service.LocalAuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +28,7 @@ class AuthControllerTest {
     private MockMvc mockMvc; //HTTP요청을 테스트하기 위한 객체임
 
     @MockitoBean
-    private AuthService authService;
+    private LocalAuthService localAuthService;
     @MockitoBean
     private JwtUtils jwtUtils;
 
@@ -39,15 +39,15 @@ class AuthControllerTest {
         String name = "테스트";
         String nickName = "테스트닉네임";
 
-        LoginRequest request = new LoginRequest();
+        LocalLoginRequest request = new LocalLoginRequest();
         request.setEmail(email);
         request.setPassword("testPassword@1231");
 
         String accessToken = "new.access.token";
         String refreshToken = "test.refresh.token";
 
-        when(authService.login(ArgumentMatchers.any(LoginRequest.class))).thenReturn(accessToken);//any가 없으면 객체 동등성이 성립되지 않아 null을 반환하는 에러 발생
-        System.out.println("Generated access token: " + authService.login(request));
+        when(localAuthService.login(ArgumentMatchers.any(LocalLoginRequest.class))).thenReturn(accessToken);//any가 없으면 객체 동등성이 성립되지 않아 null을 반환하는 에러 발생
+        System.out.println("Generated access token: " + localAuthService.login(request));
         when(jwtUtils.generateRefreshToken(email)).thenReturn(refreshToken);
         when(jwtUtils.getUserNameFromToken(accessToken)).thenReturn(name);
         System.out.println(jwtUtils.getUserNameFromToken(accessToken));
@@ -91,14 +91,14 @@ class AuthControllerTest {
     @Test
     @DisplayName("회원가입")
     void signupSuccess() throws Exception {
-        SignupRequest signupRequest = new SignupRequest();
+        LocalSignupRequest signupRequest = new LocalSignupRequest();
         signupRequest.setName("테스트");
         signupRequest.setNickname("테스트닉네임");
         signupRequest.setPassword("testPassword@1231");
         signupRequest.setEmail("test@naver.com");
         System.out.println("sign: " + signupRequest);
 
-        Mockito.doNothing().when(authService).signup(signupRequest);
+        Mockito.doNothing().when(localAuthService).signup(signupRequest);
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)

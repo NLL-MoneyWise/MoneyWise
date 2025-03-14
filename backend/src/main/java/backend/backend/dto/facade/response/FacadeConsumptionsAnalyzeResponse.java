@@ -3,7 +3,6 @@ package backend.backend.dto.facade.response;
 import backend.backend.dto.consumption.model.ByCategory;
 import backend.backend.dto.consumption.model.TopExpense;
 import lombok.*;
-
 import java.util.List;
 
 @Builder

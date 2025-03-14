@@ -26,4 +26,10 @@ public class User {
 
     @Column
     private String nickname;
+
+    @Column
+    private String provider;
+
+    @Column(name = "kakao_id")
+    private Long kakaoId;
 }
