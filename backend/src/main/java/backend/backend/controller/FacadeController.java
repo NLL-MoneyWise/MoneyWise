@@ -6,6 +6,7 @@ import backend.backend.dto.facade.response.FacadeConsumptionsAnalyzeResponse;
 import backend.backend.dto.facade.response.FacadeReceiptProcessResponse;
 import backend.backend.service.FacadeService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,7 +25,21 @@ public class FacadeController {
     }
 
     @GetMapping("/consumptions-analyze")
-    public ResponseEntity<FacadeConsumptionsAnalyzeResponse> consumptionsAnalyzeProcess(@AuthenticationPrincipal String email, @RequestBody FacadeConsumptionsAnalyzeRequest request) {
+        public ResponseEntity<FacadeConsumptionsAnalyzeResponse> consumptionsAnalyzeProcess(
+                @AuthenticationPrincipal String email,
+                @RequestParam(name = "period") String period,
+                @RequestParam(required = false, name = "year") Long year,
+                @RequestParam(required = false, name = "month") Long month) throws BadRequestException {
+
+        if (period.equals("year") && year == null) {
+            throw new BadRequestException("year가 비어있습니다.");
+        } else if (period.equals("month") && (year == null || month == null)) {
+            throw new BadRequestException("year과 month가 비어있습니다.");
+        }
+
+        FacadeConsumptionsAnalyzeRequest request = FacadeConsumptionsAnalyzeRequest.builder()
+                .period(period).year(year).month(month).build();
+
         FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(request, email);
         return ResponseEntity.ok(response);
     }

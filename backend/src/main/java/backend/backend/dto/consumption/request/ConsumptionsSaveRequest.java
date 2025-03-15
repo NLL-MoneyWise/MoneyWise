@@ -4,10 +4,6 @@ import backend.backend.dto.consumption.model.ConsumptionItem;
 import backend.backend.dto.receipt.model.ReceiptItem;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import lombok.*;
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 import java.util.ArrayList;
 import java.util.List;
 

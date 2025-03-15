@@ -95,6 +95,7 @@ public class AuthController {
 
         KakaoLoginResponse kakaoLoginResponse = KakaoLoginResponse.builder()
                 .accessToken(accessToken)
+                .email(jwtUtils.getUserEmailFromToken(accessToken))
                 .message("반갑습니다 " + jwtUtils.getUserNameFromToken(accessToken) + "님")
                 .build();
 

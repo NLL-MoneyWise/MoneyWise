@@ -20,15 +20,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtUtils jwtUtils, CustomAuthenticationEntryPoint authenticationEntryPoint) {
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
-    }
+    private final JwtUtils jwtUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+
         http
                 .csrf(AbstractHttpConfigurer::disable) //csrf 보호 기능 비활성화
                 .sessionManagement(session -> session //세션을 사용하지 않게 설정
