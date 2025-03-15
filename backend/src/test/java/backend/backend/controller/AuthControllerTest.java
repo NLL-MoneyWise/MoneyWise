@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthControllerTest {
     @Autowired
     private MockMvc mockMvc; //HTTP요청을 테스트하기 위한 객체임
-
     @MockBean
     private LocalAuthService localAuthService;
     @MockBean

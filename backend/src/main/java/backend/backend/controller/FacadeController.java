@@ -1,6 +1,8 @@
 package backend.backend.controller;
 
+import backend.backend.dto.facade.request.FacadeConsumptionsAnalyzeRequest;
 import backend.backend.dto.facade.request.FacadeReceiptProcessRequest;
+import backend.backend.dto.facade.response.FacadeConsumptionsAnalyzeResponse;
 import backend.backend.dto.facade.response.FacadeReceiptProcessResponse;
 import backend.backend.service.FacadeService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,12 @@ public class FacadeController {
     public ResponseEntity<FacadeReceiptProcessResponse> receiptProcess(@AuthenticationPrincipal String email, @RequestBody FacadeReceiptProcessRequest request) {
         FacadeReceiptProcessResponse response = facadeService.receiptProcess(email, request.getAccessUrl());
         response.setMessage("영수증 분석 및 소비 내역 저장이 완료 되었습니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/consumptions-analyze")
+    public ResponseEntity<FacadeConsumptionsAnalyzeResponse> consumptionsAnalyzeProcess(@AuthenticationPrincipal String email, @RequestBody FacadeConsumptionsAnalyzeRequest request) {
+        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(request, email);
         return ResponseEntity.ok(response);
     }
 }

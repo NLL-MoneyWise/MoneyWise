@@ -149,7 +149,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
 
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new AuthException("유효하지 않은 accessToken입니다." + accessToken);
+                throw new AuthException("유효하지 않은 accessToken입니다.");
             } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 throw new AuthException("잘못된 요청입니다.");
             }
