@@ -41,7 +41,7 @@ const LoginForm = () => {
                 aria-label="비밀번호 입력"
             />
             <div className="mt-7"></div>
-            <Button height={46} type="submit">
+            <Button type="submit" className="h-12 w-full text-xl">
                 {'로그인'}
             </Button>
             <div className="mt-1"></div>

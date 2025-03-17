@@ -16,8 +16,7 @@ export default function CommonLayout({
             flex-col
             mx-auto
             box-border
-            border-x
-            border-gray-200"
+            "
         >
             {children}
         </div>

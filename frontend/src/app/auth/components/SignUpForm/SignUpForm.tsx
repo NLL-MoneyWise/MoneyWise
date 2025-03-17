@@ -43,7 +43,7 @@ const SignUpForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { confirmpassword, ...requestUserData } = userData;
+        const { ...requestUserData } = userData;
         if (isValid) {
             signUpMutation.mutate(requestUserData);
         }
@@ -82,12 +82,12 @@ const SignUpForm = () => {
                             aria-required="true"
                             aria-label={`${UserDataKorean[val]} 입력`}
                         />
-                        <div className="mt-6" />
+                        <div className="mt-5" />
                     </div>
                 ))}
             </div>
 
-            <Button height={46} type="submit">
+            <Button type="submit" className="h-12 w-full text-xl">
                 회원가입
             </Button>
         </form>
