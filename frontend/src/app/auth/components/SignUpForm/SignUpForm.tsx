@@ -82,12 +82,12 @@ const SignUpForm = () => {
                             aria-required="true"
                             aria-label={`${UserDataKorean[val]} 입력`}
                         />
-                        <div className="mt-5" />
+                        <div className="mt-6" />
                     </div>
                 ))}
             </div>
 
-            <Button height={41} type="submit">
+            <Button height={46} type="submit">
                 회원가입
             </Button>
         </form>

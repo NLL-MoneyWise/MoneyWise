@@ -32,7 +32,7 @@ const InputField = forwardRef<
                 <label
                     htmlFor={type}
                     className={clsx(
-                        'text-sm font-medium text-primary relative'
+                        'text-lg font-medium text-primary relative'
                     )}
                 >
                     {label}

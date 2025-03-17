@@ -9,10 +9,11 @@ export default function AuthLayout({
     return (
         <>
             <TopBar />
-            <div className="flex justify-center mt-[40%] mb-10">
-                <Logo variant="dark" width={320} height={41.7} />
+
+            <div className="flex flex-col w-full h-full items-center justify-center">
+                <Logo variant="dark" width={400} height={41.7} />
+                <div className="w-full space-y-4 mt-10">{children}</div>
             </div>
-            <div className="w-full space-y-4">{children}</div>
         </>
     );
 }

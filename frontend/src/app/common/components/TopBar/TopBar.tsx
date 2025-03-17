@@ -12,7 +12,7 @@ const TopBar = () => {
 
     return (
         <p
-            className="text-gray-400 whitespace-pre-line w-full  text-xl font-bold fixed mt-3 ml-3"
+            className="text-gray-400 whitespace-pre-line w-full  text-xl font-bold fixed mt-4 ml-4 cursor-pointer"
             onClick={handleGoBack}
         >
             뒤로가기

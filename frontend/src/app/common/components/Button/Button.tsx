@@ -17,21 +17,18 @@ const Button = ({
     handleClick,
     width = '100%',
     height = '45px',
-    fontSize = '16px',
     className,
     ...rest
 }: ButtonProps) => {
     return (
         <button
             className={clsx(
-                'bg-primary/90 flex justify-center items-center py-2 rounded-xl',
+                'bg-primary/90 flex justify-center items-center py-2 rounded-xl text-xl',
                 className
             )}
             style={{
                 width: typeof width === 'number' ? `${width}px` : width,
-                height: typeof height === 'number' ? `${height}px` : height,
-                fontSize:
-                    typeof fontSize === 'number' ? `${fontSize}px` : fontSize
+                height: typeof height === 'number' ? `${height}px` : height
             }}
             onClick={handleClick}
             {...rest}
