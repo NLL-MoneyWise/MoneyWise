@@ -1,8 +1,7 @@
+'use client';
 import React from 'react';
-import { IoIosArrowBack } from '@react-icons/all-files/io/IoIosArrowBack';
-import Button from '../Button/Button';
 
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const TopBar = () => {
     const router = useRouter();
@@ -11,17 +10,13 @@ const TopBar = () => {
         router.back();
     };
 
-    const handleConfirm = () => {
-        console.log('hello');
-    };
-
     return (
-        <div className="flex w-full justify-between">
-            <IoIosArrowBack onClick={handleGoBack} />
-            <Button handleClick={handleConfirm} width={10} height={16}>
-                {'확인'}
-            </Button>
-        </div>
+        <p
+            className="text-gray-400 whitespace-pre-line w-full  text-xl font-bold fixed mt-3 ml-3"
+            onClick={handleGoBack}
+        >
+            뒤로가기
+        </p>
     );
 };
 

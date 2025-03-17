@@ -7,7 +7,7 @@ export default function CommonLayout({
         <div
             className="
             min-w-[375px] 
-            max-w-[475px] 
+            max-w-[768px] 
             w-full 
             h-screen
             min-h-screen

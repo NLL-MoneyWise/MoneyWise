@@ -19,6 +19,9 @@ interface ControlledInputProps extends BaseInputFieldProps {
 
 type InputFieldProps = ControlledInputProps | BaseInputFieldProps;
 
+const commonInputStyles =
+    'w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-xl ';
+
 const InputField = forwardRef<
     HTMLInputElement | HTMLTextAreaElement,
     InputFieldProps
@@ -42,7 +45,7 @@ const InputField = forwardRef<
                     type={type}
                     placeholder={placeholder}
                     {...rest}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+                    className={`${commonInputStyles} `}
                 />
             ) : (
                 <textarea
@@ -50,7 +53,7 @@ const InputField = forwardRef<
                     id={type}
                     placeholder={placeholder}
                     {...rest}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary min-h-[100px] resize-y"
+                    className={`${commonInputStyles} min-h-[100px] resize-y`}
                 />
             )}
         </div>

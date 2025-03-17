@@ -22,7 +22,7 @@ const LoginForm = () => {
     };
 
     return (
-        <form className="w-[80%] m-auto" onSubmit={handleSubmit}>
+        <form className="w-[75%] m-auto" onSubmit={handleSubmit}>
             <InputField
                 element="input"
                 placeholder="이메일을 입력해주세요"
@@ -31,7 +31,7 @@ const LoginForm = () => {
                 aria-required="true"
                 aria-label="이메일 입력"
             />
-            <div className="mt-6"></div>
+            <div className="mt-7"></div>
             <InputField
                 element="input"
                 placeholder="비밀번호를 입력해주세요"
@@ -40,14 +40,14 @@ const LoginForm = () => {
                 aria-required="true"
                 aria-label="비밀번호 입력"
             />
-            <div className="mt-6"></div>
-            <Button height={41} type="submit">
+            <div className="mt-7"></div>
+            <Button height={46} type="submit">
                 {'로그인'}
             </Button>
             <div className="mt-1"></div>
             <Link
                 href={'/join'}
-                className="flex justify-center items-center text-xs text-gray-500"
+                className="flex justify-center items-center text-xl text-gray-500"
             >
                 {'회원 가입'}
             </Link>
