@@ -47,6 +47,7 @@ const Calendar = () => {
                 initialView="dayGridMonth"
                 events={events}
                 datesSet={handleDatesSet}
+                dayMaxEvents={1}
                 headerToolbar={{
                     start: 'prev next',
                     center: 'title',

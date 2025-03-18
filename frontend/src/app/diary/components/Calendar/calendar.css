@@ -64,7 +64,7 @@
 /* 요일의 높이 */
 .fc-theme-standard th {
     height: 40px;
-    background: #f5f5f5;
+    background: #ecf0eb;
     border: 1px solid #e8e8e8;
     font-weight: normal;
     font-size: 16px;
@@ -102,9 +102,17 @@
     border-radius: 4px;
     font-weight: 500;
     font-size: 14px;
+    background-color: #6baf2f !important;
+    border: none !important;
+    color: white !important;
 }
 
 /* 이벤트 스타일 */
 .fc .fc-event-title.fc-sticky {
     text-overflow: ellipsis;
+}
+
+/* 현재 날짜 배경 */
+.fc .fc-day-today {
+    background-color: #f0f8e5 !important;
 }
