@@ -84,7 +84,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException | JpaSystemException e) {
-            throw new DatabaseException("유저 정보 저장 중 오류가 발생했습니다.");
+            throw new DatabaseException("사용자 정보 저장 중 오류가 발생했습니다.");
         }
     }
 
