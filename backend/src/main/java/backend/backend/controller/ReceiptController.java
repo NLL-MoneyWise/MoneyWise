@@ -92,7 +92,23 @@ public class ReceiptController {
         return ResponseEntity.ok(response);
     }
 
-
+    @Operation(summary = "사용자의 모든 이미지에 대한 cdn signed url 반환", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "모든 이미지를 불러왔습니다.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = GetAllReceiptPresignedUrlResponse.class),
+            examples = @ExampleObject("""
+                    {
+                    "allReceiptUrlInfo" : [
+                                            {"accessUrl": "receipt.jpeg",
+                                            "cdnSignedUrl": "https://d1eh1qgida7pio.cloudfront.net/receipt.jpeg?Expires=1740659366&Signature=HTEXoCdrtlJd6AxURgxjG6hysDP3lzYQMQs2PLLOs5TRmPTkD57KOa6KGyGl5bwjnwQExWmPnGlYd86lr4sd4UsaRHW-TzwpbpNBrXDN~-9kt7H9wD5iegsWOdrF~mc98RzMS~4-AFu64uAL3oZdi90g2nj8ErxJgKcxeyKbdNKU4VMEoJ30hMA4A6orGEZZ7ogFH5Kq2ZEtJiHyt0Ax8HQGEgh5FxkQ~pifP~x4tP8DGPrM6o8WuedI7sZj1FyReM14zc4dwQ3b-ssqBLE7Z~-JYF3PYBgUDhvbeuplq4eXO1fCjzpM7KC0yxvabfIn~wI1lkDuTdMx7VlqMRXhpQ__&Key-Pair-Id=KFAITQJDGVMC6"},
+                                            {"accessUrl": "receipt1.jpeg",
+                                            "cdnSignedUrl": "https://d1eh1qgida7pio.cloudfront.net/receipt.jpeg?Expires=1740659366&Signature=HTEXoCdrtlJd6AxURgxjG6hysDP3lzYQMQs2PLLOs5TRmPTkD57KOa6KGyGl5bwjnwQExWmPnGlYd86lr4sd4UsaRHW-TzwpbpNBrXDN~-9kt7H9wD5iegsWOdrF~mc98RzMS~4-AFu64uAL3oZdi90g2nj8ErxJgKcxeyKbdNKU4VMEoJ30hMA4A6orGEZZ7ogFH5Kq2ZEtJiHyt0Ax8HQGEgh5FxkQ~pifP~x4tP8DGPrM6o8WuedI7sZj1FyReM14zc4dwQ3b-ssqBLE7Z~-JYF3PYBgUDhvbeuplq4eXO1fCjzpM7KC0yxvabfIn~wI1lkDuTdMx7VlqMRXhpQ__&Key-Pair-Id=KFAITQJDGVMC6"}
+                                            ],
+                    "message":"모든 이미지를 불러왔습니다."
+                    }
+                    """)))
+    })
     @GetMapping("/images")
     public ResponseEntity<GetAllReceiptPresignedUrlResponse> images(@AuthenticationPrincipal String email) {
         List<ReceiptUrlInfo> allReceiptUrlInfo = receiptService.getAllReceiptCloudFrontSignedUrl(email);

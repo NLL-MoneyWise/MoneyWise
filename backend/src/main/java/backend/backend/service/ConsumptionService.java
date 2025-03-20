@@ -9,7 +9,7 @@ import backend.backend.exception.DatabaseException;
 import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +55,7 @@ public class ConsumptionService {
                 consumption.setItem_name(item.getName());
                 consumptionRepository.save(consumption);
             }
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataAccessException e) {
             throw new DatabaseException(
                     "데이터베이스 오류가 발생했습니다." + e.getMessage());
         } catch (NullPointerException e) {
