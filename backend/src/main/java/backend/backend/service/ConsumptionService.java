@@ -57,7 +57,7 @@ public class ConsumptionService {
             }
         } catch (DataAccessException e) {
             throw new DatabaseException(
-                    "데이터베이스 오류가 발생했습니다." + e.getMessage());
+                    "소비 저장 중 오류가 발생했습니다." + e.getMessage());
         } catch (NullPointerException e) {
             throw new ValidationException(
                     "아이템이 비어있습니다." + e.getMessage());

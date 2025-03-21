@@ -41,7 +41,7 @@ public class ReceiptController {
                                     "date": "2015/11/19",
                                     "totalAmount": "4500",
                                     "message": "영수증 분석이 완료되었습니다.",
-                                    "items": [{"category": "잡화", "name": "말보로레드", "amount": 4500}, {"category": "문구", "name": null, "amount": "0"}, {"category": "식품", "name": null, "amount": "0"},{"category": "음료", "name": null, "amount": "0"}]
+                                    "items": [{"category": "잡화", "name": "말보로레드", "amount": 4500}, {"category": "문구", "name": 컴퓨터용싸인펜, "amount": "500"}]
                                     }
                                     """))),
 

@@ -2,6 +2,8 @@ package backend.backend.service;
 
 import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ public class ReceiptServiceTest {
 
     @Test
     @DisplayName("실제 Open AI API호출 테스트")
-    void realOpenAiApiTest() {
+    void realOpenAiApiTest() throws JsonProcessingException {
         String email = "test@naver.com";
         String accessUrl = "receipt.jpeg";
         ReceiptAnalyzeResponse receiptAnalyzeResponse = receiptService.receiptAnalyze(email, accessUrl);
@@ -27,7 +29,7 @@ public class ReceiptServiceTest {
 
         System.out.println("Date: " + receiptAnalyzeResponse.getDate());
         System.out.println("Total Amount: " + receiptAnalyzeResponse.getTotalAmount());
-        System.out.println("Items: " + receiptAnalyzeResponse.getItems().get(0));
+        System.out.println("Items: " + new ObjectMapper().writeValueAsString(receiptAnalyzeResponse.getItems()));
         System.out.println("Id: " + receiptAnalyzeResponse.getReceiptId());
     }
 }

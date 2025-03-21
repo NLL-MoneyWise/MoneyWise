@@ -29,11 +29,11 @@ public class ConsumptionController {
 
     @Operation(summary = "소비 저장 기능", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "소비내역 저장이 완료되었습니다.",
+            @ApiResponse(responseCode = "200", description = "소비 내역 저장이 완료되었습니다.",
             content = @Content(mediaType = "apllication/json",
             schema = @Schema(implementation = ConsumptionsSaveResponse.class),
             examples = @ExampleObject("{\n" +
-                    "\"message\": \"소비내역 저장이 완료되었습니다.\",\n" +
+                    "\"message\": \"소비 내역 저장이 완료되었습니다.\",\n" +
                     "}"))),
 
             @ApiResponse(responseCode = "400", description = "아이템이 비어있습니다.",
@@ -44,12 +44,12 @@ public class ConsumptionController {
                     "\"message\": \"아이템이 비어있습니다.\"\n" +
                     "}"))),
 
-            @ApiResponse(responseCode = "500", description = "데이터베이스 오류가 발생했습니다.",
+            @ApiResponse(responseCode = "500", description = "소비 저장 중 오류가 발생했습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
             examples = @ExampleObject("{\n" +
                     "\"typeName\": \"DATABASE_ERROR\",\n" +
-                    "\"message\": \"데이터베이스 오류가 발생했습니다.\"\n" +
+                    "\"message\": \"소비 저장 중 오류가 발생했습니다.\"\n" +
                     "}")))
 
     })
@@ -58,7 +58,7 @@ public class ConsumptionController {
             ,@RequestBody ConsumptionsSaveRequest request) {
         consumptionService.save(email, request);
         ConsumptionsSaveResponse consumptionsSaveResponse = ConsumptionsSaveResponse.builder()
-                .message("소비내역 저장이 완료되었습니다.").build();
+                .message("소비 내역 저장이 완료되었습니다.").build();
         return ResponseEntity.ok(consumptionsSaveResponse);
     }
 
