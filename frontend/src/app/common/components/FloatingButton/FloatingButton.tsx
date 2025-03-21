@@ -12,11 +12,11 @@ const FloatingActionButton = () => {
     };
 
     return (
-        <div className="relative z-50">
+        <>
             <div className="absolute w-16 h-16 rounded-full right-12 bottom-12 shadow-md "></div>
 
             <div
-                className={`absolute right-12 bottom-12 bg-transparent w-16 overflow-hidden transition-all duration-300 ease-in-out rounded-full ${isOpen ? 'h-80' : 'h-16'}`}
+                className={`z-50 absolute right-12 bottom-12 bg-transparent w-16 overflow-hidden transition-all duration-300 ease-in-out rounded-full ${isOpen ? 'h-80' : 'h-16'}`}
                 onMouseEnter={() => setIsOpen(true)}
                 onMouseLeave={() => setIsOpen(false)}
             >
@@ -68,7 +68,7 @@ const FloatingActionButton = () => {
                     <Plus className="w-8 h-8 text-white" />
                 </button>
             </div>
-        </div>
+        </>
     );
 };
 
