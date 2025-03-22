@@ -28,4 +28,8 @@ public class Consumption {
     private Long amount;
     @Column
     private LocalDate consumption_date;
+    @Column
+    private String storeName;
+    @Column
+    private Long quantity;
 }

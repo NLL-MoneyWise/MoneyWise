@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,8 @@ public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
 
     public void save(String email, ConsumptionsSaveRequest request) {
+        Map<String, Long> categoryMap = getCategoryMap();
+
         try {
             //request의 date는 String이므로 localDate로 변환 필요
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -35,24 +39,16 @@ public class ConsumptionService {
                     .consumption_date(localDate)
                     .receipt_id(request.getReceiptId())
                     .email(email)
+                    .storeName(request.getStoreName())
                     .build();
 
             for (ConsumptionItem item : request.getItems()) {
-                Long categoryId;
-                //Request는 카테고리를 String 으로 주지만 Consumption은 Id로 입력해야함
-                if (item.getCategory().equals("문구")) {
-                    categoryId = 1L;
-                } else if (item.getCategory().equals("식품")) {
-                    categoryId = 2L;
-                } else if (item.getCategory().equals("음료")) {
-                    categoryId = 3L;
-                } else {
-                    categoryId = 4L;
-                }
+                Long categoryId = categoryMap.get(item.getCategory());
 
                 consumption.setAmount(item.getAmount());
                 consumption.setCategory_id(categoryId);
                 consumption.setItem_name(item.getName());
+                consumption.setQuantity(item.getQuantity());
                 consumptionRepository.save(consumption);
             }
         } catch (DataAccessException e) {
@@ -62,6 +58,25 @@ public class ConsumptionService {
             throw new ValidationException(
                     "아이템이 비어있습니다." + e.getMessage());
         }
+    }
+
+    private static Map<String, Long> getCategoryMap() {
+        Map<String, Long> categoryMap = new HashMap<>();
+        categoryMap.put("문구", 1L);
+        categoryMap.put("식품", 2L);
+        categoryMap.put("음료", 3L);
+        categoryMap.put("기타", 4L);
+        categoryMap.put("생활용품", 5L);
+        categoryMap.put("패션/의류", 6L);
+        categoryMap.put("건강/의약품", 7L);
+        categoryMap.put("미용/화장품", 8L);
+        categoryMap.put("전자기기", 9L);
+        categoryMap.put("교통/주유", 10L);
+        categoryMap.put("서비스", 11L);
+        categoryMap.put("취미/여가", 12L);
+        categoryMap.put("반려동물", 13L);
+        categoryMap.put("유아/아동", 14L);
+        return categoryMap;
     }
 
     public Long getTotalAmountByEmail(String email) {
