@@ -40,7 +40,7 @@ public class FacadeService {
             response.setByCategory(consumptionService.getTotalAmountByEmailAndCategoryAndYear(email, request.getYear()));
             response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemNameAndYear(email, request.getYear()));
             response.setTotalAmount(consumptionService.getTotalAmountByEmailAndYear(email, request.getYear()));
-            response.setMessage(request.getYear() + "년도의 소비 내역 분석이 완료되었습니다.");
+            response.setMessage(request.getYear() + "년의 소비 내역 분석이 완료되었습니다.");
 
         } else {
 

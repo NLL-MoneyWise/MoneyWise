@@ -1,12 +1,12 @@
 package backend.backend.dto.auth.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class KakaoSignupRequest implements BaseSignupRequest{
     private String kakaoId;
     private String email;

@@ -99,7 +99,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         if (maxAmountList.isEmpty()) {
             return Collections.emptyList(); // 또는 Collections.emptyList();
         }
-      
+
         List<TopExpense> result = queryFactory
                 .select(Projections.constructor(TopExpense.class,
                         consumption.item_name, totalAmount))

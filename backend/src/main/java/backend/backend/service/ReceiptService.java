@@ -91,12 +91,12 @@ public class ReceiptService {
 
             List<OpenAiResponse.Choice> choices = openAiResponse.getChoices();
             if (choices == null || choices.isEmpty()) {
-                throw new BadGateWayException("OpenAI 응답에 선택 항목이 없습니다");
+                throw new BadGateWayException("OpenAI 응답에 선택 항목이 없습니다.");
             }
 
             String jsonContent = openAiResponse.getChoices().get(0).getMessage().getContent();
             if (jsonContent == null || jsonContent.isEmpty()) {
-                throw new BadGateWayException("OpenAI 응답 메시지가 비어있습니다");
+                throw new BadGateWayException("OpenAI 응답 메시지가 비어있습니다.");
             }
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);

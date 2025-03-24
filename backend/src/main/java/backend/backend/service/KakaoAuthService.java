@@ -41,7 +41,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
     @Override
     public String login(KakaoLoginRequest request) {
         KakaoTokenApiResponse kakaoTokenApiResponse = getKakaoTokenResponse(request.getCode());
-        KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccessToken());
+        KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccess_token());
         Long kakaoUserId = kakaoUserInfoApiResponse.getId();
         if (kakaoUserId == null) {
             throw new AuthException("카카오 사용자 id가 비어있습니다.");
@@ -84,7 +84,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException | JpaSystemException e) {
-            throw new DatabaseException("유저 정보 저장 중 오류가 발생했습니다.");
+            throw new DatabaseException("사용자 정보 저장 중 오류가 발생했습니다.");
         }
     }
 
@@ -139,7 +139,7 @@ public class KakaoAuthService implements AuthService<KakaoLoginRequest, KakaoSig
 
             ResponseEntity<KakaoUserInfoApiResponse> response = restTemplate.exchange(
                     infoUrl,
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     requestEntity,
                     new ParameterizedTypeReference<KakaoUserInfoApiResponse>() {
                     }
