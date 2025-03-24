@@ -6,6 +6,7 @@ import backend.backend.dto.receipt.response.OpenAiResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.BadGateWayException;
 import backend.backend.exception.DatabaseException;
+import backend.backend.exception.ValidationException;
 import backend.backend.repository.ReceiptRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,29 +32,78 @@ public class ReceiptService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final ReceiptRepository receiptRepository;
+    private static final String question = """
+            -카테고리 목록
+            식품 - 과일, 채소, 육류, 생선, 냉동식품, 간편식, 빵, 과자, 간식 등
+            음료 - 생수, 탄산음료, 주스, 커피, 차, 우유, 알코올 음료 등
+            문구 - 펜, 노트, 종이, 사무용품, 필기구, 스티커, 테이프 등
+            기타 - 담배, 기념품, 기타 분류되지 않는 상품 등
+            생활용품 - 세제, 화장지, 욕실용품, 청소용품 등
+            패션/의류 - 옷, 신발, 액세서리, 가방 등
+            건강/의약품 - 약, 영양제, 의료용품 등
+            미용/화장품 - 스킨케어, 메이크업, 향수 등
+            전자기기 - 충전기, 이어폰, 소형가전 등
+            교통/주유 - 대중교통비, 주유비, 주차비 등
+            서비스/기타 - 세탁, 수선, 서비스 요금 등
+            취미/여가 - 책, 영화, 게임, 취미용품 등
+            반려동물 - 사료, 간식, 용품 등
+            유아/아동 - 장난감, 유아용품, 아동복 등
+                        
+            위 카테고리 목록과 영수증 사진을 보고 다음 형식의 json으로 응답해 주세요
+            담배는 반드시 기타 카테고리로 분류해주세요
+            모든 상품명과 가게 이름은 띄어쓰기를 하지 말아주세요
+                        
+            1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성
+            2. storeName: 영수증에 나와있는 가게 이름을 작성
+            3. items: 상품 목록 배열
+            - category: 위 카테고리 목록 참조
+            - name: 상품명
+            - amount: 상품 금액(숫자만)
+            - quantity: 상품 수량(숫자만)
+            4. totalAmount: 총 구매액(숫자만)
+            5. error: 가게 이름과 상품이 모두 없을 경우 true로 설정 이외에는 false
+            
+            응답 예시:
+            -상품과 가게이름이 모두 나와있는 경우
+            {
+            "error": false,
+            "date": "2024/01/30",
+            "storeName": "GS25 광화문점",
+            "items": [
+                          {"category": "음료", "name": "파워에이드", "amount": 1500, "quantity": 1}
+                       ],
+            "totalAmount": 1500
+            }
+                        
+            -상품이 나와있지 않을 경우
+            {
+            "error": false,
+            "date": "2024/01/30",
+            "storeName": "GS25 광화문점",
+            "totalAmount": 1500
+            }
+                        
+            -가게 이름은 없고 상품만 나와있는 경우
+            {
+            "error": false,
+            "date": "2024/01/30",
+            "items": [
+                          {"category": "음료", "name": "파워에이드", "amount": 1500, "quantity": 1}
+                       ],
+            "totalAmount": 1500
+            }
+                        
+            -가게 이름과 상품이 모두 없는 경우
+            {
+              "error": true
+            }
+            """;
 
     @Value("${openai.api.key}")
     private String apiKey;
 
     public ReceiptAnalyzeResponse receiptAnalyze(String email, String accessUrl) {
         String presignedUrl = s3Service.generateGetSignedUrlWithCloudFront(accessUrl);
-
-        String question = "영수증 사진의 상품들을 보고 다음 형식의 JSON으로 응답해주세요:" +
-                "1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성" +
-                "2. items: 상품 목록 배열" +
-                "   - category: 다음 중 하나로만 분류 (문구, 식품, 음료, 잡화) 헷갈릴 경우나 담배는 잡화로 분류" +
-                "   - name: 상품명" +
-                "   - amount: 상품 금액(숫자만)" +
-                "3. totalAmount: 총 구매액(숫자만)" +
-                "\n" +
-                "응답 예시:" +
-                "{\n" +
-                "  \"date\": \"2024/01/30\",\n" +
-                "  \"items\": [\n" +
-                "    {\"category\": \"음료\", \"name\": \"콜라\", \"amount\": 1500}\n" +
-                "  ],\n" +
-                "  \"totalAmount\": 1500\n" +
-                "}";
 
         OpenAiRequest.TextContent textContent = new OpenAiRequest.TextContent("text", question);
 
@@ -100,6 +150,11 @@ public class ReceiptService {
             }
 
             receiptAnalyzeResponse = objectMapper.readValue(jsonContent, ReceiptAnalyzeResponse.class);
+
+            if (receiptAnalyzeResponse.isError()) {
+                throw new ValidationException("잘못된 영수증 이미지 입니다.");
+            }
+
         } catch (JsonProcessingException e) {
             throw new BadGateWayException("Open Ai Response Json파싱 실패");
         } catch (RestClientException e) {

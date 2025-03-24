@@ -14,6 +14,7 @@ import java.util.List;
 public class ConsumptionsSaveRequest {
     private Long receiptId;
     private String date;
+    private String storeName;
     private List<ConsumptionItem> items;
 
     public static ConsumptionsSaveRequest fromReceiptAnalyzeResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse) {
@@ -29,6 +30,7 @@ public class ConsumptionsSaveRequest {
                 .receiptId(receiptAnalyzeResponse.getReceiptId())
                 .date(receiptAnalyzeResponse.getDate())
                 .items(consumptionItems)
+                .storeName(receiptAnalyzeResponse.getStoreName())
                 .build();
     }
 }

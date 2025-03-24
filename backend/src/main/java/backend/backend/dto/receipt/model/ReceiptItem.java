@@ -13,4 +13,5 @@ public class ReceiptItem {
     private String category;
     private String name;
     private Long amount;
+    private Long quantity;
 }
