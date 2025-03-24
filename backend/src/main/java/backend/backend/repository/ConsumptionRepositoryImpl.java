@@ -1,6 +1,7 @@
 package backend.backend.repository;
 
 import backend.backend.dto.consumption.model.ByCategory;
+import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.response.ConsumptionsSummaryResponse;
 import com.querydsl.core.types.Projections;
@@ -42,8 +43,13 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         return month != null ? consumption.consumption_date.month().eq(Math.toIntExact(month)) : null;
     }
 
+    //Math.toIntExact는 Long타입만 Integer로 변환해줌
+    private BooleanExpression dayEq(Long day) {
+        return day != null ? consumption.consumption_date.dayOfMonth().eq(Math.toIntExact(day)) : null;
+    }
+
     @Override
-        public List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month) {
+        public List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month, Long day) {
         System.out.println("Email parameter: " + email);
         NumberExpression<Long> totalAmount = consumption.amount.sum();
 
@@ -53,7 +59,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                         totalAmount.as("amount")))
                 .from(consumption)
                 .join(category).on(consumption.category_id.eq(category.id))
-                .where(emailEq(email), yearEq(year), monthEq(month))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
                 .groupBy(category.name)
                 .orderBy(totalAmount.desc())
                 .fetch();
@@ -63,7 +69,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
     }
 
     @Override
-    public List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month) {
+    public List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month, Long day) {
         System.out.println("Email parameter: " + email);
 
         NumberExpression<Long> totalAmount = consumption.amount.sum();
@@ -91,7 +97,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         List<Long> maxAmountList = queryFactory
                 .select(totalAmount)
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
                 .groupBy(consumption.item_name)
                 .orderBy(totalAmount.desc())
                 .fetch();
@@ -104,7 +110,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                 .select(Projections.constructor(TopExpense.class,
                         consumption.item_name, totalAmount))
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
                 .groupBy(consumption.item_name)
                 .having(totalAmount.eq(maxAmountList.get(0)))
                 .fetch();
@@ -115,15 +121,28 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
     }
 
     @Override
-    public Optional<Long> sumAmountByEmailAndYearAndMonthToQuerydsl(String email, Long year, Long month) {
+    public Optional<Long> sumAmountByEmail(String email, Long year, Long month, Long day) {
         NumberExpression<Long> totalAmount = consumption.amount.sum();
 
         //ofNullable메서드로 null값을 허용하고 서비스단에서 처리
         Optional<Long> result = Optional.ofNullable(queryFactory
                 .select(totalAmount)
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
                 .fetchOne());
+
+        return result;
+    }
+
+    @Override
+    public List<StoreExpense> findStoreExpenseByStoreName(String email, Long year, Long month, Long day) {
+        List<StoreExpense> result = queryFactory
+                .select(Projections.constructor(StoreExpense.class, consumption.storeName, consumption.amount.sum()))
+                .from(consumption)
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
+                .groupBy(consumption.storeName)
+                .orderBy(consumption.amount.sum().desc())
+                .fetch();
 
         return result;
     }

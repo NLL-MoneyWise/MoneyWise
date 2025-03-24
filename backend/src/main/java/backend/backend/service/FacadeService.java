@@ -30,23 +30,23 @@ public class FacadeService {
         FacadeConsumptionsAnalyzeResponse response = new FacadeConsumptionsAnalyzeResponse();
         if (request.getPeriod().equals("all")) {
 
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email));
+            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, null, null, null));
+            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, null, null, null));
+            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, null, null, null));
             response.setMessage("전체 기간 소비 내역 분석이 완료되었습니다.");
 
         } else if (request.getPeriod().equals("year")) {
 
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategoryAndYear(email, request.getYear()));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemNameAndYear(email, request.getYear()));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmailAndYear(email, request.getYear()));
+            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, request.getYear(), null, null));
+            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, request.getYear(), null, null));
+            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, request.getYear(), null, null));
             response.setMessage(request.getYear() + "년의 소비 내역 분석이 완료되었습니다.");
 
         } else {
 
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategoryAndYearAndMonth(email, request.getYear(), request.getMonth()));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemNameAndYearAndMonth(email, request.getYear(), request.getMonth()));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmailAndYearAndMonth(email, request.getYear(), request.getMonth()));
+            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, request.getYear(), request.getMonth(), null));
+            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, request.getYear(), request.getMonth(), null));
+            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, request.getYear(), request.getMonth(), null));
             response.setMessage(request.getYear() + "년 " + request.getMonth() + "월 소비 내역 분석이 완료되었습니다.");
 
         }

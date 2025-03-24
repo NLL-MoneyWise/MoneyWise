@@ -3,6 +3,7 @@ package backend.backend.service;
 import backend.backend.domain.Consumption;
 import backend.backend.dto.consumption.model.ByCategory;
 import backend.backend.dto.consumption.model.ConsumptionItem;
+import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
@@ -79,45 +80,23 @@ public class ConsumptionService {
         return categoryMap;
     }
 
-    public Long getTotalAmountByEmail(String email) {
-        return consumptionRepository.sumAmountByEmail(email).orElse(0L);
+    public Long getTotalAmountByEmail(String email, Long year, Long month, Long day) {
+        return consumptionRepository.sumAmountByEmail(email, year, month, day).orElse(0L);
     }
 
-    public Long getTotalAmountByEmailAndYear(String email, Long year) {
-        return consumptionRepository.sumAmountByEmailAndYear(email, year).orElse(0L);
-    }
-
-    public Long getTotalAmountByEmailAndYearAndMonth(String email, Long year, Long month) {
-        return consumptionRepository.sumAmountByEmailAndYearAndMonthToQuerydsl(email, year, month).orElse(0L);
-    }
-
-    public List<ByCategory> getTotalAmountByEmailAndCategory(String email) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, null, null);
+    public List<ByCategory> getTotalAmountByEmailAndCategory(String email, Long year, Long month, Long day) {
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month, day);
         return result != null ? result : Collections.emptyList();
     }
 
-    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYear(String email, Long year) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, null);
-        return result;
-    }
-
-    public List<ByCategory> getTotalAmountByEmailAndCategoryAndYearAndMonth(String email, Long year, Long month) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month);
-        return result;
-    }
-
-    public List<TopExpense> getMaxAmountByEmailAndItemName(String email) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, null, null);
+    public List<TopExpense> getMaxAmountByEmailAndItemName(String email, Long year, Long month, Long day) {
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month, day);
         return result != null ? result : Collections.emptyList();
     }
 
-    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYear(String email, Long year) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, null);
-        return result;
-    }
-
-    public List<TopExpense> getMaxAmountByEmailAndItemNameAndYearAndMonth(String email, Long year, Long month) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month);
+    public List<StoreExpense> getStoreExpenseListByEmailAndStoreName(String email, Long year, Long month, Long day) {
+        List<StoreExpense> result = consumptionRepository.findStoreExpenseByStoreName(email, year, month, day);
+        //jpa나 querydsl은 리스트를 조회할 때 값을 찾지못하면 null이 아니라 빈 리스트를 반환함
         return result;
     }
 }

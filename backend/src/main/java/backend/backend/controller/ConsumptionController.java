@@ -77,9 +77,9 @@ public class ConsumptionController {
     @GetMapping("/summary")
     public ResponseEntity<ConsumptionsSummaryResponse> consumptionSummary(@AuthenticationPrincipal String email) {
         ConsumptionsSummaryResponse response = ConsumptionsSummaryResponse.builder()
-                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email))
-                .totalAmount(consumptionService.getTotalAmountByEmail(email))
-                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email))
+                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, null, null, null))
+                .totalAmount(consumptionService.getTotalAmountByEmail(email, null, null, null))
+                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, null, null, null))
                 .message("전체 기간 소비 내역 분석이 완료되었습니다.")
                 .build();
 
@@ -101,9 +101,9 @@ public class ConsumptionController {
     @GetMapping("/{year}")
     public ResponseEntity<ConsumptionsYearResponse> consumptionYear(@AuthenticationPrincipal String email, @PathVariable("year") Long year) {
         ConsumptionsYearResponse response = ConsumptionsYearResponse.builder()
-                .byCategory(consumptionService.getTotalAmountByEmailAndCategoryAndYear(email, year))
-                .topExpenses(consumptionService.getMaxAmountByEmailAndItemNameAndYear(email, year))
-                .totalAmount(consumptionService.getTotalAmountByEmailAndYear(email, year))
+                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, null, null))
+                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, null, null))
+                .totalAmount(consumptionService.getTotalAmountByEmail(email, year, null, null))
                 .message(year + "년도의 소비 내역 분석이 완료되었습니다.")
                 .build();
 
@@ -125,9 +125,9 @@ public class ConsumptionController {
     @GetMapping("/{year}/{month}")
     public ResponseEntity<ConsumptionsYearMonthResponse> consumptionYearMonth(@AuthenticationPrincipal String email, @PathVariable("year") Long year, @PathVariable("month") Long month) {
         ConsumptionsYearMonthResponse response = ConsumptionsYearMonthResponse.builder()
-                .byCategory(consumptionService.getTotalAmountByEmailAndCategoryAndYearAndMonth(email, year, month))
-                .topExpenses(consumptionService.getMaxAmountByEmailAndItemNameAndYearAndMonth(email, year, month))
-                .totalAmount(consumptionService.getTotalAmountByEmailAndYearAndMonth(email, year, month))
+                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, null))
+                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, null))
+                .totalAmount(consumptionService.getTotalAmountByEmail(email, year, month, null))
                 .message(year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.")
                 .build();
 
