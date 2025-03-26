@@ -3,21 +3,20 @@ package backend.backend.dto.consumption.response;
 import backend.backend.dto.consumption.model.ByCategory;
 import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConsumptionsSummaryResponse {
+public class ConsumptionsDayResponse {
     private Long totalAmount;
     private List<ByCategory> byCategory;
     private List<TopExpense> topExpenses;
+
     private List<StoreExpense> storeExpenses;
     private String message;
 }

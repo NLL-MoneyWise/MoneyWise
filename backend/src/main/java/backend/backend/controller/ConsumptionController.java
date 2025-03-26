@@ -1,10 +1,7 @@
 package backend.backend.controller;
 
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
-import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
-import backend.backend.dto.consumption.response.ConsumptionsSummaryResponse;
-import backend.backend.dto.consumption.response.ConsumptionsYearMonthResponse;
-import backend.backend.dto.consumption.response.ConsumptionsYearResponse;
+import backend.backend.dto.consumption.response.*;
 import backend.backend.exception.response.ErrorResponse;
 import backend.backend.service.ConsumptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,14 +62,17 @@ public class ConsumptionController {
     @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 기간 소비 내역 분석이 완료되었습니다.",
-                    content = @Content(mediaType = "apllication/json",
-                            schema = @Schema(implementation = ConsumptionsSummaryResponse.class),
-                            examples = @ExampleObject("{\n" +
-                                    "\"totalAmount\": \"36000\",\n" +
-                                    "\"byCategory\": [{\"name\": \"잡화\",\"amount\": \"36000\"}],\n" +
-                                    "\"topExpenses\": [{\"name\": \"말보로레드\",\"amount\": \"22500\"}],\n" +
-                                    "\"message\":\"전체 기간 소비 내역 분석이 완료되었습니다.\"\n" +
-                                    "}")))
+                content = @Content(mediaType = "apllication/json",
+                schema = @Schema(implementation = ConsumptionsSummaryResponse.class),
+                examples = @ExampleObject("""
+                {
+                "totalAmount": "300000",
+                "byCategory": [{"name": "식품", "amount": "200000"}, {"name": "기타", "amount": "45000"}, {"name": "음료", "amount": "25000"}, {"name": "생활용품", "amount": "30000"}],
+                "topExpenses": [{"name": "말보로레드", "amount": "45000"}],
+                "storeExpenses": [{"name": "GS25", "amount": "100000"}, {"name": "맥도날드", "amount": "200000"}],
+                "message": "전체 기간 소비 내역 분석이 완료되었습니다."
+                }
+                """)))
     })
     @GetMapping("/summary")
     public ResponseEntity<ConsumptionsSummaryResponse> consumptionSummary(@AuthenticationPrincipal String email) {
@@ -80,6 +80,7 @@ public class ConsumptionController {
                 .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, null, null, null))
                 .totalAmount(consumptionService.getTotalAmountByEmail(email, null, null, null))
                 .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, null, null, null))
+                .storeExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, null, null, null))
                 .message("전체 기간 소비 내역 분석이 완료되었습니다.")
                 .build();
 
@@ -89,14 +90,17 @@ public class ConsumptionController {
     @Operation(summary = "특정 년도 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{year}년의 소비 내역 분석이 완료되었습니다.",
-                    content = @Content(mediaType = "apllication/json",
-                            schema = @Schema(implementation = ConsumptionsYearResponse.class),
-                            examples = @ExampleObject("{\n" +
-                                    "\"totalAmount\": \"36000\",\n" +
-                                    "\"byCategory\": [{\"name\": \"잡화\",\"amount\": \"36000\"}],\n" +
-                                    "\"topExpenses\": [{\"name\": \"말보로레드\",\"amount\": \"22500\"}],\n" +
-                                    "\"message\":\"2015년의 소비 내역 분석이 완료되었습니다.\"\n" +
-                                    "}")))
+            content = @Content(mediaType = "apllication/json",
+            schema = @Schema(implementation = ConsumptionsYearResponse.class),
+            examples = @ExampleObject("""
+            {
+            "totalAmount": "300000",
+            "byCategory": [{"name": "식품", "amount": "200000"}, {"name": "기타", "amount": "45000"}, {"name": "음료", "amount": "25000"}, {"name": "생활용품", "amount": "30000"}],
+            "topExpenses": [{"name": "말보로레드", "amount": "45000"}],
+            "storeExpenses": [{"name": "GS25", "amount": "100000"}, {"name": "맥도날드", "amount": "200000"}],
+            "message": "2015년도의 소비 내역 분석이 완료되었습니다."
+            }
+            """)))
     })
     @GetMapping("/{year}")
     public ResponseEntity<ConsumptionsYearResponse> consumptionYear(@AuthenticationPrincipal String email, @PathVariable("year") Long year) {
@@ -104,6 +108,7 @@ public class ConsumptionController {
                 .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, null, null))
                 .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, null, null))
                 .totalAmount(consumptionService.getTotalAmountByEmail(email, year, null, null))
+                .storeExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, null, null))
                 .message(year + "년도의 소비 내역 분석이 완료되었습니다.")
                 .build();
 
@@ -113,22 +118,58 @@ public class ConsumptionController {
     @Operation(summary = "특정 년월 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{year}년 {month}월 소비 내역 분석이 완료되었습니다.",
-                    content = @Content(mediaType = "apllication/json",
-                            schema = @Schema(implementation = ConsumptionsYearMonthResponse.class),
-                            examples = @ExampleObject("{\n" +
-                                    "\"totalAmount\": \"36000\",\n" +
-                                    "\"byCategory\": [{\"name\": \"잡화\",\"amount\": \"36000\"}],\n" +
-                                    "\"topExpenses\": [{\"name\": \"말보로레드\",\"amount\": \"22500\"}],\n" +
-                                    "\"message\":\"2015년 11월 소비 내역 분석이 완료되었습니다.\"\n" +
-                                    "}")))
+            content = @Content(mediaType = "apllication/json",
+            schema = @Schema(implementation = ConsumptionsMonthResponse.class),
+            examples = @ExampleObject("""
+            {
+            "totalAmount": "50000",
+            "byCategory": [{"name": "식품", "amount": "20000"}, {"name": "기타", "amount": "18000"}, {"name": "교통/주유", "amount": "12000"}],
+            "topExpenses": [{"name": "말보로레드", "amount": "18000"}],
+            "storeExpenses": [{"name": "GS25", "amount": "30000"}, {"name": "맥도날드", "amount": "20000"}],
+            "message": "2015년 11월 소비 내역 분석이 완료되었습니다."
+            }
+            """)))
     })
     @GetMapping("/{year}/{month}")
-    public ResponseEntity<ConsumptionsYearMonthResponse> consumptionYearMonth(@AuthenticationPrincipal String email, @PathVariable("year") Long year, @PathVariable("month") Long month) {
-        ConsumptionsYearMonthResponse response = ConsumptionsYearMonthResponse.builder()
+    public ResponseEntity<ConsumptionsMonthResponse> consumptionYearMonth(@AuthenticationPrincipal String email, @PathVariable("year") Long year, @PathVariable("month") Long month) {
+        ConsumptionsMonthResponse response = ConsumptionsMonthResponse.builder()
                 .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, null))
                 .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, null))
                 .totalAmount(consumptionService.getTotalAmountByEmail(email, year, month, null))
+                .storeExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, month, null))
                 .message(year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "특정 년, 월, 일 소비 내역 분석", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{year}년 {month}월 {day}일 소비 내역 분석이 완료되었습니다.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ConsumptionsDayResponse.class),
+            examples = @ExampleObject("""
+                    {
+                    "totalAmount": "5000",
+                    "byCategory": [{"name": "식품", "amount": "500"}, {"name": "기타", "amount": "4500"}],
+                    "topExpenses": [{"name": "말보로레드", "amount": "4500"}],
+                    "storeExpenses": [{"name": "GS25", "amount": "5000"}],
+                    "message": "2015년 11월 19일 소비 내역 분석이 완료되었습니다."
+                    }
+                    """)))
+    })
+    @GetMapping("/{year}/{month}/{day}")
+    public ResponseEntity<ConsumptionsDayResponse> consumptionsYearMonthDay(
+            @AuthenticationPrincipal String email,
+            @PathVariable("year") Long year,
+            @PathVariable("month") Long month,
+            @PathVariable("day") Long day) {
+        ConsumptionsDayResponse response = ConsumptionsDayResponse.builder()
+                .byCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, day))
+                .topExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, day))
+                .totalAmount(consumptionService.getTotalAmountByEmail(email, year, month, day))
+                .storeExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, month, day))
+                .message(year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.")
                 .build();
 
         return ResponseEntity.ok(response);

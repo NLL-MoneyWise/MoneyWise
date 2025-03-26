@@ -20,7 +20,7 @@ class ConsumptionServiceTest {
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
                 .receiptId(1019L)
                 .date("2015/12/19")
-                .storeName("GS25 영등포시장역점")
+                .storeName("GS25")
                 .items(List.of(ConsumptionItem.builder().name("말보로레드").amount(4500L).category("기타").quantity(1L).build()))
                 .build();
 

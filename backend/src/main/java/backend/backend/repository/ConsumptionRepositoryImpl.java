@@ -139,7 +139,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         List<StoreExpense> result = queryFactory
                 .select(Projections.constructor(StoreExpense.class, consumption.storeName, consumption.amount.sum()))
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day), consumption.storeName.isNotNull())
                 .groupBy(consumption.storeName)
                 .orderBy(consumption.amount.sum().desc())
                 .fetch();

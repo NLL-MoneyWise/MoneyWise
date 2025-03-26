@@ -26,30 +26,13 @@ public class FacadeService {
         return FacadeReceiptProcessResponse.fromReceiptAnalyzeResponse(receiptAnalyzeResponse);
     }
 
-    public FacadeConsumptionsAnalyzeResponse consumptionsAnalyzeProcess(FacadeConsumptionsAnalyzeRequest request, String email) {
+    public FacadeConsumptionsAnalyzeResponse consumptionsAnalyzeProcess(String email, Long year, Long month, Long day) {
         FacadeConsumptionsAnalyzeResponse response = new FacadeConsumptionsAnalyzeResponse();
-        if (request.getPeriod().equals("all")) {
 
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, null, null, null));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, null, null, null));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, null, null, null));
-            response.setMessage("전체 기간 소비 내역 분석이 완료되었습니다.");
-
-        } else if (request.getPeriod().equals("year")) {
-
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, request.getYear(), null, null));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, request.getYear(), null, null));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, request.getYear(), null, null));
-            response.setMessage(request.getYear() + "년의 소비 내역 분석이 완료되었습니다.");
-
-        } else {
-
-            response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, request.getYear(), request.getMonth(), null));
-            response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, request.getYear(), request.getMonth(), null));
-            response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, request.getYear(), request.getMonth(), null));
-            response.setMessage(request.getYear() + "년 " + request.getMonth() + "월 소비 내역 분석이 완료되었습니다.");
-
-        }
+        response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, day));
+        response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, day));
+        response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, year, month, day));
+        response.setStoreExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, month, day));
 
         return response;
     }
