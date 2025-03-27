@@ -7,7 +7,7 @@ export default function CommonLayout({
         <div
             className="
             min-w-[375px] 
-            max-w-[475px] 
+            max-w-[768px] 
             w-full 
             h-screen
             min-h-screen
@@ -16,8 +16,7 @@ export default function CommonLayout({
             flex-col
             mx-auto
             box-border
-            border-x
-            border-gray-200"
+            "
         >
             {children}
         </div>

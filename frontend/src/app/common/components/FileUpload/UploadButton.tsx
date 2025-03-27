@@ -78,7 +78,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     );
 
     return (
-        <div className="w-96 h-96">
+        <div className="w-full h-96">
             <div
                 className={`
                     relative flex flex-col items-center justify-center

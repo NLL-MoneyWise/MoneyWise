@@ -1,4 +1,5 @@
 import Logo from '@/app/common/components/Logo/Logo';
+import TopBar from '@/app/common/components/TopBar/TopBar';
 
 export default function AuthLayout({
     children
@@ -7,10 +8,12 @@ export default function AuthLayout({
 }) {
     return (
         <>
-            <div className="flex justify-center mt-[40%] mb-10">
-                <Logo variant="dark" width={320} height={41.7} />
+            <TopBar />
+
+            <div className="flex flex-col w-full h-full items-center justify-center">
+                <Logo variant="dark" width={400} height={41.7} />
+                <div className="w-full space-y-4 mt-10">{children}</div>
             </div>
-            <div className="w-full space-y-4">{children}</div>
         </>
     );
 }
