@@ -125,26 +125,38 @@ public class FacadeController {
             examples = {
                     @ExampleObject(name = "period = all 일 때", value = """
                             {
-                            "totalAmount": "56500",
-                            "byCategory": [{"name": "잡화", "amount": "36000"}, {"name": "식품", "amount": "15000"}, {"name": "음료", "amount": "5500"}],
-                            "topExpenses": [{"name": "말보로레드", "amount": "22500"}],
+                            "totalAmount": "300000",
+                            "byCategory": [{"name": "식품", "amount": "200000"}, {"name": "기타", "amount": "45000"}, {"name": "음료", "amount": "25000"}, {"name": "생활용품", "amount": "30000"}],
+                            "topExpenses": [{"name": "말보로레드", "amount": "45000"}],
+                            "storeExpenses": [{"name": "GS25", "amount": "100000"}, {"name": "맥도날드", "amount": "200000"}],
                             "message": "전체 기간 소비 내역 분석이 완료되었습니다."
                             }
                             """),
                     @ExampleObject(name = "period = year 일 때", value = """
                             {
-                            "totalAmount": "21000",
-                            "byCategory": [{"name": "잡화", "amount": "18000"}, {"name": "문구", "amount": "3000"}],
-                            "topExpenses": [{"name": "말보로레드", "amount": "13500"}],
-                            "message": "2015년의 소비 내역 분석이 완료되었습니다."
+                            "totalAmount": "300000",
+                            "byCategory": [{"name": "식품", "amount": "200000"}, {"name": "기타", "amount": "45000"}, {"name": "음료", "amount": "25000"}, {"name": "생활용품", "amount": "30000"}],
+                            "topExpenses": [{"name": "말보로레드", "amount": "45000"}],
+                            "storeExpenses": [{"name": "GS25", "amount": "100000"}, {"name": "맥도날드", "amount": "200000"}],
+                            "message": "2015년도의 소비 내역 분석이 완료되었습니다."
                             }
                             """),
                     @ExampleObject(name = "period = month 일 때", value = """
                             {
-                            "totalAmount": "20000",
-                            "byCategory": [{"name": "잡화", "amount": "20000"}],
-                            "topExpenses": [{"name": "말보로레드", "amount": "9000"}],
+                            "totalAmount": "50000",
+                            "byCategory": [{"name": "식품", "amount": "20000"}, {"name": "기타", "amount": "18000"}, {"name": "교통/주유", "amount": "12000"}],
+                            "topExpenses": [{"name": "말보로레드", "amount": "18000"}],
+                            "storeExpenses": [{"name": "GS25", "amount": "30000"}, {"name": "맥도날드", "amount": "20000"}],
                             "message": "2015년 11월 소비 내역 분석이 완료되었습니다."
+                            }
+                            """),
+                    @ExampleObject(name = "period = day 일 때", value = """
+                            {
+                            "totalAmount": "5000",
+                            "byCategory": [{"name": "식품", "amount": "500"}, {"name": "기타", "amount": "4500"}],
+                            "topExpenses": [{"name": "말보로레드", "amount": "4500"}],
+                            "storeExpenses": [{"name": "GS25", "amount": "5000"}],
+                            "message": "2015년 11월 19일 소비 내역 분석이 완료되었습니다."
                             }
                             """)
                     }
@@ -166,7 +178,15 @@ public class FacadeController {
                             value = """
                             {
                             "typeName": "VALIDATION_ERROR",
-                            "message": "year과 month가 비어있습니다."
+                            "message": "year나 month가 비어있습니다."
+                            }
+                            """),
+
+                    @ExampleObject(name = "period = day이지만 year나 month나 day가 비어있을 때",
+                            value = """
+                            {
+                            "typeName": "VALIDATION_ERROR",
+                            "message": "year나 month나 day가 비어있습니다."
                             }
                             """)
             }))
@@ -176,18 +196,29 @@ public class FacadeController {
                 @AuthenticationPrincipal String email,
                 @RequestParam(name = "period") String period,
                 @RequestParam(required = false, name = "year") Long year,
-                @RequestParam(required = false, name = "month") Long month) throws BadRequestException {
+                @RequestParam(required = false, name = "month") Long month,
+                @RequestParam(required = false, name = "day") Long day) throws BadRequestException {
 
         if (period.equals("year") && year == null) {
             throw new ValidationException("year가 비어있습니다.");
         } else if (period.equals("month") && (year == null || month == null)) {
-            throw new ValidationException("year과 month가 비어있습니다.");
+            throw new ValidationException("year나 month가 비어있습니다.");
+        } else if (period.equals("day") && (year == null || month == null || day == null)) {
+            throw new ValidationException("year나 month나 day가 비어있습니다.");
         }
 
-        FacadeConsumptionsAnalyzeRequest request = FacadeConsumptionsAnalyzeRequest.builder()
-                .period(period).year(year).month(month).build();
+        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(email, year, month, day);
 
-        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(request, email);
+        if (period.equals("all")) {
+            response.setMessage("전체 기간 소비 내역 분석이 완료되었습니다.");
+        } else if (period.equals("year")) {
+            response.setMessage(year + "년도의 소비 내역 분석이 완료되었습니다.");
+        } else if (period.equals("month")) {
+            response.setMessage(year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.");
+        } else {
+            response.setMessage(year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.");
+        }
+          
         return ResponseEntity.ok(response);
     }
 }
