@@ -14,12 +14,14 @@ public class ConsumptionItem {
     private String category;
     private String name;
     private Long amount;
+    private Long quantity;
 
     public static ConsumptionItem fromReceiptItem(ReceiptItem item) {
         return ConsumptionItem.builder()
                 .category(item.getCategory())
                 .name(item.getName())
                 .amount(item.getAmount())
+                .quantity(item.getQuantity())
                 .build();
     }
 }

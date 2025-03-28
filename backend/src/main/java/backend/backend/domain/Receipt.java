@@ -18,7 +18,7 @@ public class Receipt {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RECEIPT_SEQ_GEN")
     @SequenceGenerator(name = "RECEIPT_SEQ_GEN", sequenceName = "receipt_seq", allocationSize = 1, initialValue = 1000)
     private Long id;
-    @Column(length = 100, nullable = true)
+    @Column(length = 100)
     private String email;
     @Column(nullable = true)
     private Long total_amount;

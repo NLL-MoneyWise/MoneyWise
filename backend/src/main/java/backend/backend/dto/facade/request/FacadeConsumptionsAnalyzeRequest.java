@@ -11,4 +11,5 @@ public class FacadeConsumptionsAnalyzeRequest {
     private String period;
     private Long year;
     private Long month;
+    private Long day;
 }

@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service("local")
 @RequiredArgsConstructor
-public class LocalAuthService implements AuthService<LocalLoginRequest, LocalSignupRequest>{
+public class LocalAuthService implements AuthService<LocalLoginRequest, LocalSignupRequest> {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;

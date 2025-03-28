@@ -52,33 +52,18 @@ class FacadeControllerTest {
         String nickName = "테스트닉네임";
         String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
-        FacadeConsumptionsAnalyzeRequest allRequest = FacadeConsumptionsAnalyzeRequest.builder()
-                .period("all").build();
-
         mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
                 .header("Authorization", accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(allRequest)))
+                        .param("period", "all"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
-        FacadeConsumptionsAnalyzeRequest yearRequest = FacadeConsumptionsAnalyzeRequest.builder()
-                .period("year").year(2015L).build();
-
         mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
                         .header("Authorization", accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(yearRequest)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
-
-        FacadeConsumptionsAnalyzeRequest monthRequest = FacadeConsumptionsAnalyzeRequest.builder()
-                .period("month").year(2015L).month(11L).build();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
-                        .header("Authorization", accessToken)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(monthRequest)))
+                        .param("period", "day")
+                        .param("year", "2015")
+                        .param("month", "12")
+                        .param("day", "20"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
