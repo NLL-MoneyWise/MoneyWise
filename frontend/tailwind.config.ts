@@ -29,7 +29,7 @@ export default {
                 }
             },
             animation: {
-                fadeIn: 'fadeIn 2s ease forwards',
+                fadeIn: 'fadeIn 0.5s ease forwards',
                 'toast-slide-in': 'toast-slide-in 2s ease forwards'
             },
             screens: {
