@@ -1,7 +1,6 @@
 'use client';
-
-import React, { useCallback, useEffect, useState } from 'react';
-import { Image, Check } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Check } from 'lucide-react';
 import FileUpload from '@/app/common/components/FileUpload/UploadButton';
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
@@ -37,7 +36,7 @@ const UploadPage = () => {
         setPreviewUrls(updatedUrls);
     };
 
-    const handleDeleteFile = useCallback((index: number) => {
+    const handleDeleteFile = (index: number) => {
         URL.revokeObjectURL(previewUrls[index]);
 
         const newReceipt = receipt.filter((_, i) => i !== index);
@@ -45,7 +44,7 @@ const UploadPage = () => {
 
         setReceipt(newReceipt);
         setPreviewUrls(newUrls);
-    }, []);
+    };
 
     useEffect(() => {
         return () => {
