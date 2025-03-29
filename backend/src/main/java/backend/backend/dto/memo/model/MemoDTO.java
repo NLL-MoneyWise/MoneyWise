@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class MemoDTO {
-    private Long id;
     private String email;
     private String date;
     private String content;

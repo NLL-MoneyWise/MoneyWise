@@ -1,6 +1,5 @@
 package backend.backend.dto.memo.response;
 
-import backend.backend.domain.Memo;
 import backend.backend.dto.memo.model.MemoDTO;
 import lombok.Getter;
 import lombok.Setter;

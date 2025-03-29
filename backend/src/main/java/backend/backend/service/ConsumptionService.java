@@ -32,8 +32,7 @@ public class ConsumptionService {
 
         try {
             //request의 date는 String이므로 localDate로 변환 필요
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-            LocalDate localDate = LocalDate.parse(request.getDate(), dateTimeFormatter);
+            LocalDate localDate = LocalDate.parse(request.getDate());
 
             //공통 입력 사항
             Consumption consumption = Consumption.builder()

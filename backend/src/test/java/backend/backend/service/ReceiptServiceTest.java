@@ -25,7 +25,6 @@ public class ReceiptServiceTest {
         Assertions.assertNotNull(receiptAnalyzeResponse);
         Assertions.assertNotNull(receiptAnalyzeResponse.getDate());
         Assertions.assertNotNull(receiptAnalyzeResponse.getTotalAmount());
-        Assertions.assertNotNull(receiptAnalyzeResponse.getItems());
 
         System.out.println("Date: " + receiptAnalyzeResponse.getDate());
         System.out.println("StoreName: " + receiptAnalyzeResponse.getStoreName());

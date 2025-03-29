@@ -38,6 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request,response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return  path.equals("/api/auth/login") ||
+                path.equals("/api/auth/signup") ||
+                path.equals("/api/auth/refresh") ||
+                path.equals("/api/auth/kakaoLogin") ||
+                path.equals("/api/auth/kakaoSignup") ||
+                path.startsWith("/swagger-ui/") ||
+                path.equals("/swagger-ui.html") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/webjars/");
+    }
+
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         //bearerToken이 널이거나 공백이 아닌지 확인 && 토큰이 Bearer로 시작하는지 확인

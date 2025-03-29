@@ -218,7 +218,7 @@ public class FacadeController {
         } else {
             response.setMessage(year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.");
         }
-          
+
         return ResponseEntity.ok(response);
     }
 }

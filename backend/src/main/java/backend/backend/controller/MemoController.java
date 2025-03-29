@@ -1,6 +1,5 @@
 package backend.backend.controller;
 
-import backend.backend.domain.Memo;
 import backend.backend.dto.memo.model.MemoDTO;
 import backend.backend.exception.response.ErrorResponse;
 import backend.backend.service.MemoService;
@@ -46,6 +45,26 @@ public class MemoController {
                     }
                     """))),
 
+            @ApiResponse(responseCode = "400", description = "잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = @ExampleObject("""
+                    {
+                    "typeName": "VALIDATION_ERROR",
+                    "message": "잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요."
+                    }
+                    """))),
+
+            @ApiResponse(responseCode = "409", description = "해당 날짜에 메모가 이미 존재합니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                    {
+                    "typeName": "CONFLICT_ERROR",
+                    "message": "해당 날짜에 메모가 이미 존재합니다."
+                    }
+                    """))),
+
             @ApiResponse(responseCode = "500", description = "메모 저장 중 오류가 발생했습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
@@ -60,7 +79,9 @@ public class MemoController {
     public ResponseEntity<CreateMemoResponse> createMemo(
             @AuthenticationPrincipal String email,
             @RequestBody CreateMemoRequest request) {
-        return ResponseEntity.ok(new CreateMemoResponse(memoService.createMemo(request.getContent(), email), "메모가 저장되었습니다."));
+        memoService.createMemo(email, request);
+        CreateMemoResponse response = new CreateMemoResponse("메모가 저장되었습니다.");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "메모 수정", security = {@SecurityRequirement(name = "JWT")})
@@ -97,9 +118,8 @@ public class MemoController {
     @PutMapping("/{memoId}")
     public ResponseEntity<UpdateMemoResponse> updateMemo(
             @AuthenticationPrincipal String email,
-            @PathVariable Long memoId,
             @RequestBody UpdateMemoRequest request) {
-        memoService.updateMemo(memoId, request.getContent(), email);
+        memoService.updateMemo(request, email);
         return ResponseEntity.ok(new UpdateMemoResponse("메모가 수정되었습니다."));
     }
 
