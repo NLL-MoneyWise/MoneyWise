@@ -5,6 +5,9 @@ interface LogoSizeType {
     width?: number;
     height?: number;
 }
+
+const LogoStlye = 'mx-auto';
+
 const PrimaryLogo = ({ width, height }: LogoSizeType) => {
     return (
         <Image
@@ -13,6 +16,7 @@ const PrimaryLogo = ({ width, height }: LogoSizeType) => {
             width={width}
             height={height}
             unoptimized={true}
+            className={`${LogoStlye}`}
         />
     );
 };
@@ -25,6 +29,7 @@ const DarkLogo = ({ width, height }: LogoSizeType) => {
             width={width}
             height={height}
             unoptimized={true}
+            className={`${LogoStlye}`}
         />
     );
 };
