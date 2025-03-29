@@ -49,12 +49,14 @@ public class ReceiptService {
             반려동물 - 사료, 간식, 용품 등
             유아/아동 - 장난감, 유아용품, 아동복 등
                         
-            위 카테고리 목록과 영수증 사진을 보고 다음 형식의 json으로 응답해 주세요
+            위 카테고리 목록과 영수증 사진(모바일 영수증, 종이 영수증 포함)을 보고 다음 형식의 json으로 응답해 주세요
             담배는 반드시 기타 카테고리로 분류해주세요
             모든 상품명과 가게 이름은 띄어쓰기를 하지 말아주세요
-            storeName은 브랜드 이름만 적어주세요(예시 : 맥도날드기장직영점 -> 맥도날드)
+            storeName에서 편의점 이름은 영어 대문자로 주세요
+            storeName이나 상품명에 영어가 포함되거나 영어인 경우 대문자로 적어주세요
+            storeName은 브랜드 명만 적어주세요 (예시 : 맥도날드기장직영점 -> 맥도날드)
                         
-            1. date: 구매날짜를 yyyy/MM/dd 형식으로 작성
+            1. date: 구매날짜를 yyyy-MM-dd 형식으로 작성
             2. storeName: 영수증에 나와있는 가게 이름을 작성
             3. items: 상품 목록 배열
             - category: 위 카테고리 목록 참조
@@ -68,7 +70,7 @@ public class ReceiptService {
             -상품과 가게이름이 모두 나와있는 경우
             {
             "error": false,
-            "date": "2024/01/30",
+            "date": "2024-01-30",
             "storeName": "GS25 광화문점",
             "items": [
                           {"category": "음료", "name": "파워에이드", "amount": 1500, "quantity": 1}
@@ -79,7 +81,7 @@ public class ReceiptService {
             -상품이 나와있지 않을 경우
             {
             "error": false,
-            "date": "2024/01/30",
+            "date": "2024-01-30",
             "storeName": "GS25 광화문점",
             "totalAmount": 1500
             }
@@ -87,7 +89,7 @@ public class ReceiptService {
             -가게 이름은 없고 상품만 나와있는 경우
             {
             "error": false,
-            "date": "2024/01/30",
+            "date": "2024-01-30",
             "items": [
                           {"category": "음료", "name": "파워에이드", "amount": 1500, "quantity": 1}
                        ],
@@ -162,8 +164,7 @@ public class ReceiptService {
             throw new BadGateWayException("Open AI API 호출 실패" + e.getMessage());
         }
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate(), dateTimeFormatter);
+        LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate());
 
         Receipt receipt = Receipt.builder()
                 .access_url(accessUrl)

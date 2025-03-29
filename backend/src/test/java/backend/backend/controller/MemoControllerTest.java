@@ -39,7 +39,8 @@ class MemoControllerTest {
         String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
         CreateMemoRequest createMemoRequest = new CreateMemoRequest();
-        createMemoRequest.setContent("텅장");
+        createMemoRequest.setContent("자바자바wkqkfsg");
+        createMemoRequest.setDate("2020/10/10");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/memos/save")
                 .header("Authorization", accessToken)

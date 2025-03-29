@@ -1,11 +1,12 @@
 package backend.backend.repository;
 
-import backend.backend.domain.Memo;
+import backend.backend.domain.memo.Memo;
+import backend.backend.domain.memo.primaryKey.MemoId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 // Memo 엔티티에 대한 데이터베이스 작업을 처리하는 JPA 레포지토리
-public interface MemoRepository extends JpaRepository<Memo, Long> {
-    List<Memo> findByEmail(String email);
+public interface MemoRepository extends JpaRepository<Memo, MemoId> {
+    List<Memo> findByIdEmail(String email);
 }// JpaRepository에서 기본적인 CRUD 메서드 제공
 
 // JPA
