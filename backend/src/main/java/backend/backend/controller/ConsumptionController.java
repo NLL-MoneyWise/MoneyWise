@@ -33,14 +33,6 @@ public class ConsumptionController {
                     "\"message\": \"소비 내역 저장이 완료되었습니다.\",\n" +
                     "}"))),
 
-            @ApiResponse(responseCode = "400", description = "아이템이 비어있습니다.",
-            content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorResponse.class),
-            examples = @ExampleObject("{\n" +
-                    "\"typeName\": \"VALIDATION_ERROR\",\n" +
-                    "\"message\": \"아이템이 비어있습니다.\"\n" +
-                    "}"))),
-
             @ApiResponse(responseCode = "500", description = "소비 저장 중 오류가 발생했습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
@@ -48,7 +40,6 @@ public class ConsumptionController {
                     "\"typeName\": \"DATABASE_ERROR\",\n" +
                     "\"message\": \"소비 저장 중 오류가 발생했습니다.\"\n" +
                     "}")))
-
     })
     @PostMapping("/save")
     public ResponseEntity<ConsumptionsSaveResponse> consumptionSave(@AuthenticationPrincipal String email

@@ -1,21 +1,22 @@
 package backend.backend.service;
 
 import backend.backend.domain.Consumption;
+import backend.backend.domain.Receipt;
+import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.model.ByCategory;
-import backend.backend.dto.consumption.model.ConsumptionItem;
 import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.exception.DatabaseException;
-import backend.backend.exception.ValidationException;
+import backend.backend.exception.NotFoundException;
 import backend.backend.repository.ConsumptionRepository;
+import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 @Transactional
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
+    private final ReceiptRepository receiptRepository;
 
     public void save(String email, ConsumptionsSaveRequest request) {
         Map<String, Long> categoryMap = getCategoryMap();
@@ -37,26 +39,31 @@ public class ConsumptionService {
             //공통 입력 사항
             Consumption consumption = Consumption.builder()
                     .consumption_date(localDate)
-                    .receipt_id(request.getReceiptId())
                     .email(email)
+                    .access_url(request.getAccess_url())
                     .storeName(request.getStoreName())
                     .build();
 
-            for (ConsumptionItem item : request.getItems()) {
-                Long categoryId = categoryMap.get(item.getCategory());
+            if (request.getItems() != null && !request.getItems().isEmpty()) {
+                for (Item item : request.getItems()) {
+                    Long categoryId = categoryMap.get(item.getCategory());
 
-                consumption.setAmount(item.getAmount());
-                consumption.setCategory_id(categoryId);
-                consumption.setItem_name(item.getName());
-                consumption.setQuantity(item.getQuantity());
+                    consumption.setAmount(item.getAmount());
+                    consumption.setCategory_id(categoryId);
+                    consumption.setItem_name(item.getName());
+                    consumption.setQuantity(item.getQuantity());
+                    consumptionRepository.save(consumption);
+                }
+            } else {
+                Receipt receipt = receiptRepository.findById(request.getAccess_url())
+                        .orElseThrow(() -> new NotFoundException("해당하는 영수증이 없습니다."));
+
+                consumption.setAmount(receipt.getTotal_amount());
                 consumptionRepository.save(consumption);
             }
         } catch (DataAccessException e) {
             throw new DatabaseException(
                     "소비 저장 중 오류가 발생했습니다." + e.getMessage());
-        } catch (NullPointerException e) {
-            throw new ValidationException(
-                    "아이템이 비어있습니다." + e.getMessage());
         }
     }
 

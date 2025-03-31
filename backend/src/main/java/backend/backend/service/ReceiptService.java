@@ -82,7 +82,7 @@ public class ReceiptService {
             {
             "error": false,
             "date": "2024-01-30",
-            "storeName": "GS25 광화문점",
+            "storeName": "GS25",
             "totalAmount": 1500
             }
                         
@@ -124,23 +124,10 @@ public class ReceiptService {
                         .build())
                 .build();
 
-
-        //Http헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(apiKey); //authorization: Bearer {apiKey}형식으로 인증 헤더 설정
-        headers.setContentType(MediaType.APPLICATION_JSON); //타입: Json
-
         ReceiptAnalyzeResponse receiptAnalyzeResponse;
-        try {
-        //Http요청 보내기
-            ResponseEntity<OpenAiResponse> response = restTemplate.exchange(
-                    "https://api.openai.com/v1/chat/completions", //요청 URL
-                    HttpMethod.POST, //요청 형식 메서드
-                    new HttpEntity<>(openAiRequest, headers), //요청 바디와 헤더를 포함한 엔티티
-                    OpenAiResponse.class //응답을 변환할 클래스 타입
-            );
 
-            OpenAiResponse openAiResponse = response.getBody(); //http는 헤더와 바디로 구성되어 있다.
+        try {
+            OpenAiResponse openAiResponse = openAiConnect(openAiRequest); //http는 헤더와 바디로 구성되어 있다.
 
             List<OpenAiResponse.Choice> choices = openAiResponse.getChoices();
             if (choices == null || choices.isEmpty()) {
@@ -160,8 +147,6 @@ public class ReceiptService {
 
         } catch (JsonProcessingException e) {
             throw new BadGateWayException("Open Ai Response Json파싱 실패");
-        } catch (RestClientException e) {
-            throw new BadGateWayException("Open AI API 호출 실패" + e.getMessage());
         }
 
         LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate());
@@ -172,15 +157,35 @@ public class ReceiptService {
                 .date(localDate)
                 .total_amount(receiptAnalyzeResponse.getTotalAmount())
                 .build();
-
         try {
-            receipt = receiptRepository.save(receipt);
-            receiptAnalyzeResponse.setReceiptId(receipt.getId());
+            receiptRepository.save(receipt);
         } catch (DataAccessException e) {
             throw new DatabaseException("영수증 저장 중 오류가 발생했습니다.");
         }
 
         return receiptAnalyzeResponse;
+    }
+
+    private OpenAiResponse openAiConnect(OpenAiRequest request) {
+        try {
+            //Http헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(apiKey); //authorization: Bearer {apiKey}형식으로 인증 헤더 설정
+            headers.setContentType(MediaType.APPLICATION_JSON); //타입: Json
+
+            //Http요청 보내기
+            ResponseEntity<OpenAiResponse> response = restTemplate.exchange(
+                    "https://api.openai.com/v1/chat/completions", //요청 URL
+                    HttpMethod.POST, //요청 형식 메서드
+                    new HttpEntity<>(request, headers), //요청 바디와 헤더를 포함한 엔티티
+                    OpenAiResponse.class //응답을 변환할 클래스 타입
+            );
+
+            return response.getBody();
+
+        } catch (RestClientException e) {
+            throw new BadGateWayException("Open AI API 호출 실패" + e.getMessage());
+        }
     }
 
     public List<ReceiptUrlInfo> getAllReceiptCloudFrontSignedUrl(String email) {

@@ -34,7 +34,7 @@ class FacadeControllerTest {
         String nickName = "테스트닉네임";
         String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
-        FacadeReceiptProcessRequest request = FacadeReceiptProcessRequest.builder().accessUrl("receipt.jpeg").build();
+        FacadeReceiptProcessRequest request = FacadeReceiptProcessRequest.builder().accessUrl("receipt_mobile.jpg").build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/workflows/receipt-process")
                         .header("Authorization", accessToken)

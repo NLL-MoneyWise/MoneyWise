@@ -1,6 +1,6 @@
 package backend.backend.service;
 
-import backend.backend.dto.consumption.model.ConsumptionItem;
+import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +18,10 @@ class ConsumptionServiceTest {
     @DisplayName("ConsumptionService성공")
     void ConsumptionSaveSuccess() {
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
-                .receiptId(1019L)
-                .date("2015/12/19")
+                .access_url("receipt.jpeg")
+                .date("2015-12-19")
                 .storeName("GS25")
-                .items(List.of(ConsumptionItem.builder().name("말보로레드").amount(4500L).category("기타").quantity(1L).build()))
+                .items(List.of(Item.builder().name("말보로레드").amount(4500L).category("기타").quantity(1L).build()))
                 .build();
 
         Assertions.assertThatCode(() -> {

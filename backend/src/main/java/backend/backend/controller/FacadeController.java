@@ -47,18 +47,12 @@ public class FacadeController {
             @ApiResponse(responseCode = "400", description = "아이템이 비어있습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
-            examples = {
-                    @ExampleObject(name = "소비 저장 시 item이 없을 경우", value = "{\n" +
-                            "\"typeName\": \"VALIDATION_ERROR\",\n" +
-                            "\"message\": \"아이템이 비어있습니다.\"\n" +
-                            "}"),
-                    @ExampleObject(name = "영수증에 가게 이름과 상품 목록이 모두 없을 경우", value = """
+            examples = @ExampleObject(name = "영수증에 가게 이름과 상품 목록이 모두 없을 경우", value = """
                             {
                             "typeName": "VALIDATION_ERROR",
                             "message": "잘못된 영수증 이미지 입니다."
                             }
-                            """)
-            })),
+                            """))),
 
             @ApiResponse(responseCode = "500", description = "저장 관련 데이터베이스 오류 2가지",
             content = @Content(mediaType = "application/json",
