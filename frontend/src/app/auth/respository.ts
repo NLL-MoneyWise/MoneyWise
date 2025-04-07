@@ -14,6 +14,7 @@ export class AuthRepositoryimpl implements AuthRepository {
     constructor() {
         this.api = defaultApi();
     }
+
     async login(credentials: LoginRequest): Promise<LoginResponse> {
         const { data } = await this.api.post('/auth/login', credentials);
         return data;

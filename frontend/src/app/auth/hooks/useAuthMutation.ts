@@ -20,6 +20,7 @@ const useAuthMutation = () => {
                 response;
             // 토큰 저장
             await saveToekn(accessToken, refreshToken);
+
             // 유저 정보 로컬 저장
             setUser({ email, nickName });
 
