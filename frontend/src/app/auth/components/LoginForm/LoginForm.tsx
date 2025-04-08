@@ -5,6 +5,7 @@ import InputField from '@/app/common/components/Input/InputField';
 import useAuthMutation from '../../hooks/useAuthMutation';
 import Link from 'next/link';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
+import Text from '@/app/common/components/Text/Text';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -62,7 +63,10 @@ const LoginForm = () => {
                 variant="kakao"
                 type="button"
                 className="h-12 w-full text-xl"
-                onClick={() => alert('카카오 로그인')}
+                onClick={() => {
+                    const kakaoUrl = process.env.NEXT_PUBLIC_KAKAO_URL!;
+                    window.location.href = kakaoUrl;
+                }}
             >
                 카카오 로그인
             </Button>
@@ -70,9 +74,9 @@ const LoginForm = () => {
             <div className="mt-4" />
             <Link
                 href={'/join'}
-                className="flex justify-center items-center text-xl text-gray-500 "
+                className="flex justify-center items-center  text-gray-500 "
             >
-                {'회원 가입'}
+                <Text>{'회원 가입'}</Text>
             </Link>
         </form>
     );

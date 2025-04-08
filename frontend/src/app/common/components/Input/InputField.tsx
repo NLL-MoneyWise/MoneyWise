@@ -27,7 +27,7 @@ const InputField = forwardRef<
     InputFieldProps
 >(({ element = 'input', label, type, placeholder, ...rest }, ref) => {
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 font-medium">
             {label && (
                 <label
                     htmlFor={type}

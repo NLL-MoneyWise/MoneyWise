@@ -36,7 +36,7 @@ const Button = ({
     return (
         <button
             className={clsx(
-                'flex justify-center items-center py-2 rounded-xl cursor-pointer text-md',
+                'flex justify-center items-center py-2 rounded-xl cursor-pointer font-medium',
                 {
                     'bg-primary/80 text-white hover:bg-primary':
                         variant === 'primary',
@@ -52,7 +52,7 @@ const Button = ({
         >
             {variant === 'kakao' && <KakaoIcon />}
             {variant === 'kakao' && typeof children === 'string' ? (
-                <span className="font-medium">{children}</span>
+                <span>{children}</span>
             ) : (
                 children
             )}

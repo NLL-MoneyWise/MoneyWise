@@ -6,6 +6,7 @@ import FloatingActionButton from '@/app/common/components/FloatingButton/Floatin
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import PreviewImg from '@/app/upload/components/PreviewImg/PreviewImg';
 import Button from '@/app/common/components/Button/Button';
+import Text from '@/app/common/components/Text/Text';
 
 const UploadPage = () => {
     const [receipt, setReceipt] = useState<File[]>([]);
@@ -55,16 +56,14 @@ const UploadPage = () => {
     return (
         <>
             <div className="bg-white w-[800px] rounded-lg shadow-lg p-8 mx-auto my-10 border border-gray-100 overflow">
-                <h1 className="text-2xl text-gray-700 font-bold mb-6 text-center">
+                <Text.Title className="flex justify-center mb-4">
                     파일 업로드
-                </h1>
+                </Text.Title>
 
-                <div className="mb-4 ">
-                    <p className="text-sm text-gray-500 mb-4 ">
-                        필요한 영수증 파일을 업로드해주세요. 이미지 파일만
-                        가능합니다.
-                    </p>
-                </div>
+                <Text.SmallText className="mb-4 text-gray-500">
+                    필요한 영수증 파일을 업로드해주세요. 이미지 파일만
+                    가능합니다.
+                </Text.SmallText>
 
                 <FileUpload
                     onFileUpload={handleReciptUpload}
@@ -75,10 +74,10 @@ const UploadPage = () => {
 
                 <div className="mt-4">
                     <Button
-                        className=" text-white py-2 px-4 rounded-md transition-colors duration-200 flex items-center"
+                        className=" text-white py-2 px-4 rounded-md transition-colors duration-200 flex items-center text"
                         disabled={previewUrls.length === 0}
                     >
-                        <Check className="w-4 h-4 mr-2" />
+                        <Check className="w-6 h-6 mr-2" />
                         업로드 완료
                     </Button>
                 </div>
