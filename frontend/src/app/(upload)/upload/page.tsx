@@ -72,15 +72,13 @@ const UploadPage = () => {
                     multiple={true}
                 />
 
-                <div className="mt-4">
-                    <Button
-                        className=" text-white py-2 px-4 rounded-md transition-colors duration-200 flex items-center text"
-                        disabled={previewUrls.length === 0}
-                    >
-                        <Check className="w-6 h-6 mr-2" />
-                        업로드 완료
-                    </Button>
-                </div>
+                <Button
+                    className=" text-white py-2 px-4 rounded-md transition-colors duration-200 flex items-center text mt-4"
+                    disabled={previewUrls.length === 0}
+                >
+                    <Check className="w-6 h-6 mr-2" />
+                    업로드 완료
+                </Button>
 
                 <PreviewImg
                     previewUrls={previewUrls}

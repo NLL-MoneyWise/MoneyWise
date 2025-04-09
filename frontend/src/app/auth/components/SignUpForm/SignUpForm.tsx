@@ -92,7 +92,7 @@ const SignUpForm = () => {
                 ))}
             </div>
 
-            <Button type="submit" className="h-12 w-full text-xl">
+            <Button type="submit" className="h-12 w-full ">
                 회원가입
             </Button>
         </form>
