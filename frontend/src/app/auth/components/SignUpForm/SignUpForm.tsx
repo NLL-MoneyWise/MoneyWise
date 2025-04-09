@@ -43,9 +43,14 @@ const SignUpForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { ...requestUserData } = userData;
+        const { email, name, nickname, password } = userData;
         if (isValid) {
-            signUpMutation.mutate(requestUserData);
+            signUpMutation.mutate({
+                email,
+                password,
+                name,
+                nickname
+            });
         }
     };
 
@@ -87,7 +92,7 @@ const SignUpForm = () => {
                 ))}
             </div>
 
-            <Button type="submit" className="h-12 w-full text-xl">
+            <Button type="submit" className="h-12 w-full ">
                 회원가입
             </Button>
         </form>

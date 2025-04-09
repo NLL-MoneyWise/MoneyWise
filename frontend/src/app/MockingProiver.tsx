@@ -13,8 +13,10 @@ function MSWProvider() {
                 return;
             }
             const { worker } = await import('../mocks/browser');
-            await worker.start();
-            console.log('worker started');
+
+            if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+                await worker.start();
+            }
         }
         setupWokrer();
     }, []);

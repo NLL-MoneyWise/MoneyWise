@@ -16,7 +16,7 @@ export const handleCustomError = (error: unknown, addToast: ToastFunction) => {
             addToast(`API 오류: ${error.message}`, 'error');
             break;
         case ErrorType.AUTH:
-            addToast('인증이 필요합니다', 'error');
+            addToast('인증이 필요합니다.', 'error');
             break;
         case ErrorType.VALIDATION:
             addToast(`${error.message}`, 'error');
@@ -26,6 +26,15 @@ export const handleCustomError = (error: unknown, addToast: ToastFunction) => {
             break;
         case ErrorType.RENDER:
             addToast('화면 표시 중 오류가 발생했습니다', 'error');
+            break;
+        case ErrorType.RENDER:
+            addToast('화면 표시 중 오류가 발생했습니다', 'error');
+            break;
+        case ErrorType.CONFLICT:
+            addToast('이미 가입된 이메일 입니다.', 'error');
+            break;
+        case ErrorType.DATABASE:
+            addToast('저장 중 오류가 발생했습니다.', 'error');
             break;
         default:
             addToast('알 수 없는 오류가 발생했습니다', 'error');
