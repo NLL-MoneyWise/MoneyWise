@@ -1,19 +1,25 @@
-import React from 'react';
+'use client';
+
+import React, { ReactNode } from 'react';
 import Button from '../Button/Button';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface LinkProps {
     address: string;
-    addressName: string;
+    children: ReactNode;
 }
 
-const Link = ({ address, addressName }: LinkProps) => {
+const Link = ({ address, children }: LinkProps) => {
     const router = useRouter();
     const handleClick = () => {
         router.push(address);
     };
 
-    return <Button onClick={handleClick}>{addressName}</Button>;
+    return (
+        <Button onClick={handleClick} className="w-full">
+            {children}
+        </Button>
+    );
 };
 
 export default Link;
