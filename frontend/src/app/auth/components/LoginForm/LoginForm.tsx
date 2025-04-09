@@ -34,6 +34,16 @@ const LoginForm = () => {
         loginMutation.mutate(loginData);
     };
 
+    const handleKakaoLoginClick = () => {
+        const kakaoUrl = process.env.NEXT_PUBLIC_KAKAO_URL;
+
+        if (!kakaoUrl) {
+            addToast('현재 카카오톡 로그인은 사용할 수 없습니다.', 'error');
+            return;
+        }
+        window.location.href = kakaoUrl;
+    };
+
     return (
         <form className="w-[75%] m-auto" onSubmit={handleSubmit}>
             <InputField
@@ -63,10 +73,7 @@ const LoginForm = () => {
                 variant="kakao"
                 type="button"
                 className="h-12 w-full text-xl"
-                onClick={() => {
-                    const kakaoUrl = process.env.NEXT_PUBLIC_KAKAO_URL!;
-                    window.location.href = kakaoUrl;
-                }}
+                onClick={handleKakaoLoginClick}
             >
                 카카오 로그인
             </Button>
