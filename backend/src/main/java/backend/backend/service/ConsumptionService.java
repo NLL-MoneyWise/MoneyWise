@@ -44,6 +44,9 @@ public class ConsumptionService {
                     .storeName(request.getStoreName())
                     .build();
 
+            Receipt receipt = receiptRepository.findById(request.getAccess_url())
+                    .orElseThrow(() -> new NotFoundException("해당하는 영수증이 없습니다."));
+
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 for (Item item : request.getItems()) {
                     Long categoryId = categoryMap.get(item.getCategory());
@@ -55,9 +58,6 @@ public class ConsumptionService {
                     consumptionRepository.save(consumption);
                 }
             } else {
-                Receipt receipt = receiptRepository.findById(request.getAccess_url())
-                        .orElseThrow(() -> new NotFoundException("해당하는 영수증이 없습니다."));
-
                 consumption.setAmount(receipt.getTotal_amount());
                 consumptionRepository.save(consumption);
             }

@@ -33,6 +33,16 @@ public class ConsumptionController {
                     "\"message\": \"소비 내역 저장이 완료되었습니다.\",\n" +
                     "}"))),
 
+            @ApiResponse(responseCode = "404", description = "해당하는 영수증이 없습니다.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = @ExampleObject("""
+                    {
+                    "typeName": "NOT_FOUND_ERROR",
+                    "message": "해당하는 영수증이 없습니다."
+                    }
+                    """))),
+
             @ApiResponse(responseCode = "500", description = "소비 저장 중 오류가 발생했습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
