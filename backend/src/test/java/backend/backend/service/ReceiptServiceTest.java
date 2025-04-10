@@ -30,6 +30,5 @@ public class ReceiptServiceTest {
         System.out.println("StoreName: " + receiptAnalyzeResponse.getStoreName());
         System.out.println("Total Amount: " + receiptAnalyzeResponse.getTotalAmount());
         System.out.println("Items: " + new ObjectMapper().writeValueAsString(receiptAnalyzeResponse.getItems()));
-        System.out.println("Id: " + receiptAnalyzeResponse.getReceiptId());
     }
 }

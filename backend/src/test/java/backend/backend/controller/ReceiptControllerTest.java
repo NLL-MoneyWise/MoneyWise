@@ -43,7 +43,7 @@ class ReceiptControllerTest {
         String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
         ReceiptAnalyzeRequest request = ReceiptAnalyzeRequest.builder().accessUrl(accessUrl).build();
-        ReceiptAnalyzeResponse mockResponse = ReceiptAnalyzeResponse.builder().receiptId(1010L).build();
+        ReceiptAnalyzeResponse mockResponse = ReceiptAnalyzeResponse.builder().build();
         when(receiptService.receiptAnalyze(ArgumentMatchers.any(String.class), ArgumentMatchers.any(String.class))).thenReturn(mockResponse);
 //ArgumentMatchers.eq(email) : receiptService.receiptAnalyze를 컨트롤러에서 호출 할 때 email의 값을 확인함 객체가 동등한지는 확인안함
 //Json 파싱에는 기본생성자 및 setter가 필요하다.

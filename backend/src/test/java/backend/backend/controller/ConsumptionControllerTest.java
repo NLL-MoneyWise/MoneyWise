@@ -1,6 +1,6 @@
 package backend.backend.controller;
 
-import backend.backend.dto.consumption.model.ConsumptionItem;
+import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.ConsumptionService;
@@ -38,9 +38,9 @@ class ConsumptionControllerTest {
         String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
 
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
-                .receiptId(1019L)
-                .date("2015/11/19")
-                .items(List.of(ConsumptionItem.builder().name("말보로레드").amount(4500L).category("잡화").build()))
+                .access_url("receipt.jpeg")
+                .date("2015-11-19")
+                .items(List.of(Item.builder().name("말보로레드").amount(4500L).category("잡화").build()))
                 .build();
 
         Mockito.doNothing().when(consumptionService).save(email, request);//void반한타입 모킹법

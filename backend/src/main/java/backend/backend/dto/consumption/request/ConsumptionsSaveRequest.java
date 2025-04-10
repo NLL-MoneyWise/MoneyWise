@@ -1,35 +1,25 @@
 package backend.backend.dto.consumption.request;
 
-import backend.backend.dto.consumption.model.ConsumptionItem;
-import backend.backend.dto.receipt.model.ReceiptItem;
+import backend.backend.dto.common.model.Item;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import lombok.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class ConsumptionsSaveRequest {
-    private Long receiptId;
+    private String access_url;
     private String date;
     private String storeName;
-    private List<ConsumptionItem> items;
+    private List<Item> items;
 
     public static ConsumptionsSaveRequest fromReceiptAnalyzeResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse) {
-        // Item 객체 변환
-        List<ConsumptionItem> consumptionItems = new ArrayList<>();
-
-        for(ReceiptItem item : receiptAnalyzeResponse.getItems()) {
-            ConsumptionItem consumptionItem = ConsumptionItem.fromReceiptItem(item);
-            consumptionItems.add(consumptionItem);
-        }
-
         return ConsumptionsSaveRequest.builder()
-                .receiptId(receiptAnalyzeResponse.getReceiptId())
                 .date(receiptAnalyzeResponse.getDate())
-                .items(consumptionItems)
+                .items(receiptAnalyzeResponse.getItems())
                 .storeName(receiptAnalyzeResponse.getStoreName())
                 .build();
     }

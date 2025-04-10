@@ -1,15 +1,15 @@
-package backend.backend.dto.receipt.model;
+package backend.backend.dto.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptItem {
+@Getter
+public class Item {
     private String category;
     private String name;
     private Long amount;

@@ -19,7 +19,7 @@ public class Consumption {
     @Column
     private String email;
     @Column
-    private Long receipt_id;
+    private String access_url;
     @Column
     private Long category_id;
     @Column
