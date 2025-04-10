@@ -1,6 +1,5 @@
 package backend.backend.controller;
 
-import backend.backend.dto.facade.request.FacadeConsumptionsAnalyzeRequest;
 import backend.backend.dto.facade.request.FacadeReceiptProcessRequest;
 import backend.backend.dto.facade.response.FacadeConsumptionsAnalyzeResponse;
 import backend.backend.dto.facade.response.FacadeReceiptProcessResponse;

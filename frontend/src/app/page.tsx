@@ -6,7 +6,7 @@ import Header from './common/components/Header/Header';
 
 export default function Home() {
     return (
-        <div className="overflow-auto no-scrollbar">
+        <div className="overflow-auto no-scrollbar ">
             <Header />
             <IntroduceArticle />
             <InstructionArticle />
