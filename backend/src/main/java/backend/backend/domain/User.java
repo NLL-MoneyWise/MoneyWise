@@ -31,5 +31,5 @@ public class User {
     private String provider;
 
     @Column(name = "kakao_id")
-    private Long kakaoId;
+    private Long providerId;
 }

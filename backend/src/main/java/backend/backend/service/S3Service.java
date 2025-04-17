@@ -140,7 +140,7 @@ public class S3Service {
 
         //KeyFactory는 key를 다양한 형식간의 변환하는 기능을 제공한다.
         //여기서는 der바이너리 데이터를 읽어온 PKCS8객체를 privateKey로 만드는 과정을 보여준다.
-        //PKCS#8은 개인 키를 저장하기 위한 표준 형식이며, DER은 이 형식의 바이너리 인코딩이다.
+        //PKCS8은 개인 키를 저장하기 위한 표준 형식이며, DER은 이 형식의 바이너리 인코딩이다.
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(derData);
         //RSA알고리즘으로 작성된 keySpec을 변환하기 위해 RSA알고리즘을 처리하는 keyFactory를 Bouncy Castle제공자를 명시적으로 지정하여 연다.
         KeyFactory keyFactory = KeyFactory.getInstance("RSA","BC");

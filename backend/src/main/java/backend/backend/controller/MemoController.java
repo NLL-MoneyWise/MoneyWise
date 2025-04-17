@@ -24,7 +24,7 @@ import java.util.List;
 
 @Tag(name = "Memo Relevant")
 @RestController
-@RequestMapping("/api/memos")
+@RequestMapping("/memos")
 public class MemoController {
 
     private final MemoService memoService;
