@@ -1,3 +1,4 @@
+import { KakaoLoginRequest } from './types/request/request-login';
 import { defaultApi } from './../common/util/api';
 import { AxiosInstance } from 'axios';
 import { LoginRequest, SignUpRequest } from './types/request/index';
@@ -14,8 +15,14 @@ export class AuthRepositoryimpl implements AuthRepository {
     constructor() {
         this.api = defaultApi();
     }
+
     async login(credentials: LoginRequest): Promise<LoginResponse> {
-        const { data } = await this.api.post('/auth/login', credentials);
+        const { data } = await this.api.post('/auth/login/local', credentials);
+        return data;
+    }
+
+    async kakaoLogin(credentials: KakaoLoginRequest): Promise<LoginResponse> {
+        const { data } = await this.api.post('/auth/login/kakao', credentials);
         return data;
     }
 

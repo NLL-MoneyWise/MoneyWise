@@ -16,10 +16,10 @@ const useAuthMutation = () => {
     const loginMutation = useMutation({
         mutationFn: authRepository.login.bind(authRepository),
         onSuccess: async (response: LoginResponse) => {
-            const { message, accessToken, refreshToken, email, nickName } =
-                response;
+            const { message, accessToken, email, nickName } = response;
             // 토큰 저장
-            await saveToekn(accessToken, refreshToken);
+            await saveToekn(accessToken);
+
             // 유저 정보 로컬 저장
             setUser({ email, nickName });
 
@@ -40,9 +40,21 @@ const useAuthMutation = () => {
         }
     });
 
+    const kakaoLogin = useMutation({
+        mutationFn: authRepository.kakaoLogin.bind(authRepository),
+        onSuccess: (reponse: LoginResponse) => {
+            const { message } = reponse;
+            addToast(message, 'success');
+        },
+        onError: () => {
+            router.push('/login-failed');
+        }
+    });
+
     return {
         loginMutation,
-        signUpMutation
+        signUpMutation,
+        kakaoLogin
     };
 };
 

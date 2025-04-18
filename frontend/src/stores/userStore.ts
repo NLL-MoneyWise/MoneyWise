@@ -8,14 +8,18 @@ interface UserState {
     } | null;
 
     setUser: (user: UserState['user']) => void;
+    isLoggedIn: () => boolean;
     logout: () => void;
 }
 
 export const useUserStore = create<UserState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             user: null,
             setUser: (user) => set({ user }),
+            isLoggedIn: () => {
+                return get().user !== null;
+            },
             logout: () => set({ user: null })
         }),
         {

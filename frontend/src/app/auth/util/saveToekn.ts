@@ -1,4 +1,4 @@
-const saveToekn = async (accessToken: string, refreshToken: string) => {
+const saveToekn = async (accessToken: string) => {
     try {
         await fetch('/api/auth/token', {
             method: 'POST',
@@ -6,8 +6,7 @@ const saveToekn = async (accessToken: string, refreshToken: string) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                accessToken,
-                refreshToken
+                accessToken
             })
         });
     } catch (error) {
