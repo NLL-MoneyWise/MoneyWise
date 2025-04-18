@@ -41,7 +41,7 @@ const useAuthMutation = () => {
     });
 
     const kakaoLogin = useMutation({
-        mutationFn: authRepository.kakoLogin.bind(authRepository),
+        mutationFn: authRepository.kakaoLogin.bind(authRepository),
         onSuccess: (reponse: LoginResponse) => {
             const { message } = reponse;
             addToast(message, 'success');

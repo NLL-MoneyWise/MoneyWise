@@ -17,12 +17,12 @@ export class AuthRepositoryimpl implements AuthRepository {
     }
 
     async login(credentials: LoginRequest): Promise<LoginResponse> {
-        const { data } = await this.api.post('/auth/login', credentials);
+        const { data } = await this.api.post('/auth/login/local', credentials);
         return data;
     }
 
-    async kakoLogin(credentials: KakaoLoginRequest): Promise<LoginResponse> {
-        const { data } = await this.api.post('/auth/kakao-login', credentials);
+    async kakaoLogin(credentials: KakaoLoginRequest): Promise<LoginResponse> {
+        const { data } = await this.api.post('/auth/login/kakao', credentials);
         return data;
     }
 

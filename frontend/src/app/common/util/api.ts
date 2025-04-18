@@ -2,13 +2,13 @@ import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { CustomError } from '../types/error/error';
 
-const baseUrl = '';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const defaultApi = (
     option?: InternalAxiosRequestConfig
 ): AxiosInstance => {
     const instance = axios.create({
-        baseURL: baseUrl + '/api',
+        baseURL: baseUrl,
         ...option
     });
 
