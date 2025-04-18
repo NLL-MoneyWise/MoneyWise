@@ -22,17 +22,15 @@ const KakaoLoginPage = () => {
 
     return (
         <>
-            <Suspense fallback={<div>로딩 중...</div>}>
-                <Image
-                    src={'/마스코트.png'}
-                    alt="마스코트 이미지"
-                    width={320}
-                    height={320}
-                />
-                <Text.Title>로그인 중입니다.</Text.Title>
+            <Image
+                src={'/마스코트.png'}
+                alt="마스코트 이미지"
+                width={320}
+                height={320}
+            />
+            <Text.Title>로그인 중입니다.</Text.Title>
 
-                <Text.SubTitle>잠시만 기다려주세요</Text.SubTitle>
-            </Suspense>
+            <Text.SubTitle>잠시만 기다려주세요</Text.SubTitle>
         </>
     );
 };

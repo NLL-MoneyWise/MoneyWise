@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 export default function KakaoAuthLayout({
     children
 }: Readonly<{
@@ -5,7 +7,7 @@ export default function KakaoAuthLayout({
 }>) {
     return (
         <div className="absolute inset-0 flex justify-center items-center text-xl flex-col ">
-            {children}
+            <Suspense fallback={'로딩 중..'}>{children}</Suspense>
         </div>
     );
 }
