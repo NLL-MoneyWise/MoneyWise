@@ -5,11 +5,13 @@ import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
-    const { isLoggedIn } = useUserStore();
+    const { logout, isLoggedIn } = useUserStore();
     const router = useRouter();
 
     const handleClick = () => {
-        if (!isLoggedIn()) {
+        if (isLoggedIn()) {
+            logout();
+        } else {
             router.push('login');
         }
     };
@@ -25,7 +27,7 @@ const Header = () => {
                         className="hidden sm:block w-32 h-10"
                         onClick={handleClick}
                     >
-                        시작하기
+                        {isLoggedIn() ? '로그아웃' : '로그인'}
                     </Button>
                 </div>
             </div>
