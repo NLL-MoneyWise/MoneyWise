@@ -11,15 +11,17 @@ const useAuthMutation = () => {
     const { addToast } = useToastStore();
     const authRepository = new AuthRepositoryimpl();
     const router = useRouter();
-    const { setUser } = useUserStore();
+    const { setUser, setAccessToken } = useUserStore();
 
     const loginMutation = useMutation({
         mutationFn: authRepository.login.bind(authRepository),
         onSuccess: async (response: LoginResponse) => {
-            const { message, access_token, email, nickname } = response;
+            const { message, email, nickname, access_token } = response;
 
             // 유저 정보 로컬 저장
             setUser({ email, nickName: nickname });
+            // 엑세스 토큰 인메모리에 저장
+            setAccessToken(access_token);
 
             // 갈려하던 파라미터를 불러와 처리
             const searchParams = new URLSearchParams(window.location.search);
