@@ -1,3 +1,3 @@
-export interface responType {
+export interface responseType {
     message: string;
 }
