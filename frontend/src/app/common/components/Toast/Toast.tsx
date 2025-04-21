@@ -33,6 +33,8 @@ const Toast = ({ children, variant = 'success', onClose }: ToastProps) => {
             text-[12px] md:text-[16px]
             leading-[16px] md:leading-[26px]
             shadow-md  
+            pointer-events-auto
+            animate-toast-slide-in
             ${
                 variant === 'success'
                     ? 'bg-green-500'
@@ -40,7 +42,7 @@ const Toast = ({ children, variant = 'success', onClose }: ToastProps) => {
                       ? 'bg-red-500'
                       : 'bg-yellow-400'
             }
-            animate-toast-slide-in
+           
         `}
         >
             <div className="flex items-center w-full gap-3">
