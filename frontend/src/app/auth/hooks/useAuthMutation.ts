@@ -4,7 +4,7 @@ import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { AuthRepositoryimpl } from '../respository';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import saveToekn from '../util/saveToekn';
+
 import { useUserStore } from '@/stores/userStore';
 
 const useAuthMutation = () => {
@@ -16,19 +16,18 @@ const useAuthMutation = () => {
     const loginMutation = useMutation({
         mutationFn: authRepository.login.bind(authRepository),
         onSuccess: async (response: LoginResponse) => {
-            const { message, accessToken, email, nickName } = response;
-            // 토큰 저장
-            await saveToekn(accessToken);
+            const { message, access_token, email, nickname } = response;
 
             // 유저 정보 로컬 저장
-            setUser({ email, nickName });
+            setUser({ email, nickName: nickname });
 
             // 갈려하던 파라미터를 불러와 처리
             const searchParams = new URLSearchParams(window.location.search);
             const callbackUrl = searchParams.get('callbackUrl') || '/';
 
-            addToast(message, 'success');
             router.push(callbackUrl);
+
+            addToast(message, 'success');
         }
     });
 
