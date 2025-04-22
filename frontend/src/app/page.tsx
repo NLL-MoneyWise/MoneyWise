@@ -1,10 +1,13 @@
 'use client';
+import { useUserStore } from '@/stores/userStore';
 import ArrowIcon from './common/components/ArrowIcon/ArrowIcon';
 import InstructionArticle from './common/components/Articles/InstructionArticle/InstructionArticle';
 import IntroduceArticle from './common/components/Articles/IntroduceArticle/IntroduceArticle';
 import Header from './common/components/Header/Header';
+import FloatingActionButton from './common/components/FloatingButton/FloatingButton';
 
 export default function Home() {
+    const { isLoggedIn } = useUserStore();
     return (
         <div className="overflow-auto no-scrollbar ">
             <Header />
@@ -13,6 +16,7 @@ export default function Home() {
             <div className="fixed bottom-[3%] left-1/2 -translate-x-1/2 z-10">
                 <ArrowIcon className="animate-bounce " color="#b0aeae" />
             </div>
+            {isLoggedIn() && <FloatingActionButton />}
         </div>
     );
 }

@@ -3,7 +3,7 @@ import useAuthMutation from '@/app/auth/hooks/useAuthMutation';
 import Text from '@/app/common/components/Text/Text';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { Suspense, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 const KakaoLoginPage = () => {
     const router = useRouter();
