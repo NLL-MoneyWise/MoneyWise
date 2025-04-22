@@ -1,9 +1,15 @@
-import { responseType } from './../common/types/response/reponse.dto';
-import { KakaoLoginRequest } from './types/request/request-login';
 import { defaultApi } from './../common/util/api';
 import { AxiosInstance } from 'axios';
-import { LoginRequest, SignUpRequest } from './types/request/index';
-import { LoginResponse, ReissueResponse } from './types/reponse/index';
+import {
+    LoginRequest,
+    SignUpRequest,
+    KakaoLoginRequest
+} from './types/request/index';
+import {
+    LoginResponse,
+    ReissueResponse,
+    SignUpResponse
+} from './types/reponse/index';
 
 interface AuthRepository {
     login(credentials: LoginRequest): Promise<LoginResponse>;
@@ -26,7 +32,7 @@ export class AuthRepositoryimpl implements AuthRepository {
         return data;
     }
 
-    async signUp(userData: SignUpRequest): Promise<responseType> {
+    async signUp(userData: SignUpRequest): Promise<SignUpResponse> {
         const { data } = await this.api.post('/auth/signup', userData);
         return data;
     }

@@ -1,23 +1,34 @@
 'use client';
-import useAuthMutation from '@/app/auth/hooks/useAuthMutation';
+import { kakaoLogin } from '@/app/auth/api/action';
 import Text from '@/app/common/components/Text/Text';
+import { useToastStore } from '@/app/common/hooks/useToastStore';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 const KakaoLoginPage = () => {
-    const router = useRouter();
     const searchParams = useSearchParams();
-    const { kakaoLogin } = useAuthMutation();
+    const { addToast } = useToastStore();
+    const router = useRouter();
+
     useEffect(() => {
-        const code = searchParams.get('code');
+        const fetchData = async () => {
+            try {
+                const code = searchParams.get('code');
 
-        if (!code) {
-            router.push('/login-failed');
-            return;
-        }
+                if (!code) {
+                    router.push('/login-failed');
+                    return;
+                }
 
-        kakaoLogin.mutate({ code });
+                const response = await kakaoLogin({ code });
+                addToast(response.message, 'success');
+            } catch {
+                router.push('/login-failed');
+            }
+        };
+
+        fetchData();
     }, []);
 
     return (
