@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 const useIsLoggedIn = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
     const { addToast } = useToastStore();
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -15,16 +14,13 @@ const useIsLoggedIn = () => {
                 setIsLoggedIn(data.isLoggedIn);
             } catch (err) {
                 addToast('데이터를 패칭 중 실패했습니다.', 'error');
-                setIsLoggedIn(false);
-            } finally {
-                setLoading(false);
             }
         };
 
         checkLoginStatus();
-    }, []);
+    }, [addToast]);
 
-    return { isLoggedIn, loading };
+    return { isLoggedIn };
 };
 
 export default useIsLoggedIn;
