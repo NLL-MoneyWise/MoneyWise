@@ -9,7 +9,7 @@ import {
 import { CustomError, ErrorType } from './app/common/types/error/error';
 
 // 추가예정
-const protectedRoutes = ['/test'];
+const protectedRoutes = ['/calendar', '/upload', '/history'];
 
 export async function middleware(request: NextRequest) {
     const token = await getAccessToken();
@@ -68,5 +68,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/test']
+    matcher: ['/calendar', '/upload', '/history']
 };
