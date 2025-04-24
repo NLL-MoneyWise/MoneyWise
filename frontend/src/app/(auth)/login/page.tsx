@@ -10,6 +10,7 @@ export default function LoginPage() {
     const { addToast } = useToastStore();
     const { claerUser } = useUserStore();
 
+    // 나중에 수정
     useEffect(() => {
         const error = searchParams.get('error');
         if (error === 'token_expired') {

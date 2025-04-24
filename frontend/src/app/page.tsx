@@ -18,7 +18,7 @@ export default function Home() {
             <Header />
             <IntroduceArticle />
             <InstructionArticle />
-            <ArrowIcon className="animate-bounce " color="#b0aeae" />
+            <ArrowIcon className="animate-bounce" color="#b0aeae" />
             {isLoggedIn() && <FloatingActionButton />}
         </div>
     );

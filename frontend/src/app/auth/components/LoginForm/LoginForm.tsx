@@ -8,6 +8,7 @@ import Text from '@/app/common/components/Text/Text';
 import { login } from '../../api/action';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
+import { CustomError } from '@/app/common/types/error/error';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -46,7 +47,12 @@ const LoginForm = () => {
             router.push(callbackUrl);
 
             addToast(response.message, 'success');
+            // 차후에 전역 에러로 수정
         } catch (err) {
+            if (err instanceof CustomError) {
+                addToast(err.message, 'warning');
+                return;
+            }
             addToast('로그인에 실패했습니다.', 'warning');
         }
     };
