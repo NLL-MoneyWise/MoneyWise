@@ -18,7 +18,7 @@ const authRepository = AuthRepositoryImpl.getInstance();
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
     const data = await authRepository.login(credentials);
 
-    saveAccessToken(data.access_token);
+    await saveAccessToken(data.access_token);
 
     return data;
 }
@@ -28,7 +28,7 @@ export async function kakaoLogin(
 ): Promise<LoginResponse> {
     const data = await authRepository.kakaoLogin(credentials);
 
-    saveAccessToken(data.access_token);
+    await saveAccessToken(data.access_token);
 
     return data;
 }
