@@ -1,61 +1,54 @@
 import {
     LoginRequest,
     KakaoLoginRequest,
-    SignUpRequest
+    SignUpRequest,
+    ValidateRequest
 } from './../types/request/index';
-import { LoginResponse, SignUpResponse } from './../types/reponse/index';
-import { AuthRepositoryimpl } from '../respository';
+import {
+    LoginResponse,
+    SignUpResponse,
+    ValidateResponse,
+    RefreshValidateResponse
+} from './../types/reponse/index';
+import { AuthRepositoryImpl } from '../respository';
 import { saveAccessToken } from '../util/toekn';
-import { CustomError, ErrorType } from '@/app/common/types/error/error';
 
-const authRepository = new AuthRepositoryimpl();
+const authRepository = AuthRepositoryImpl.getInstance();
 
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
-    try {
-        const data = await authRepository.login(credentials);
+    const data = await authRepository.login(credentials);
 
-        saveAccessToken(data.access_token);
+    saveAccessToken(data.access_token);
 
-        return data;
-    } catch (err) {
-        throw new CustomError(
-            '로그인 처리 중 오류가 발생했습니다',
-            400,
-            ErrorType.NETWORK
-        );
-    }
+    return data;
 }
 
 export async function kakaoLogin(
     credentials: KakaoLoginRequest
 ): Promise<LoginResponse> {
-    try {
-        const data = await authRepository.kakaoLogin(credentials);
+    const data = await authRepository.kakaoLogin(credentials);
 
-        saveAccessToken(data.access_token);
+    saveAccessToken(data.access_token);
 
-        return data;
-    } catch (err) {
-        throw new CustomError(
-            '카카오 로그인 중 오류가 발생했습니다',
-            400,
-            ErrorType.NETWORK
-        );
-    }
+    return data;
 }
 
-export async function signUp(
-    credentials: SignUpRequest
-): Promise<SignUpResponse> {
-    try {
-        const data = await authRepository.signUp(credentials);
+export async function signUp(userData: SignUpRequest): Promise<SignUpResponse> {
+    const data = await authRepository.signUp(userData);
 
-        return data;
-    } catch (err) {
-        throw new CustomError(
-            '회원가입 중 에러가 발생했습니다',
-            400,
-            ErrorType.NETWORK
-        );
-    }
+    return data;
+}
+
+export async function validate(
+    token: ValidateRequest
+): Promise<ValidateResponse> {
+    const data = await authRepository.validate(token);
+
+    return data;
+}
+
+export async function refresh(): Promise<RefreshValidateResponse> {
+    const data = await authRepository.refresh();
+
+    return data;
 }

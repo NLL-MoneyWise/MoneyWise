@@ -10,7 +10,7 @@ export const saveAccessToken = async (token: string) => {
     cookieStore.set('accessToken', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 3600,
         path: '/'
     });
@@ -24,7 +24,7 @@ export const getAccessToken = async () => {
 
     if (!token) return null;
 
-    return token;
+    return token.value;
 };
 
 // 액세스 토큰 삭제하는 함수

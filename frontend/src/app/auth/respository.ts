@@ -3,23 +3,33 @@ import { AxiosInstance } from 'axios';
 import {
     LoginRequest,
     SignUpRequest,
-    KakaoLoginRequest
+    KakaoLoginRequest,
+    ValidateRequest
 } from './types/request/index';
 import {
     LoginResponse,
-    ReissueResponse,
-    SignUpResponse
+    ValidateResponse,
+    SignUpResponse,
+    RefreshValidateResponse
 } from './types/reponse/index';
 
 interface AuthRepository {
     login(credentials: LoginRequest): Promise<LoginResponse>;
 }
 
-export class AuthRepositoryimpl implements AuthRepository {
+export class AuthRepositoryImpl implements AuthRepository {
+    private static instance: AuthRepositoryImpl | null = null;
     private api: AxiosInstance;
 
-    constructor() {
+    private constructor() {
         this.api = defaultApi();
+    }
+
+    public static getInstance(): AuthRepositoryImpl {
+        if (!AuthRepositoryImpl.instance) {
+            AuthRepositoryImpl.instance = new AuthRepositoryImpl();
+        }
+        return AuthRepositoryImpl.instance;
     }
 
     async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -37,7 +47,14 @@ export class AuthRepositoryimpl implements AuthRepository {
         return data;
     }
 
-    async reissue(): Promise<ReissueResponse> {
+    async validate({
+        access_token
+    }: ValidateRequest): Promise<ValidateResponse> {
+        const { data } = await this.api.post('/auth/validate', access_token);
+        return data;
+    }
+
+    async refresh(): Promise<RefreshValidateResponse> {
         const { data } = await this.api.post('/auth/refresh');
         return data;
     }
