@@ -47,7 +47,7 @@ const LoginForm = () => {
 
             addToast(response.message, 'success');
         } catch (err) {
-            addToast('로그인에 실패했습니다.', 'success');
+            addToast('로그인에 실패했습니다.', 'warning');
         }
     };
 
