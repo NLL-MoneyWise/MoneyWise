@@ -1,9 +1,10 @@
+'use client';
 import Link from 'next/link';
 import React from 'react';
 const navLinks = [
     { href: '/upload', label: '업로드' },
     { href: '/mypage', label: '개인 정보' },
-    { href: '/history', label: '분석' },
+    { href: '/calendar', label: '달력' },
     { href: '/history', label: '분석' }
 ];
 

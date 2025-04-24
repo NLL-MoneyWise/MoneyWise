@@ -14,9 +14,9 @@ type Toast = {
 const ToastContainer = () => {
     const { toasts, removeToast } = useToastStore();
 
-    const mounted = useClientMount();
+    const { isMounted } = useClientMount();
 
-    if (!mounted) return null;
+    if (!isMounted) return null;
 
     return createPortal(
         <div className="flex flex-col items-center w-full fixed top-5 pointer-events-none z-10">

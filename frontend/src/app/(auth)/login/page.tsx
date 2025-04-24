@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 export default function LoginPage() {
     const searchParams = useSearchParams();
     const { addToast } = useToastStore();
-    const { logout } = useUserStore();
+    const { claerUser } = useUserStore();
 
     useEffect(() => {
         const error = searchParams.get('error');
@@ -17,7 +17,7 @@ export default function LoginPage() {
                 '로그인 세션이 만료되었습니다. 다시 로그인해주세요.',
                 'warning'
             );
-            logout();
+            claerUser();
         }
     }, [searchParams]);
 
