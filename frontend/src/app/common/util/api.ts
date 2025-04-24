@@ -26,7 +26,6 @@ export const defaultApi = (
             return response;
         },
         (error) => {
-            console.log(error);
             const errorMessage =
                 error.response?.data?.message || '알 수 없는 에러입니다.';
             const errorType = error.response.data?.typeName || 'UNKNOWN';

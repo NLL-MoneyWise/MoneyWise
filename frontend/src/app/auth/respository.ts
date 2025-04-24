@@ -1,19 +1,35 @@
-import { KakaoLoginRequest } from './types/request/request-login';
 import { defaultApi } from './../common/util/api';
 import { AxiosInstance } from 'axios';
-import { LoginRequest, SignUpRequest } from './types/request/index';
-import { LoginResponse } from './types/reponse/response-login';
-import { responType } from '../common/types/response/reponse.dto';
+import {
+    LoginRequest,
+    SignUpRequest,
+    KakaoLoginRequest,
+    ValidateRequest
+} from './types/request/index';
+import {
+    LoginResponse,
+    ValidateResponse,
+    SignUpResponse,
+    RefreshValidateResponse
+} from './types/reponse/index';
 
 interface AuthRepository {
     login(credentials: LoginRequest): Promise<LoginResponse>;
 }
 
-export class AuthRepositoryimpl implements AuthRepository {
+export class AuthRepositoryImpl implements AuthRepository {
+    private static instance: AuthRepositoryImpl | null = null;
     private api: AxiosInstance;
 
-    constructor() {
+    private constructor() {
         this.api = defaultApi();
+    }
+
+    public static getInstance(): AuthRepositoryImpl {
+        if (!AuthRepositoryImpl.instance) {
+            AuthRepositoryImpl.instance = new AuthRepositoryImpl();
+        }
+        return AuthRepositoryImpl.instance;
     }
 
     async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -26,8 +42,20 @@ export class AuthRepositoryimpl implements AuthRepository {
         return data;
     }
 
-    async signUp(userData: SignUpRequest): Promise<responType> {
+    async signUp(userData: SignUpRequest): Promise<SignUpResponse> {
         const { data } = await this.api.post('/auth/signup', userData);
+        return data;
+    }
+
+    async validate({
+        access_token
+    }: ValidateRequest): Promise<ValidateResponse> {
+        const { data } = await this.api.post('/auth/validate', access_token);
+        return data;
+    }
+
+    async refresh(): Promise<RefreshValidateResponse> {
+        const { data } = await this.api.post('/auth/refresh');
         return data;
     }
 }

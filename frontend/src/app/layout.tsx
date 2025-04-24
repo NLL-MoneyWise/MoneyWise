@@ -25,8 +25,8 @@ export default function RootLayout({
                         {children}
                     </main>
                 </QueryProviders>
-                <ToastContainer />
                 <div id="toast-portal"></div>
+                <ToastContainer />
                 <div id="modal-portal"></div>
             </body>
         </html>

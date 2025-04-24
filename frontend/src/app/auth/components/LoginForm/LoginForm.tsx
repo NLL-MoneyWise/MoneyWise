@@ -2,36 +2,59 @@
 import React, { useRef } from 'react';
 import Button from '@/app/common/components/Button/Button';
 import InputField from '@/app/common/components/Input/InputField';
-import useAuthMutation from '../../hooks/useAuthMutation';
 import Link from 'next/link';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import Text from '@/app/common/components/Text/Text';
+import { login } from '../../api/action';
+import { useUserStore } from '@/stores/userStore';
+import { useRouter } from 'next/navigation';
+import { CustomError } from '@/app/common/types/error/error';
 
 const LoginForm = () => {
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
-
-    const { loginMutation } = useAuthMutation();
+    const { setUser } = useUserStore();
     const { addToast } = useToastStore();
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        const email = emailRef.current!.value.trim();
-        const password = passwordRef.current!.value.trim();
+            const email = emailRef.current!.value.trim();
+            const password = passwordRef.current!.value.trim();
 
-        //  아이디와 패스워드 입력 요구
-        if (!email || !password) {
-            addToast('아이디와 비밀번호를 입력해주세요', 'error');
-            return;
+            //  아이디와 패스워드 입력 요구
+            if (!email || !password) {
+                addToast('아이디와 비밀번호를 입력해주세요', 'error');
+                return;
+            }
+
+            const loginData = {
+                email: email,
+                password: password
+            };
+
+            const response = await login(loginData);
+
+            // 유저 정보 로컬 저장
+            setUser({ email: response.email, nickName: response.nickname });
+
+            // 갈려하던 파라미터를 불러와 처리
+            const searchParams = new URLSearchParams(window.location.search);
+            const callbackUrl = searchParams.get('callbackUrl') || '/';
+
+            router.push(callbackUrl);
+
+            addToast(response.message, 'success');
+            // 차후에 전역 에러로 수정
+        } catch (err) {
+            if (err instanceof CustomError) {
+                addToast(err.message, 'warning');
+                return;
+            }
+            addToast('로그인에 실패했습니다.', 'warning');
         }
-
-        const loginData = {
-            email: email,
-            password: password
-        };
-
-        loginMutation.mutate(loginData);
     };
 
     const handleKakaoLoginClick = () => {
