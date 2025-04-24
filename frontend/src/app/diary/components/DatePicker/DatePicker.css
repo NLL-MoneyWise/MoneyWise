@@ -1,0 +1,13 @@
+#story--datepicker--default--primary {
+    width: fit-content;
+}
+
+.rdp-root {
+    --rdp-accent-color: #6baf2f !important;
+}
+
+.rdp-selected .rdp-day_button {
+    background-color: #6baf2f;
+    color: white;
+    font-weight: 500;
+}
