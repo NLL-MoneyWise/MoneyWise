@@ -1,22 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { DayPicker } from 'react-day-picker';
-import './DatePicker.css';
 import 'react-day-picker/dist/style.css';
 import './DatePicker.css';
+import clsx from 'clsx';
 
-const DatePicker = () => {
-    const [selected, setSelected] = useState<Date | undefined>(new Date());
+interface DatePickerProps {
+    className?: string;
+    selected?: Date;
+    onDateChange?: (date: Date | undefined) => void;
+}
 
+const DatePicker = ({ className, selected, onDateChange }: DatePickerProps) => {
     useEffect(() => {
-        console.log(selected);
+        if (selected) {
+            console.log('선택된 날짜:', selected);
+        }
     }, [selected]);
 
     return (
-        <div className="p-4 rounded-lg shadow">
+        <div
+            className={clsx(
+                `p-4 rounded-lg shadow absolute bg-white `,
+                className
+            )}
+        >
             <DayPicker
                 mode="single"
                 selected={selected}
-                onSelect={setSelected}
+                onSelect={(date) => {
+                    if (onDateChange) {
+                        onDateChange(date);
+                    }
+                }}
             />
         </div>
     );

@@ -1,9 +1,10 @@
-#story--datepicker--default--primary {
-    width: fit-content;
-}
-
 .rdp-root {
     --rdp-accent-color: #6baf2f !important;
+}
+
+.rdp-months,
+.rdp-month_grid {
+    gap: 0 !important;
 }
 
 .rdp-selected .rdp-day_button {
