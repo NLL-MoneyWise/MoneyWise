@@ -6,6 +6,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import './calendar.css';
 import { useState } from 'react';
 import { DatesSetArg } from '@fullcalendar/core';
+import useModal from '@/app/common/hooks/useModal';
+import EventForm from '../EventForm/EventForm';
 
 const events = [
     {
@@ -34,6 +36,9 @@ const events = [
 
 const Calendar = () => {
     const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+    const { ModalComponent, closeModal, openModal } = useModal();
 
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);
@@ -55,7 +60,14 @@ const Calendar = () => {
                 }}
                 locale={'ko'}
                 height={'100vh'}
+                dateClick={(data) => {
+                    setSelectedDate(data.date);
+                    openModal();
+                }}
             />
+            <ModalComponent>
+                <EventForm initalDate={selectedDate} closeModal={closeModal} />
+            </ModalComponent>
         </div>
     );
 };
