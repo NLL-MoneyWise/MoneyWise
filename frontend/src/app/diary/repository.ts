@@ -1,10 +1,10 @@
 import { defaultApi } from '../common/util/api';
 import { AxiosInstance } from 'axios';
 import { MemoRequest } from './types/request';
-import { saveMemoResponse } from './types/response';
+import { SaveMemoResponse, GetMemoResponse } from './types/response';
 
 interface DiaryRepository {
-    saveMemo(memo: MemoRequest): Promise<saveMemoResponse>;
+    saveMemo(memo: MemoRequest): Promise<SaveMemoResponse>;
 }
 
 export class DiaryRepositoryImpl implements DiaryRepository {
@@ -24,8 +24,15 @@ export class DiaryRepositoryImpl implements DiaryRepository {
     }
 
     // 메모 저장
-    async saveMemo(memo: MemoRequest): Promise<saveMemoResponse> {
+    async saveMemo(memo: MemoRequest): Promise<SaveMemoResponse> {
         const { data } = await this.api.post('/memos/save', memo);
+        return data;
+    }
+
+    // 메모 불러오기
+    async getMemo(): Promise<GetMemoResponse> {
+        const { data } = await this.api.get('/memos/find');
+
         return data;
     }
 }

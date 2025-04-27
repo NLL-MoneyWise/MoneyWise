@@ -27,7 +27,7 @@ const EventForm: React.FC<EventFormProps> = ({ closeModal, initalDate }) => {
     };
 
     // 폼 제출 처리
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         const content = contentRef.current?.value?.trim();
@@ -42,10 +42,12 @@ const EventForm: React.FC<EventFormProps> = ({ closeModal, initalDate }) => {
             return;
         }
 
-        saveMemo.mutate({
+        const response = await saveMemo.mutateAsync({
             date: formatDate(selectedDate),
             content: content
         });
+        closeModal();
+        console.log(response);
     };
 
     return (
