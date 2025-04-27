@@ -1,9 +1,9 @@
-import { MemoRequest } from './../types/request/request-memo';
+import { MemoRequest, PutMemoRequest } from './../types/request/request-memo';
 import {
     SaveMemoResponse,
     GetMemoResponse
 } from './../types/response/reponse-memo';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DiaryRepositoryImpl } from '../repository';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 
@@ -23,9 +23,17 @@ const useDiary = () => {
         queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl)
     });
 
+    const editMemo = useMutation<SaveMemoResponse, Error, PutMemoRequest>({
+        mutationFn: diaryRepositoryImpl.editMemo.bind(diaryRepositoryImpl),
+        onSuccess: async (data) => {
+            addToast(data.message, 'success');
+        }
+    });
+
     return {
         saveMemo,
-        getMemo
+        getMemo,
+        editMemo
     };
 };
 

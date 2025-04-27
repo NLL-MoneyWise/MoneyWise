@@ -10,16 +10,23 @@ import useDiary from '../../hooks/useDiary';
 interface EventFormProps {
     closeModal: () => void;
     initalDate: Date;
+    isEditMode: boolean;
+    id?: number;
 }
 
-const EventForm: React.FC<EventFormProps> = ({ closeModal, initalDate }) => {
+const EventForm: React.FC<EventFormProps> = ({
+    closeModal,
+    initalDate,
+    isEditMode
+}) => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         initalDate || new Date()
     );
+
     const contentRef = useRef<HTMLInputElement | null>(null);
 
     const { addToast } = useToastStore();
-    const { saveMemo } = useDiary();
+    const { saveMemo, editMemo } = useDiary();
 
     // 날짜 변경 처리
     const handleDateSelect = (date: Date | undefined) => {
@@ -42,12 +49,17 @@ const EventForm: React.FC<EventFormProps> = ({ closeModal, initalDate }) => {
             return;
         }
 
-        const response = await saveMemo.mutateAsync({
-            date: formatDate(selectedDate),
-            content: content
-        });
+        // 수정
+        if (isEditMode) {
+            addToast('개발 중입니다.', 'error');
+        } else {
+            await saveMemo.mutateAsync({
+                date: formatDate(selectedDate),
+                content: content
+            });
+        }
+
         closeModal();
-        console.log(response);
     };
 
     return (

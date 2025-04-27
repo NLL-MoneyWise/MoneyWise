@@ -11,22 +11,26 @@ import { DatesSetArg } from '@fullcalendar/core';
 import useModal from '@/app/common/hooks/useModal';
 import EventForm from '../EventForm/EventForm';
 import useDiary from '../../hooks/useDiary';
+import formatDate from '../../util/formatDate';
 
 const Calendar = () => {
     const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
     const calendarRef = useRef<FullCalendar>(null);
 
     const { ModalComponent, closeModal, openModal } = useModal();
 
     const {
-        getMemo: { data, refetch, isLoading }
+        getMemo: { data: response, refetch, isLoading }
     } = useDiary();
 
     if (isLoading) {
         return <div>로딩중</div>;
     }
+
+    console.log(response);
 
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);
@@ -53,7 +57,7 @@ const Calendar = () => {
                 locale={'ko'}
                 height={'100vh'}
                 dayCellContent={(arg) => {
-                    const memoForDate = data?.memoDTOList?.find(
+                    const memoForDate = response?.memoDTOList.find(
                         (memo) =>
                             new Date(memo.date).toDateString() ===
                             arg.date.toDateString()
@@ -77,18 +81,26 @@ const Calendar = () => {
                         </div>
                     );
                 }}
-                dateClick={(data) => {
-                    setSelectedDate(data.date);
-                    openModal();
-                }}
-                eventClick={(event) => {
-                    if (event.event._def.extendedProps.type === 'memo') {
-                        alert('안뇽');
+                dateClick={(arg) => {
+                    setSelectedDate(arg.date);
+
+                    const hasMemo = response?.memoDTOList.some(
+                        (memo) => memo.date === formatDate(arg.date)
+                    );
+
+                    if (hasMemo) {
+                        setIsEditMode(true);
                     }
+
+                    openModal();
                 }}
             />
             <ModalComponent>
-                <EventForm initalDate={selectedDate} closeModal={setMemo} />
+                <EventForm
+                    initalDate={selectedDate}
+                    closeModal={setMemo}
+                    isEditMode={isEditMode}
+                />
             </ModalComponent>
         </div>
     );
