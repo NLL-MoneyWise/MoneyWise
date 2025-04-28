@@ -1,6 +1,8 @@
 package backend.backend.controller;
 
 import backend.backend.dto.memo.model.MemoDTO;
+import backend.backend.dto.memo.request.DeleteMemoRequest;
+import backend.backend.dto.memo.response.DeleteMemoResponse;
 import backend.backend.exception.response.ErrorResponse;
 import backend.backend.service.MemoService;
 import backend.backend.dto.memo.request.CreateMemoRequest;
@@ -95,13 +97,31 @@ public class MemoController {
                     }
                     """))),
 
-            @ApiResponse(responseCode = "404", description = "{id}번의 메모를 찾지 못했습니다.",
+            @ApiResponse(responseCode = "400", description = "날짜는 필수 입력입니다. / 잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = {
+                    @ExampleObject(name = "요청 형식에 날짜가 없는 경우", value = """
+                            {
+                            "typeName": "VALIDATION_ERROR",
+                            "message": "날짜는 필수 입력입니다."
+                            }
+                            """),
+                    @ExampleObject(name = "잘못된 날짜 형식을 사용한 경우", value = """
+                            {
+                            "typeName": "VALIDATION_ERROR",
+                            "message": "잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요."
+                            }
+                            """)
+            })),
+
+            @ApiResponse(responseCode = "404", description = "해당 날짜의 메모를 찾지 못했습니다.",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = ErrorResponse.class),
             examples = @ExampleObject("""
                     {
                     "typeName": "NOT_FOUND_ERROR",
-                    "message": "3001번의 메모를 찾지 못했습니다."
+                    "message": "해당 날짜의 메모를 찾지 못했습니다."
                     }
                     """))),
 
@@ -115,7 +135,7 @@ public class MemoController {
                     }
                     """)))
     })
-    @PutMapping("/{memoId}")
+    @PutMapping("/update")
     public ResponseEntity<UpdateMemoResponse> updateMemo(
             @AuthenticationPrincipal String email,
             @RequestBody UpdateMemoRequest request) {
@@ -146,5 +166,53 @@ public class MemoController {
         List<MemoDTO> memoDTOList = memoService.getAllMemos(email);
 
         return ResponseEntity.ok(new GetAllMemosResponse("모든 메모 내역을 불러왔습니다.", memoDTOList));
+    }
+
+    @Operation(summary = "메모 삭제", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모가 삭제되었습니다.",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = DeleteMemoResponse.class),
+            examples = @ExampleObject("""
+                    {
+                    "message": "메모가 삭제되었습니다."
+                    }
+                    """))),
+
+            @ApiResponse(responseCode = "400", description = "날짜는 필수 입력입니다. / 잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = {
+                                    @ExampleObject(name = "요청 형식에 날짜가 없는 경우", value = """
+                            {
+                            "typeName": "VALIDATION_ERROR",
+                            "message": "날짜는 필수 입력입니다."
+                            }
+                            """),
+                                    @ExampleObject(name = "잘못된 날짜 형식을 사용한 경우", value = """
+                            {
+                            "typeName": "VALIDATION_ERROR",
+                            "message": "잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요."
+                            }
+                            """)
+                            })),
+
+            @ApiResponse(responseCode = "500", description = "메모 삭제에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                    {
+                    "typeName": "DATABASE_ERROR",
+                    "message": "메모 삭제에 실패했습니다."
+                    }
+                    """)))
+    })
+    @DeleteMapping("/delete")
+    public ResponseEntity<DeleteMemoResponse> deleteMemo(@AuthenticationPrincipal String email, @RequestBody DeleteMemoRequest request) {
+        memoService.deleteMemo(email, request);
+        DeleteMemoResponse response = new DeleteMemoResponse();
+        response.setMessage("메모가 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
     }
 }
