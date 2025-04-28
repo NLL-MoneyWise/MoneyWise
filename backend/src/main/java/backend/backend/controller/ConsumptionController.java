@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Consumptions")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/consumptions")
+@RequestMapping("/consumptions")
 public class ConsumptionController {
     private final ConsumptionService consumptionService;
 

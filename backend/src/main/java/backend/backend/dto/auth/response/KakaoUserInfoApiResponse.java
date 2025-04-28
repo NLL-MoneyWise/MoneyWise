@@ -14,6 +14,6 @@ public class KakaoUserInfoApiResponse {
     @Setter
     public static class Properties {
         @JsonProperty("nickname")
-        private String nickName;
+        private String nickname;
     }
 }

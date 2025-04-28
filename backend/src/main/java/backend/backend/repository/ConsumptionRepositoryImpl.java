@@ -110,7 +110,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                 .select(Projections.constructor(TopExpense.class,
                         consumption.item_name, totalAmount))
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day), consumption.item_name.isNotNull())
                 .groupBy(consumption.item_name)
                 .having(totalAmount.eq(maxAmountList.get(0)))
                 .fetch();

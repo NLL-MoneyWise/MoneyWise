@@ -25,7 +25,7 @@ import java.util.List;
 
 @Tag(name = "Receipt Relevant")
 @RestController
-@RequestMapping("/api/receipts")
+@RequestMapping("/receipts")
 @RequiredArgsConstructor
 public class ReceiptController {
     private final ReceiptService receiptService;
