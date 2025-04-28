@@ -5,7 +5,6 @@ import backend.backend.dto.auth.request.AccessTokenValidationRequest;
 import backend.backend.dto.auth.request.LocalSignupRequest;
 import backend.backend.dto.auth.response.*;
 import backend.backend.exception.AuthException;
-import backend.backend.exception.NotFoundException;
 import backend.backend.exception.response.ErrorResponse;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
@@ -16,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,11 +23,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Map;
 
 @Tag(name = "Authentication", description = "인증 관련 기능")
 @RestController
@@ -262,7 +258,6 @@ public class AuthController {
         }
         throw new AuthException("refresh_token 검증에 실패했습니다.");
     }
-
 
     @Operation(summary = "access_token이 유효한지 확인")
     @ApiResponses(value = {

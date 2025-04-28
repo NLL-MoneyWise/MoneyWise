@@ -2,9 +2,9 @@ package backend.backend.dto.auth.response;
 
 import lombok.*;
 
+@Builder
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponse {

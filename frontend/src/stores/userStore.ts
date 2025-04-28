@@ -6,17 +6,28 @@ interface UserState {
         nickName: string;
         email: string;
     } | null;
-
     setUser: (user: UserState['user']) => void;
-    logout: () => void;
+    isLoggedIn: () => boolean;
+    claerUser: () => void;
+    clearStorage: () => void;
 }
 
 export const useUserStore = create<UserState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             user: null,
+            accessToken: null,
             setUser: (user) => set({ user }),
-            logout: () => set({ user: null })
+            isLoggedIn: () => {
+                return get().user !== null;
+            },
+            clearStorage: () => {
+                localStorage.removeItem('user-storage');
+            },
+            claerUser: () => {
+                set({ user: null });
+                get().clearStorage();
+            }
         }),
         {
             name: 'user-storage',

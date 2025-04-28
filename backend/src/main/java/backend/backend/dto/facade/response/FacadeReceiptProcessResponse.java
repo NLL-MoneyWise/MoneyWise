@@ -4,7 +4,6 @@ import backend.backend.dto.common.model.Item;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import lombok.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @Builder

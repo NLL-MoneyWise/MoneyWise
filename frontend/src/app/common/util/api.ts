@@ -2,13 +2,13 @@ import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { CustomError } from '../types/error/error';
 
-const baseUrl = process.env.API_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const defaultApi = (
     option?: InternalAxiosRequestConfig
 ): AxiosInstance => {
     const instance = axios.create({
-        baseURL: baseUrl + '/api',
+        baseURL: baseUrl,
         ...option
     });
 
@@ -27,7 +27,7 @@ export const defaultApi = (
         },
         (error) => {
             const errorMessage =
-                error.response?.data?.message || '알수 없는 에러입니다.';
+                error.response?.data?.message || '알 수 없는 에러입니다.';
             const errorType = error.response.data?.typeName || 'UNKNOWN';
             const errorStatus = error.response?.status || 500;
 

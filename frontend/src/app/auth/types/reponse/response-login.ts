@@ -1,8 +1,8 @@
-import { responType } from '../../../common/types/response/reponse.dto';
+import { Response } from '../../../common/types/response/reponse.dto';
 
-export interface LoginResponse extends responType {
-    accessToken: string;
-    refreshToken: string;
-    nickName: string;
+// 차후에 수정
+export interface LoginResponse extends Response {
+    access_token: string;
+    nickname: string;
     email: string;
 }

@@ -14,7 +14,7 @@ public class ConsumptionsSaveRequest {
     private String access_url;
     private String date;
     private String storeName;
-    private List<backend.backend.dto.common.model.Item> items;
+    private List<Item> items;
 
     public static ConsumptionsSaveRequest fromReceiptAnalyzeResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse) {
         return ConsumptionsSaveRequest.builder()

@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { MdFileUpload } from '@react-icons/all-files/md/MdFileUpload';
+import Text from '../Text/Text';
 
 interface FileUploadProps {
     onFileUpload: (files: File[]) => void;
@@ -78,7 +79,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     );
 
     return (
-        <div className="w-96 h-96">
+        <div className="w-full h-96">
             <div
                 className={`
                     relative flex flex-col items-center justify-center
@@ -107,7 +108,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
                 <MdFileUpload className="w-12 h-12 text-primary" />
 
-                <p className="mt-4 text-sm text-gray-600">
+                <Text.SmallText className="mt-4 text-gray-600">
                     {isDragging ? (
                         '파일을 여기에 놓아주세요'
                     ) : (
@@ -118,14 +119,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             하거나 여기로 드래그하세요
                         </>
                     )}
-                </p>
+                </Text.SmallText>
 
-                <p className="mt-2 text-xs text-gray-500">
+                <Text.SmallText className="mt-2  text-gray-500">
                     {multiple ? '여러 개의 파일' : '하나의 파일'}을 {maxSize}MB
                     이하로 업로드해주세요
-                </p>
+                </Text.SmallText>
 
-                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+                {error && (
+                    <Text.SmallText className="mt-2 text-red-500">
+                        {error}
+                    </Text.SmallText>
+                )}
             </div>
         </div>
     );
