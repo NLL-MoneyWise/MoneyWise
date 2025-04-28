@@ -4,12 +4,14 @@ import backend.backend.domain.memo.Memo;
 import backend.backend.domain.memo.primaryKey.MemoId;
 import backend.backend.dto.memo.model.MemoDTO;
 import backend.backend.dto.memo.request.CreateMemoRequest;
+import backend.backend.dto.memo.request.DeleteMemoRequest;
 import backend.backend.dto.memo.request.UpdateMemoRequest;
 import backend.backend.exception.ConflictException;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.exception.ValidationException;
 import backend.backend.repository.MemoRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,5 +102,25 @@ public class MemoService {
         }
 
         return memoDTOList;
+    }
+
+    public void deleteMemo(String email, DeleteMemoRequest request) {
+        if (request.getDate() == null) {
+            throw new ValidationException("날짜는 필수 입력입니다.");
+        }
+
+        try {
+            LocalDate date = LocalDate.parse(request.getDate());
+            MemoId id = new MemoId();
+            id.setDate(date);
+            id.setEmail(email);
+
+            memoRepository.deleteById(id);
+
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
+        } catch (DataAccessException e) {
+            throw new DatabaseException("메모 삭제에 실패했습니다.");
+        }
     }
 }

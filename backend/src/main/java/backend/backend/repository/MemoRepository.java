@@ -7,7 +7,9 @@ import java.util.List;
 // Memo 엔티티에 대한 데이터베이스 작업을 처리하는 JPA 레포지토리
 public interface MemoRepository extends JpaRepository<Memo, MemoId> {
     List<Memo> findByIdEmail(String email);
-}// JpaRepository에서 기본적인 CRUD 메서드 제공
+
+}
+// JpaRepository에서 기본적인 CRUD 메서드 제공
 
 // JPA
 // List의 검색 결과가 null이면 빈 리스트를 반환
