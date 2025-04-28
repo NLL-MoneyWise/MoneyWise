@@ -37,7 +37,7 @@ public class KakaoAuthenticationProvider extends OAuth2AuthenticationProvider {
         KakaoTokenApiResponse kakaoTokenApiResponse = getKakaoTokenResponse(code);
         KakaoUserInfoApiResponse kakaoUserInfoApiResponse = getKakaoUserInfo(kakaoTokenApiResponse.getAccess_token());
         Long kakaoUserId = kakaoUserInfoApiResponse.getId();
-        String kakaoUserNickname = kakaoUserInfoApiResponse.getProperties().getNickName();
+        String kakaoUserNickname = kakaoUserInfoApiResponse.getProperties().getNickname();
 
 
         User user;
@@ -103,9 +103,9 @@ public class KakaoAuthenticationProvider extends OAuth2AuthenticationProvider {
         }
     }
 
-    private KakaoUserInfoApiResponse getKakaoUserInfo(String accessToken) {
+    private KakaoUserInfoApiResponse getKakaoUserInfo(String access_token) {
         try {
-            String bearerToken = "Bearer " + accessToken;
+            String bearerToken = "Bearer " + access_token;
 
             String infoUrl = "https://kapi.kakao.com/v2/user/me";
 

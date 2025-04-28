@@ -38,9 +38,9 @@ class ReceiptControllerTest {
     void receiptControllerTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
+        String nickname = "테스트닉네임";
         String accessUrl = "receipt.jpeg";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         ReceiptAnalyzeRequest request = ReceiptAnalyzeRequest.builder().accessUrl(accessUrl).build();
         ReceiptAnalyzeResponse mockResponse = ReceiptAnalyzeResponse.builder().build();
@@ -48,7 +48,7 @@ class ReceiptControllerTest {
 //ArgumentMatchers.eq(email) : receiptService.receiptAnalyze를 컨트롤러에서 호출 할 때 email의 값을 확인함 객체가 동등한지는 확인안함
 //Json 파싱에는 기본생성자 및 setter가 필요하다.
         mockMvc.perform(post("/api/receipts/analyze")
-                .header("Authorization", accessToken)
+                .header("Authorization", access_token)
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -60,11 +60,11 @@ class ReceiptControllerTest {
     void imagesSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/receipts/images")
-                .header("Authorization", accessToken))
+                .header("Authorization", access_token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

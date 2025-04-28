@@ -11,5 +11,5 @@ public class KakaoSignupRequest implements BaseSignupRequest{
     private String kakaoId;
     private String email;
     private String name;
-    private String nickName;
+    private String nickname;
 }

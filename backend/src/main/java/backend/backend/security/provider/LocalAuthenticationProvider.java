@@ -1,11 +1,12 @@
 package backend.backend.security.provider;
 
 import backend.backend.domain.User;
-import backend.backend.exception.AuthException;
+import backend.backend.dto.auth.response.LoginResponse;
 import backend.backend.repository.UserRepository;
 import backend.backend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -30,21 +31,23 @@ public class LocalAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException("이메일을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BadCredentialsException("이메일을 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AuthException("잘못된 비밀번호 입니다.");
+            throw new BadCredentialsException("잘못된 비밀번호 입니다.");
         }
 
-        String accessToken = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
+        String access_token = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
 
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-        Map<String, Object> details = new HashMap<>();
-        details.put("email", email);
-        details.put("name", user.getName());
-        details.put("nickname", user.getNickname());
-        details.put("access_token", accessToken);
+
+        LoginResponse details = LoginResponse.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .nickname(user.getNickname())
+                .access_token(access_token)
+                .build();
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email, null, authorities);

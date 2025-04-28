@@ -59,7 +59,7 @@ public class AuthService {
 
             return response;
         } catch (BadCredentialsException e) {
-            throw new AuthException("로그인에 실패했습니다.");
+            throw new AuthException(e.getMessage());
         } catch (Exception e) {
             throw new APIException("서버 내부 오류 발생");
         }

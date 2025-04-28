@@ -14,15 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 public class FacadeReceiptProcessResponse {
     private String date;
-    private Long totalAmount;
+    private Long total_amount;
     private List<Item> items;
     private String message;
+    private String store_name;
 
     public static FacadeReceiptProcessResponse fromReceiptAnalyzeResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse) {
         return FacadeReceiptProcessResponse.builder()
                 .date(receiptAnalyzeResponse.getDate())
                 .items(receiptAnalyzeResponse.getItems())
-                .totalAmount(receiptAnalyzeResponse.getTotalAmount())
+                .total_amount(receiptAnalyzeResponse.getTotalAmount())
+                .store_name(receiptAnalyzeResponse.getStoreName())
                 .build();
     }
 }

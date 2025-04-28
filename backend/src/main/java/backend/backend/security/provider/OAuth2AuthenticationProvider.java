@@ -34,7 +34,7 @@ public abstract class OAuth2AuthenticationProvider implements AuthenticationProv
 
         User user = authenticationUser(code);
 
-        String accessToken = jwtUtils.generateAccessToken(user.getEmail(), user.getName(), user.getNickname());
+        String access_token = jwtUtils.generateAccessToken(user.getEmail(), user.getName(), user.getNickname());
 
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
@@ -42,7 +42,7 @@ public abstract class OAuth2AuthenticationProvider implements AuthenticationProv
                 .email(user.getEmail())
                 .name(user.getName())
                 .nickname(user.getNickname())
-                .access_token(accessToken)
+                .access_token(access_token)
                 .build();
 
         UsernamePasswordAuthenticationToken authToken =

@@ -49,6 +49,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
+                                "/auth/refresh",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
@@ -63,6 +64,7 @@ public class SecurityConfig{
         AuthenticationManagerBuilder authManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authManagerBuilder.authenticationProvider(localAuthenticationProvider);
         authManagerBuilder.authenticationProvider(kakaoAuthenticationProvider);
+        authManagerBuilder.parentAuthenticationManager(null);
         return authManagerBuilder.build();
     }
 

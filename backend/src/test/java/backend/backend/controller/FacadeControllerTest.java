@@ -31,13 +31,13 @@ class FacadeControllerTest {
     void receiptProcessTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         FacadeReceiptProcessRequest request = FacadeReceiptProcessRequest.builder().accessUrl("receipt_mobile.jpg").build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/workflows/receipt-process")
-                        .header("Authorization", accessToken)
+                        .header("Authorization", access_token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -49,17 +49,17 @@ class FacadeControllerTest {
     void consumptionsProcessSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
-                .header("Authorization", accessToken)
+                .header("Authorization", access_token)
                         .param("period", "all"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/workflows/consumptions-analyze")
-                        .header("Authorization", accessToken)
+                        .header("Authorization", access_token)
                         .param("period", "day")
                         .param("year", "2015")
                         .param("month", "12")

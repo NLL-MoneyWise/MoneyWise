@@ -34,8 +34,8 @@ class ConsumptionControllerTest {
     void ConsumptionControllerSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         ConsumptionsSaveRequest request = ConsumptionsSaveRequest.builder()
                 .access_url("receipt.jpeg")
@@ -46,7 +46,7 @@ class ConsumptionControllerTest {
         Mockito.doNothing().when(consumptionService).save(email, request);//void반한타입 모킹법
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/consumptions/save")
-                .header("Authorization", accessToken)
+                .header("Authorization", access_token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -58,11 +58,11 @@ class ConsumptionControllerTest {
     void consumptionSummaryTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email,name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email,name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/summary")
-                .header("Authorization", accessToken))
+                .header("Authorization", access_token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -72,11 +72,11 @@ class ConsumptionControllerTest {
     void consumptionsYearTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/{year}", 2015)
-                .header("Authorization", accessToken))
+                .header("Authorization", access_token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -86,11 +86,11 @@ class ConsumptionControllerTest {
     void consumptionsYearMonthTest() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/consumptions/{year}/{month}", 2015, 12)
-                        .header("Authorization", accessToken))
+                        .header("Authorization", access_token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
