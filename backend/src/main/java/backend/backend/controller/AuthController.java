@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -311,5 +313,40 @@ public class AuthController {
             return ResponseEntity.ok(TokenValidationResponse.builder().message("유효한 토큰입니다.").build());
         }
         throw new AuthException("검증에 실패했습니다.");
+    }
+
+    @Operation(summary = "유저 삭제", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자의 모든 정보가 삭제되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DeleteUserResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "사용자의 모든 정보가 삭제되었습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 입니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "존재하지 않는 사용자 입니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "500", description = "사용자 삭제에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n\"typeName\": \"DATABASE_ERROR\",\n\"message\": \"사용자 삭제에 실패했습니다.\"\n}")))
+    })
+    @DeleteMapping("/delete")
+    public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal String email) {
+        authService.deleteUser(email);
+        DeleteUserResponse response = new DeleteUserResponse();
+        response.setMessage("사용자의 모든 정보가 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
     }
 }

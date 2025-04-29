@@ -15,4 +15,6 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("이메일을 찾을 수 없습니다."));
     }
+
+
 }

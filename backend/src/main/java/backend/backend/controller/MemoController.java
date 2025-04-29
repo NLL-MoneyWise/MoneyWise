@@ -42,7 +42,6 @@ public class MemoController {
             schema = @Schema(implementation = CreateMemoResponse.class),
             examples = @ExampleObject("""
                     {
-                    "id": "3001",
                     "message": "메모가 저장되었습니다."
                     }
                     """))),

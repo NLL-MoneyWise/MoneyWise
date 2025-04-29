@@ -80,4 +80,16 @@ public class AuthService {
             throw new DatabaseException("회원가입에 실패했습니다.");
         }
     }
+
+    public void deleteUser(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new NotFoundException("존재하지 않는 사용자 입니다.");
+        }
+
+        try {
+            userRepository.deleteById(email);
+        } catch (DataAccessException e) {
+            throw new DatabaseException("사용자 삭제에 실패했습니다.");
+        }
+    }
 }
