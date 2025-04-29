@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { validate, refresh } from './app/auth/api/action';
-import {
-    getAccessToken,
-    removeAccessToken,
-    saveAccessToken
-} from './app/auth/util/toekn';
+import { getAccessToken } from './app/auth/util/toekn';
 
 // 추가예정
 const protectedRoutes = ['/calendar', '/upload', '/history'];
