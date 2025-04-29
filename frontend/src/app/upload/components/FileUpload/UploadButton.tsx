@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { MdFileUpload } from '@react-icons/all-files/md/MdFileUpload';
-import Text from '../Text/Text';
+import Text from '@/app/common/components/Text/Text';
 
 interface FileUploadProps {
     onFileUpload: (files: File[]) => void;
