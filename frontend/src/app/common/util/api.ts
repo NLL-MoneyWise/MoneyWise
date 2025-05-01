@@ -72,7 +72,9 @@ export const defaultApi = (
 
                     await removeAccessToken();
 
-                    window.location.href = `/login?callbackUrl=${window.location.pathname}&error=token_expired`;
+                    if (typeof window !== 'undefined') {
+                        window.location.href = `/login?callbackUrl=${window.location.pathname}&error=token_expired`;
+                    }
 
                     return Promise.reject(
                         new CustomError(errorMessage, errorStatus, errorType)
