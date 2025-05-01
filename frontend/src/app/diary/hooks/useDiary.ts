@@ -1,7 +1,11 @@
-import { MemoRequest, PutMemoRequest } from './../types/request/request-memo';
+import {
+    MemoRequest,
+    DeleteMemoRequest
+} from './../types/request/request-memo';
 import {
     SaveMemoResponse,
-    GetMemoResponse
+    GetMemoResponse,
+    DeleteResponse
 } from './../types/response/reponse-memo';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DiaryRepositoryImpl } from '../repository';
