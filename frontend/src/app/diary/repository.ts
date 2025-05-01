@@ -1,7 +1,15 @@
 import { defaultApi } from '../common/util/api';
 import { AxiosInstance } from 'axios';
-import { MemoRequest, PutMemoRequest } from './types/request';
-import { SaveMemoResponse, GetMemoResponse } from './types/response';
+import {
+    MemoRequest,
+    PutMemoRequest,
+    DeleteMemoRequest
+} from './types/request';
+import {
+    SaveMemoResponse,
+    GetMemoResponse,
+    DeleteResponse
+} from './types/response';
 
 interface DiaryRepository {
     saveMemo(memo: MemoRequest): Promise<SaveMemoResponse>;
@@ -36,9 +44,18 @@ export class DiaryRepositoryImpl implements DiaryRepository {
         return data;
     }
 
-    // 메모 불러오기
-    async editMemo({ id, memo }: PutMemoRequest): Promise<SaveMemoResponse> {
-        const { data } = await this.api.put(`/memos/${id}`, memo);
+    // 메모 수정하기
+    async editMemo(memo: MemoRequest): Promise<SaveMemoResponse> {
+        const { data } = await this.api.put('/memos/update', memo);
+
+        return data;
+    }
+
+    // 메모 삭제하기
+    async deleteMemo(date: DeleteMemoRequest): Promise<DeleteResponse> {
+        const { data } = await this.api.delete(`/memos/delete`, {
+            data: date
+        });
 
         return data;
     }

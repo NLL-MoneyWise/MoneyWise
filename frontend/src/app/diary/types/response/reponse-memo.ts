@@ -13,3 +13,5 @@ export interface Memo {
 export interface GetMemoResponse extends Response {
     memoDTOList: Memo[];
 }
+
+export interface DeleteResponse extends Response {}

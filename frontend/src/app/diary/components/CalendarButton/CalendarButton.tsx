@@ -8,12 +8,14 @@ interface CalendarButtonProps {
     className?: string;
     selectedDate: Date | undefined;
     onDateSelect: (date: Date | undefined) => void;
+    editMode: 'create' | 'edit';
 }
 
 const CalendarButton = ({
     className,
     selectedDate,
-    onDateSelect
+    onDateSelect,
+    editMode
 }: CalendarButtonProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -46,6 +48,7 @@ const CalendarButton = ({
                 className="flex items-center justify-center px-4 py-2"
                 onClick={toggleCalendar}
                 type="button"
+                disabled={editMode === 'edit' && true}
             >
                 <Calendar1 className="mr-3" />
                 {formatDate(selectedDate)}

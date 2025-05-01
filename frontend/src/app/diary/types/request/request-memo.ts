@@ -7,3 +7,7 @@ export interface PutMemoRequest {
     id: number;
     memo: MemoRequest;
 }
+
+export interface DeleteMemoRequest {
+    date: string;
+}
