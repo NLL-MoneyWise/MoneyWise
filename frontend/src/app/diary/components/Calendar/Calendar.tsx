@@ -7,6 +7,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import './calendar.css';
 
 import { useRef, useState } from 'react';
+
+import { useRef, useState } from 'react';
 import { DatesSetArg } from '@fullcalendar/core';
 import useModal from '@/app/common/hooks/useModal';
 import EventForm from '../EventForm/EventForm';
@@ -48,6 +50,7 @@ const Calendar = () => {
     return (
         <div className="calendar-container m-auto ">
             <FullCalendar
+                ref={calendarRef}
                 ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
