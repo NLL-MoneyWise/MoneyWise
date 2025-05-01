@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-query';
 import { useToastStore } from './common/hooks/useToastStore';
 import { CustomError } from './common/types/error/error';
-import { handleCustomError } from './common/util/errorHandler';
 
 export function QueryProviders({ children }: { children: React.ReactNode }) {
     const { addToast } = useToastStore();
@@ -14,8 +13,10 @@ export function QueryProviders({ children }: { children: React.ReactNode }) {
     const mutationCache = new MutationCache({
         onError: (error) => {
             if (error instanceof CustomError) {
-                handleCustomError(error, addToast);
+                addToast(error.message, 'error');
+                return;
             }
+            addToast('알 수 없는 에러입니다.', 'error');
         }
     });
 

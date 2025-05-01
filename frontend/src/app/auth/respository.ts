@@ -15,6 +15,10 @@ import {
 
 interface AuthRepository {
     login(credentials: LoginRequest): Promise<LoginResponse>;
+    kakaoLogin(credentials: KakaoLoginRequest): Promise<LoginResponse>;
+    signUp(userData: SignUpRequest): Promise<SignUpResponse>;
+    validate({ access_token }: ValidateRequest): Promise<ValidateResponse>;
+    refresh(): Promise<RefreshValidateResponse>;
 }
 
 export class AuthRepositoryImpl implements AuthRepository {

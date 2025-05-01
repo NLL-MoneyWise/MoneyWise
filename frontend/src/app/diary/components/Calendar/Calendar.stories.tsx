@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 
 const meta: Meta<typeof Calendar> = {
     component: Calendar,
-    title: 'Calendar',
+    title: 'templates/Calendar',
     tags: ['autodocs'],
     argTypes: {}
 };
