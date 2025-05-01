@@ -7,14 +7,11 @@ import interactionPlugin from '@fullcalendar/interaction';
 import './calendar.css';
 
 import { useRef, useState } from 'react';
-
-import { useRef, useState } from 'react';
 import { DatesSetArg } from '@fullcalendar/core';
 import useModal from '@/app/common/hooks/useModal';
 import EventForm from '../EventForm/EventForm';
 import useDiary from '../../hooks/useDiary';
 import formatDate from '../../util/formatDate';
-import { DeleteIcon } from 'lucide-react';
 
 const Calendar = () => {
     const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
@@ -50,7 +47,6 @@ const Calendar = () => {
     return (
         <div className="calendar-container m-auto ">
             <FullCalendar
-                ref={calendarRef}
                 ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"

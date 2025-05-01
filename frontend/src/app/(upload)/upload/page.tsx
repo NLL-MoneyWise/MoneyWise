@@ -1,12 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
-import FileUpload from '@/app/common/components/FileUpload/UploadButton';
+
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import PreviewImg from '@/app/upload/components/PreviewImg/PreviewImg';
 import Button from '@/app/common/components/Button/Button';
 import Text from '@/app/common/components/Text/Text';
+import FileUpload from '@/app/upload/components/FileUpload/UploadButton';
 
 const UploadPage = () => {
     const [receipt, setReceipt] = useState<File[]>([]);

@@ -1,4 +1,3 @@
-import { RefreshValidateResponse } from './../../auth/types/reponse/reponse-validate';
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { CustomError } from '../types/error/error';
@@ -85,10 +84,6 @@ export const defaultApi = (
                 const errorType = error.response.data?.typeName || 'UNKNOWN';
                 const errorStatus = error.response?.status || 500;
 
-                return Promise.reject(
-                    new CustomError(errorMessage, errorStatus, errorType)
-                );
-            }
                 return Promise.reject(
                     new CustomError(errorMessage, errorStatus, errorType)
                 );

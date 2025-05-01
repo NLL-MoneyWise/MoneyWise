@@ -30,6 +30,14 @@ const useDiary = () => {
         }
     });
 
+      // 메모 삭제하기
+      async deleteMemo(date: DeleteMemoRequest): Promise<DeleteResponse> {
+        const { data } = await this.api.delete(`/memos/delete`, {
+            data: date
+        });
+
+        return data;
+    }
     return {
         saveMemo,
         getMemo,
