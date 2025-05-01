@@ -13,7 +13,7 @@ export function QueryProviders({ children }: { children: React.ReactNode }) {
     const mutationCache = new MutationCache({
         onError: (error) => {
             if (error instanceof CustomError) {
-                addToast(error.message, 'error');
+                addToast(error.message, 'warning');
                 return;
             }
             addToast('알 수 없는 에러입니다.', 'error');
