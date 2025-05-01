@@ -10,14 +10,14 @@ import useDiary from '../../hooks/useDiary';
 interface EventFormProps {
     closeModal: () => void;
     initalDate: Date;
-    isEditMode: boolean;
+    editMode: 'create' | 'edit';
     id?: number;
 }
 
 const EventForm: React.FC<EventFormProps> = ({
     closeModal,
     initalDate,
-    isEditMode
+    editMode
 }) => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(
         initalDate || new Date()
@@ -26,7 +26,7 @@ const EventForm: React.FC<EventFormProps> = ({
     const contentRef = useRef<HTMLInputElement | null>(null);
 
     const { addToast } = useToastStore();
-    const { saveMemo, editMemo } = useDiary();
+    const { saveMemo, editMemo, deleteMemo } = useDiary();
 
     // 날짜 변경 처리
     const handleDateSelect = (date: Date | undefined) => {
@@ -34,7 +34,7 @@ const EventForm: React.FC<EventFormProps> = ({
     };
 
     // 폼 제출 처리
-    const handleSubmit = async (e: FormEvent) => {
+    const handleCreateSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         const content = contentRef.current?.value?.trim();
@@ -49,24 +49,52 @@ const EventForm: React.FC<EventFormProps> = ({
             return;
         }
 
-        // 수정
-        if (isEditMode) {
-            addToast('개발 중입니다.', 'error');
-        } else {
-            await saveMemo.mutateAsync({
-                date: formatDate(selectedDate),
-                content: content
-            });
-        }
+        await saveMemo.mutateAsync({
+            date: formatDate(selectedDate),
+            content: content
+        });
 
         closeModal();
     };
 
-    return (
-        <div className="p-6 max-w-md mx-auto">
-            <Text.SubTitle className="mb-6 text-black">메모 작성</Text.SubTitle>
+    const handleModifySubmit = async (e: FormEvent) => {
+        e.preventDefault();
 
-            <form onSubmit={handleSubmit}>
+        const content = contentRef.current?.value?.trim();
+
+        if (!content) {
+            addToast('내용을 입력해주세요', 'error');
+            return;
+        }
+
+        await editMemo.mutateAsync({
+            date: formatDate(initalDate),
+            content: content
+        });
+
+        closeModal();
+    };
+
+    const handelDelete = async (e: FormEvent) => {
+        e.stopPropagation();
+        await deleteMemo.mutateAsync({ date: formatDate(initalDate) });
+        closeModal();
+    };
+
+    return (
+        <div className="p-6 max-w-md mx-auto ">
+            {/* 선택된 모드에 따라 편집모드가 변경됩니다. */}
+            <Text.SubTitle className="mb-6 text-black">
+                {editMode === 'create' ? '메모 작성' : '메모 편집'}
+            </Text.SubTitle>
+            {/* 모드에따라 */}
+            <form
+                onSubmit={
+                    editMode === 'create'
+                        ? handleCreateSubmit
+                        : handleModifySubmit
+                }
+            >
                 {/* 날짜 선택 */}
                 <div className="mb-4">
                     <Text.SemiBoldText className="mb-2">날짜</Text.SemiBoldText>
@@ -74,6 +102,7 @@ const EventForm: React.FC<EventFormProps> = ({
                         selectedDate={selectedDate}
                         onDateSelect={handleDateSelect}
                         className="w-full"
+                        editMode={editMode}
                     />
                 </div>
 
@@ -99,9 +128,30 @@ const EventForm: React.FC<EventFormProps> = ({
                     >
                         취소
                     </Button>
-                    <Button type="submit" className="px-4 py-2">
-                        저장
-                    </Button>
+                    {editMode === 'create' ? (
+                        <Button type="submit" className="px-4 py-2">
+                            저장
+                        </Button>
+                    ) : (
+                        <>
+                            <Button
+                                variant="delete"
+                                className="px-4 py-2"
+                                onClick={handelDelete}
+                                type="button"
+                            >
+                                🗑️ 삭제하기
+                            </Button>
+
+                            <Button
+                                variant="modify"
+                                className="px-4 py-2"
+                                type="submit"
+                            >
+                                ✏️ 수정하기
+                            </Button>
+                        </>
+                    )}
                 </div>
             </form>
         </div>

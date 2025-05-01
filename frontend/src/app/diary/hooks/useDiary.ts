@@ -1,7 +1,11 @@
-import { MemoRequest, PutMemoRequest } from './../types/request/request-memo';
+import {
+    MemoRequest,
+    DeleteMemoRequest
+} from './../types/request/request-memo';
 import {
     SaveMemoResponse,
-    GetMemoResponse
+    GetMemoResponse,
+    DeleteResponse
 } from './../types/response/reponse-memo';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DiaryRepositoryImpl } from '../repository';
@@ -20,11 +24,20 @@ const useDiary = () => {
 
     const getMemo = useQuery<GetMemoResponse, Error>({
         queryKey: ['memo'],
-        queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl)
+        queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl),
+        staleTime: 60000,
+        gcTime: 900000
     });
 
-    const editMemo = useMutation<SaveMemoResponse, Error, PutMemoRequest>({
+    const editMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
         mutationFn: diaryRepositoryImpl.editMemo.bind(diaryRepositoryImpl),
+        onSuccess: async (data) => {
+            addToast(data.message, 'success');
+        }
+    });
+
+    const deleteMemo = useMutation<DeleteResponse, Error, DeleteMemoRequest>({
+        mutationFn: diaryRepositoryImpl.deleteMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
         }
@@ -33,7 +46,8 @@ const useDiary = () => {
     return {
         saveMemo,
         getMemo,
-        editMemo
+        editMemo,
+        deleteMemo
     };
 };
 

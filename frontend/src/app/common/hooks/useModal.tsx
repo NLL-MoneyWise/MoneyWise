@@ -15,11 +15,13 @@ const useModal = () => {
         setIsOpen(false);
     };
 
-    const ModalComponent = ({ children }: ModalContainerProps) => {
+    const ModalWrapper = ({ children }: ModalContainerProps) => {
         return (
             <>{isOpen && <Modal closeHandler={closeModal}>{children}</Modal>}</>
         );
     };
+
+    const ModalComponent = React.memo(ModalWrapper);
 
     return { openModal, ModalComponent, closeModal };
 };

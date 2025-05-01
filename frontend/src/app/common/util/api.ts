@@ -1,12 +1,12 @@
-import { RefreshValidateResponse } from './../../auth/types/reponse/reponse-validate';
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { CustomError } from '../types/error/error';
 import {
     getAccessToken,
-    removeAccessToken,
-    saveAccessToken
+    saveAccessToken,
+    removeAccessToken
 } from '@/app/auth/util/toekn';
+import { RefreshValidateResponse } from './../../auth/types/reponse/reponse-validate';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -15,7 +15,8 @@ export const defaultApi = (
 ): AxiosInstance => {
     const instance = axios.create({
         baseURL: baseUrl,
-        ...option
+        ...option,
+        withCredentials: true
     });
 
     instance.interceptors.request.use(
@@ -44,11 +45,14 @@ export const defaultApi = (
                 try {
                     const response = await fetch(`${baseUrl}/auth/refresh`, {
                         method: 'POST',
-                        credentials: 'include',
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
+
+                    if (!response.ok) {
+                        throw new Error('토큰 갱신 실패');
+                    }
 
                     const data: RefreshValidateResponse = await response.json();
 
@@ -66,8 +70,9 @@ export const defaultApi = (
                         error.response.data?.typeName || 'UNKNOWN';
                     const errorStatus = error.response?.status || 500;
 
-                    window.location.href = `/login?callbackUrl=${window.location.pathname}&error=token_expired`;
                     await removeAccessToken();
+
+                    window.location.href = `/login?callbackUrl=${window.location.pathname}&error=token_expired`;
 
                     return Promise.reject(
                         new CustomError(errorMessage, errorStatus, errorType)

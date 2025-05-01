@@ -8,13 +8,13 @@ import NavBar from '../NavBar/NavBar';
 import { removeAccessToken } from '@/app/auth/util/toekn';
 
 const Header = () => {
-    const { claerUser, isLoggedIn } = useUserStore();
+    const { clearUser, isLoggedIn } = useUserStore();
     const router = useRouter();
 
     // 로그아웃 함수
     const handleLogOut = async () => {
         removeAccessToken();
-        claerUser();
+        clearUser();
     };
 
     const handleNavigate = () => {

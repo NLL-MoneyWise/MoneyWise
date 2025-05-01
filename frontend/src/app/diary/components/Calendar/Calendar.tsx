@@ -16,11 +16,15 @@ import formatDate from '../../util/formatDate';
 const Calendar = () => {
     const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [isEditMode, setIsEditMode] = useState<boolean>(false);
+    const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
 
     const calendarRef = useRef<FullCalendar>(null);
 
-    const { ModalComponent, closeModal, openModal } = useModal();
+    const {
+        ModalComponent: EventModal,
+        closeModal: closeEventModal,
+        openModal: openEventModal
+    } = useModal();
 
     const {
         getMemo: { data: response, refetch, isLoading }
@@ -30,8 +34,6 @@ const Calendar = () => {
         return <div>로딩중</div>;
     }
 
-    console.log(response);
-
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);
         console.log('현재 뷰 타입:', arg.view.type);
@@ -39,7 +41,7 @@ const Calendar = () => {
 
     const setMemo = () => {
         refetch();
-        closeModal();
+        closeEventModal();
     };
 
     return (
@@ -71,12 +73,14 @@ const Calendar = () => {
                                 </span>
                             </div>
                             {memoForDate && (
-                                <div className="memo-content">
-                                    {memoForDate.content.slice(0, 20)}
-                                    {memoForDate.content.length > 20
-                                        ? '...'
-                                        : ''}
-                                </div>
+                                <>
+                                    <div className="memo-content flex">
+                                        {memoForDate.content.slice(0, 20)}
+                                        {memoForDate.content.length > 20
+                                            ? '...'
+                                            : ''}
+                                    </div>
+                                </>
                             )}
                         </div>
                     );
@@ -89,19 +93,21 @@ const Calendar = () => {
                     );
 
                     if (hasMemo) {
-                        setIsEditMode(true);
+                        setEditMode('edit');
+                    } else {
+                        setEditMode('create');
                     }
 
-                    openModal();
+                    openEventModal();
                 }}
             />
-            <ModalComponent>
+            <EventModal>
                 <EventForm
                     initalDate={selectedDate}
                     closeModal={setMemo}
-                    isEditMode={isEditMode}
+                    editMode={editMode}
                 />
-            </ModalComponent>
+            </EventModal>
         </div>
     );
 };
