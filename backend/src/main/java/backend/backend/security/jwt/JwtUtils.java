@@ -24,13 +24,13 @@ public class JwtUtils {
     }
 
     // JWT 토큰 생성
-    public String generateAccessToken(String email, String name, String nickName) {
+    public String generateAccessToken(String email, String name, String nickname) {
         long now = new Date().getTime(); //JJWT의 메서드는 Date만 지원한다. (LocalDateTime사용 불가)
 
         return Jwts.builder()
                 .setSubject(email)
                 .claim("name", name)
-                .claim("nickName", nickName)
+                .claim("nickname", nickname)
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key)
                 .compact();
@@ -72,7 +72,7 @@ public class JwtUtils {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException e) {
+        } catch (SecurityException | MalformedJwtException | io.jsonwebtoken.security.SignatureException e) {
             throw new AuthException("잘못된 서명입니다.");
         } catch (ExpiredJwtException e) {
             throw new AuthException("만료된 인증 입니다.");

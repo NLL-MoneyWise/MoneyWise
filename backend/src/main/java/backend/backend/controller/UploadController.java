@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Image Upload Presigned Url")
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/upload")
 @RequiredArgsConstructor
 public class UploadController {
     private final S3Service s3Service;

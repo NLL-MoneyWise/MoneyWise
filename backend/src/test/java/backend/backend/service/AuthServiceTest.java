@@ -1,16 +1,19 @@
 package backend.backend.service;
 
 import backend.backend.dto.auth.request.LocalLoginRequest;
+import backend.backend.dto.auth.response.LoginResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Map;
+
 @SpringBootTest
 public class AuthServiceTest {
     @Autowired
-    private LocalAuthService localAuthService;
+    private AuthService authService;
     @Test
     @DisplayName("실제 로그인 테스트")
     void loginSuccess() {
@@ -19,10 +22,10 @@ public class AuthServiceTest {
 
         LocalLoginRequest request = LocalLoginRequest.builder().email(email).password(password).build();
 
-        String accessToken = localAuthService.login(request);
+        LoginResponse response = authService.login("local", request);
 
-        System.out.println(accessToken);
+        System.out.println(response.getAccess_token());
 
-        Assertions.assertNotNull(accessToken);
+        Assertions.assertNotNull(response.getAccess_token());
     }
 }

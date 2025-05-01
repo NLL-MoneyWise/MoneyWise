@@ -122,7 +122,7 @@ public class FacadeController {
 
     @Operation(summary = "period 필드를 통한 통합 소비 분석", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "period 필드에 따라 응답의 message 필드가 다릅니다.",
+            @ApiResponse(responseCode = "200", description = "period 필드에 따라 응답의 message 필드가 다릅니다. / period = all||year||month||day",
             content = @Content(mediaType = "application/json",
             schema = @Schema(implementation = FacadeConsumptionsAnalyzeResponse.class),
             examples = {
@@ -210,17 +210,27 @@ public class FacadeController {
             throw new ValidationException("year나 month나 day가 비어있습니다.");
         }
 
-        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(email, year, month, day);
+        String message;
 
         if (period.equals("all")) {
-            response.setMessage("전체 기간 소비 내역 분석이 완료되었습니다.");
+            message = "전체 기간 소비 내역 분석이 완료되었습니다.";
+            year = null;
+            month = null;
+            day = null;
         } else if (period.equals("year")) {
-            response.setMessage(year + "년도의 소비 내역 분석이 완료되었습니다.");
+            message = year + "년도의 소비 내역 분석이 완료되었습니다.";
+            month = null;
+            day = null;
         } else if (period.equals("month")) {
-            response.setMessage(year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.");
+            message = year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.";
+            day = null;
         } else {
-            response.setMessage(year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.");
+            message = year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.";
         }
+
+        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(email, year, month, day);
+
+        response.setMessage(message);
 
         return ResponseEntity.ok(response);
     }

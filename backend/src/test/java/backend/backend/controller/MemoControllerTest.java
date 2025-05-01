@@ -35,15 +35,15 @@ class MemoControllerTest {
     void memoSaveSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         CreateMemoRequest createMemoRequest = new CreateMemoRequest();
         createMemoRequest.setContent("자바자바wkqkfsg");
         createMemoRequest.setDate("2020/10/10");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/memos/save")
-                .header("Authorization", accessToken)
+                .header("Authorization", access_token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createMemoRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -55,14 +55,14 @@ class MemoControllerTest {
     void memoUpdateSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         UpdateMemoRequest request = new UpdateMemoRequest();
         request.setContent("텅텅텅장");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/memos/{memoId}", 3001)
-                .header("Authorization", accessToken)
+                .header("Authorization", access_token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -74,11 +74,11 @@ class MemoControllerTest {
     void getAllMemoSuccess() throws Exception {
         String email = "test@naver.com";
         String name = "테스트";
-        String nickName = "테스트닉네임";
-        String accessToken = "Bearer " + jwtUtils.generateAccessToken(email, name, nickName);
+        String nickname = "테스트닉네임";
+        String access_token = "Bearer " + jwtUtils.generateAccessToken(email, name, nickname);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/memos/find")
-                .header("Authorization", accessToken))
+                .header("Authorization", access_token))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }

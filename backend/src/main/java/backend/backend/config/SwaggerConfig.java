@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -16,12 +15,12 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
 import java.util.Map;
 
 @Configuration
 public class SwaggerConfig {
     private static final String JWT_SECURITY_SCHEME_NAME = "JWT";
+    private static final String COOKIE_SECURITY_SCHEMA_NAME = "REFRESH_TOKEN";
     @Bean
     public OpenAPI customOpenAPI() {
         SecurityRequirement securityRequirement = createSecurityRequirement();
@@ -48,7 +47,8 @@ public class SwaggerConfig {
     }
 
     private SecurityRequirement createSecurityRequirement() {
-        return new SecurityRequirement().addList(JWT_SECURITY_SCHEME_NAME);
+        return new SecurityRequirement().addList(JWT_SECURITY_SCHEME_NAME)
+                .addList(COOKIE_SECURITY_SCHEMA_NAME);
     }
 
     private Components createSecurityComponents() {
@@ -60,7 +60,14 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER)
                 .description("JWT 토큰을 입력해주세요.");
 
-        return new Components().addSecuritySchemes(JWT_SECURITY_SCHEME_NAME, jwtSecurityScheme);
+        SecurityScheme cookieSecurityScheme = new SecurityScheme()
+                .name(COOKIE_SECURITY_SCHEMA_NAME)
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.COOKIE)
+                .description("리프레시 토큰이 저장된 쿠키입니다.");
+
+        return new Components().addSecuritySchemes(JWT_SECURITY_SCHEME_NAME, jwtSecurityScheme)
+                .addSecuritySchemes(COOKIE_SECURITY_SCHEMA_NAME, cookieSecurityScheme);
     }
 
     private Schema createErrorResponseSchema() {
