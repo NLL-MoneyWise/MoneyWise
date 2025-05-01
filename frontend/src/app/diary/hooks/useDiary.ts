@@ -20,28 +20,30 @@ const useDiary = () => {
 
     const getMemo = useQuery<GetMemoResponse, Error>({
         queryKey: ['memo'],
-        queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl)
+        queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl),
+        staleTime: 60000,
+        gcTime: 900000
     });
 
-    const editMemo = useMutation<SaveMemoResponse, Error, PutMemoRequest>({
+    const editMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
         mutationFn: diaryRepositoryImpl.editMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
         }
     });
 
-      // 메모 삭제하기
-      async deleteMemo(date: DeleteMemoRequest): Promise<DeleteResponse> {
-        const { data } = await this.api.delete(`/memos/delete`, {
-            data: date
-        });
+    const deleteMemo = useMutation<DeleteResponse, Error, DeleteMemoRequest>({
+        mutationFn: diaryRepositoryImpl.deleteMemo.bind(diaryRepositoryImpl),
+        onSuccess: async (data) => {
+            addToast(data.message, 'success');
+        }
+    });
 
-        return data;
-    }
     return {
         saveMemo,
         getMemo,
-        editMemo
+        editMemo,
+        deleteMemo
     };
 };
 
