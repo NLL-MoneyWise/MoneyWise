@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { CustomError } from '../types/error/error';
+import { CustomError, ErrorType } from '../types/error/error';
 import {
     getAccessToken,
     saveAccessToken,
@@ -51,7 +51,13 @@ export const defaultApi = (
                     });
 
                     if (!response.ok) {
-                        throw new Error('토큰 갱신 실패');
+                        return Promise.reject(
+                            new CustomError(
+                                '세션이 만료됬습니다.',
+                                401,
+                                ErrorType.API
+                            )
+                        );
                     }
 
                     const data: RefreshValidateResponse = await response.json();
