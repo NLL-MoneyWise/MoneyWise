@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
     handleClick?: () => void;
-    variant?: 'primary' | 'secondary' | 'kakao' | 'modify' | 'delete';
+    variant?: 'primary' | 'secondary' | 'kakao' | 'modify' | 'delete' | 'block';
     className?: string;
 }
 
@@ -47,7 +47,8 @@ const Button = ({
                     'bg-red-500 hover:bg-red-600   text-white':
                         variant === 'delete',
                     'bg-blue-500 hover:bg-blue-600 text-white':
-                        variant === 'modify'
+                        variant === 'modify',
+                    ' bg-gray-400 text-white': variant === 'block'
                 },
                 className
             )}

@@ -45,10 +45,11 @@ const CalendarButton = ({
     return (
         <div className={clsx(className)}>
             <Button
-                className="flex items-center justify-center px-4 py-2"
+                className={clsx('flex items-center justify-center px-4 py-2')}
                 onClick={toggleCalendar}
                 type="button"
                 disabled={editMode === 'edit' && true}
+                variant={editMode === 'edit' ? 'block' : 'primary'}
             >
                 <Calendar1 className="mr-3" />
                 {formatDate(selectedDate)}
