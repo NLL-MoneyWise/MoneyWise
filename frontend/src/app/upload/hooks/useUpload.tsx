@@ -7,10 +7,12 @@ import {
 } from '../types/reponse/index';
 
 import { AnalyzeReceiptRequest } from '../types/request/index';
+import { useRouter } from 'next/navigation';
 
 const useUpload = () => {
     const uploadRepositoryImpl = UploadRepositoryImpl.getInstance();
     const { addToast } = useToastStore();
+    const router = useRouter();
 
     const uploadRecipt = useQuery<UploadReciptResponse, Error>({
         queryKey: ['recipt'],
@@ -25,6 +27,7 @@ const useUpload = () => {
         mutationFn: uploadRepositoryImpl.analyze.bind(uploadRepositoryImpl),
         onSuccess: async () => {
             addToast('영수증 분석이 완료되었습니다.', 'success');
+            router.push('/');
         }
     });
 

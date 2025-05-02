@@ -15,7 +15,7 @@ const UploadPage = () => {
 
     const { addToast } = useToastStore();
     const {
-        uploadRecipt: { data, isLoading },
+        uploadRecipt: { data, isLoading, refetch },
         analyzeRecipt
     } = useUpload();
 
@@ -115,6 +115,7 @@ const UploadPage = () => {
                 }
             }
         } catch (error) {
+            refetch();
             return;
         }
     };
