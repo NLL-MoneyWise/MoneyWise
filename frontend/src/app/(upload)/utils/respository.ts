@@ -1,6 +1,6 @@
-import { defaultApi } from './../common/util/api';
+import { UploadResponse } from './../types/reponse/reponse-upload';
 import { AxiosInstance } from 'axios';
-import { UploadResponse } from './types/reponse/index';
+import { defaultApi } from '@/app/common/util/api';
 
 interface UploadRepository {
     upload(): Promise<UploadResponse>;

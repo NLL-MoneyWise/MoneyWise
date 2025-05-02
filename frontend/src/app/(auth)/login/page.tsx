@@ -1,9 +1,9 @@
 'use client';
-import LoginForm from '@/app/auth/components/LoginForm/LoginForm';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { useUserStore } from '@/stores/userStore';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import LoginForm from '../components/LoginForm/LoginForm';
 
 export default function LoginPage() {
     const searchParams = useSearchParams();

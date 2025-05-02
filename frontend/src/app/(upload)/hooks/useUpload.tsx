@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { UploadRepositoryImpl } from '../respository';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { UploadResponse } from '../types/reponse/index';
+import { UploadRepositoryImpl } from '../utils/respository';
 
 const useUpload = () => {
     const uploadRepositoryImpl = UploadRepositoryImpl.getInstance();

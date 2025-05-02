@@ -1,17 +1,17 @@
-import { defaultApi } from './../common/util/api';
 import { AxiosInstance } from 'axios';
 import {
     LoginRequest,
     SignUpRequest,
     KakaoLoginRequest,
     ValidateRequest
-} from './types/request/index';
+} from '../types/request/index';
 import {
     LoginResponse,
     ValidateResponse,
     SignUpResponse,
     RefreshValidateResponse
-} from './types/reponse/index';
+} from '../types/reponse/index';
+import { defaultApi } from '@/app/common/util/api';
 
 interface AuthRepository {
     login(credentials: LoginRequest): Promise<LoginResponse>;

@@ -5,7 +5,7 @@ import Button from '../Button/Button';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
 import NavBar from '../NavBar/NavBar';
-import { removeAccessToken } from '@/app/auth/util/toekn';
+import { removeAccessToken } from '@/app/(auth)/util/toekn';
 
 const Header = () => {
     const { clearUser, isLoggedIn } = useUserStore();

@@ -1,3 +1,4 @@
+import { RefreshValidateResponse } from './../../(auth)/types/reponse/reponse-validate';
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { CustomError } from '../types/error/error';
@@ -5,8 +6,7 @@ import {
     getAccessToken,
     saveAccessToken,
     removeAccessToken
-} from '@/app/auth/util/toekn';
-import { RefreshValidateResponse } from './../../auth/types/reponse/reponse-validate';
+} from '@/app/(auth)/util/toekn';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 

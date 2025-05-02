@@ -8,8 +8,8 @@ import {
     DeleteResponse
 } from './../types/response/reponse-memo';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { DiaryRepositoryImpl } from '../repository';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
+import { DiaryRepositoryImpl } from '../util/repository';
 
 const useDiary = () => {
     const diaryRepositoryImpl = DiaryRepositoryImpl.getInstance();

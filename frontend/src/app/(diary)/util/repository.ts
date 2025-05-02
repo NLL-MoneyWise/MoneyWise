@@ -1,15 +1,11 @@
-import { defaultApi } from '../common/util/api';
+import { defaultApi } from './../../common/util/api';
 import { AxiosInstance } from 'axios';
-import {
-    MemoRequest,
-    PutMemoRequest,
-    DeleteMemoRequest
-} from './types/request';
+import { MemoRequest, DeleteMemoRequest } from './types/request';
 import {
     SaveMemoResponse,
     GetMemoResponse,
     DeleteResponse
-} from './types/response';
+} from '../types/response';
 
 interface DiaryRepository {
     saveMemo(memo: MemoRequest): Promise<SaveMemoResponse>;

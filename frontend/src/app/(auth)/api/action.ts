@@ -11,8 +11,8 @@ import {
     ValidateResponse,
     RefreshValidateResponse
 } from './../types/reponse/index';
-import { AuthRepositoryImpl } from '../respository';
 import { saveAccessToken } from '../util/toekn';
+import { AuthRepositoryImpl } from '../util/respository';
 
 const authRepository = AuthRepositoryImpl.getInstance();
 
