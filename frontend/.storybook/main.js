@@ -4,7 +4,8 @@ const config = {
         '@storybook/addon-onboarding',
         '@storybook/addon-essentials',
         '@chromatic-com/storybook',
-        '@storybook/addon-interactions'
+        '@storybook/addon-interactions',
+        '@storybook/addon-styling-webpack'
     ],
     framework: {
         name: '@storybook/nextjs',
