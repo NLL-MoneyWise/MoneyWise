@@ -16,7 +16,7 @@ public class JwtUtils {
     private static final String BEARER_TYPE = "Bearer";
 
     //토큰은 밀리초 단위로 계산해야한다. 쿠키는 초단위이다.
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 180;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey); //base64로 텍스트로 저장된 시크릿 키 디코딩

@@ -7,6 +7,7 @@ import backend.backend.dto.receipt.response.GetAllReceiptPresignedUrlResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import backend.backend.exception.response.ErrorResponse;
 import backend.backend.service.ReceiptService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ReceiptController {
     private final ReceiptService receiptService;
 
-    @Operation(summary = "영수증 분석 기능", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "영수증 분석 기능", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "영수증 분석이 완료되었습니다.",
                     content = @Content(mediaType = "apllication/json",
