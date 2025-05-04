@@ -8,13 +8,13 @@ import NavBar from '../NavBar/NavBar';
 import { removeAccessToken } from '@/app/auth/util/toekn';
 
 const Header = () => {
-    const { claerUser, isLoggedIn } = useUserStore();
+    const { clearUser, isLoggedIn } = useUserStore();
     const router = useRouter();
 
     // 로그아웃 함수
     const handleLogOut = async () => {
         removeAccessToken();
-        claerUser();
+        clearUser();
     };
 
     const handleNavigate = () => {
@@ -29,7 +29,7 @@ const Header = () => {
         }
     };
     return (
-        <header className=" py-6 fixed left-0 right-0 top-0  bg-white z-10">
+        <header className=" py-6 fixed left-0 right-0 top-0 bg-white z-10">
             <div className=" max-w-screen-xl m-auto">
                 <div className="items-center flex justify-center sm:justify-between w-full px-1 ">
                     <h1 aria-label="로고">

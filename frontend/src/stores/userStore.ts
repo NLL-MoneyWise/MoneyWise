@@ -1,3 +1,4 @@
+import { getAccessToken } from '@/app/auth/util/toekn';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -8,7 +9,7 @@ interface UserState {
     } | null;
     setUser: (user: UserState['user']) => void;
     isLoggedIn: () => boolean;
-    claerUser: () => void;
+    clearUser: () => void;
     clearStorage: () => void;
 }
 
@@ -19,12 +20,16 @@ export const useUserStore = create<UserState>()(
             accessToken: null,
             setUser: (user) => set({ user }),
             isLoggedIn: () => {
-                return get().user !== null;
+                if (get().user) {
+                    return true;
+                } else {
+                    return false;
+                }
             },
             clearStorage: () => {
                 localStorage.removeItem('user-storage');
             },
-            claerUser: () => {
+            clearUser: () => {
                 set({ user: null });
                 get().clearStorage();
             }

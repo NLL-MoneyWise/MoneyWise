@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -124,25 +124,23 @@ public class AuthController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\n\"typeName\": \"NOT_FOUND_ERROR\",\n\"message\": \"가입되지 않은 이메일 입니다.\"\n}"))),
 
-            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다.",
+            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다./카카오 API호출에 실패했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "DATABASE_ERROR",
-                                    "message": "회원가입에 실패했습니다."
-                                    }
-                                    """))),
-
-            @ApiResponse(responseCode = "500", description = "카카오 API호출에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "API_ERROR",
-                                    "message": "카카오 API호출에 실패했습니다."
-                                    }
-                                    """))),
+                            examples = {
+                                    @ExampleObject(name = "kakao: 자동 회원가입 오류", value = """
+                                            {
+                                            "typeName": "DATABASE_ERROR",
+                                            "message": "회원가입에 실패했습니다."
+                                            }
+                                            """),
+                                    @ExampleObject("""
+                                            {
+                                            "typeName": "API_ERROR",
+                                            "message": "카카오 API호출에 실패했습니다."
+                                            }
+                                            """)}
+                    )),
 
             @ApiResponse(responseCode = "503", description = "카카오 서버에 연결할 수 없습니다.",
                     content = @Content(mediaType = "application/json",

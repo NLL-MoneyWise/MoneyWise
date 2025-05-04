@@ -7,7 +7,7 @@ import { useToastStore } from '@/app/common/hooks/useToastStore';
 import Text from '@/app/common/components/Text/Text';
 import { login } from '../../api/action';
 import { useUserStore } from '@/stores/userStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomError } from '@/app/common/types/error/error';
 
 const LoginForm = () => {
@@ -16,7 +16,7 @@ const LoginForm = () => {
     const { setUser } = useUserStore();
     const { addToast } = useToastStore();
     const router = useRouter();
-
+    const searchParams = useSearchParams();
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
@@ -41,7 +41,7 @@ const LoginForm = () => {
             setUser({ email: response.email, nickName: response.nickname });
 
             // 갈려하던 파라미터를 불러와 처리
-            const searchParams = new URLSearchParams(window.location.search);
+
             const callbackUrl = searchParams.get('callbackUrl') || '/';
 
             router.push(callbackUrl);
