@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Plus, Upload, User, Chart, Home } from 'lucide-react';
+import { Plus, Upload, User, ChartBar, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const FloatingActionButton = () => {
@@ -41,7 +41,7 @@ const FloatingActionButton = () => {
                     </button>
 
                     <button className="w-12 h-12 rounded-full bg-yellow-500 shadow hover:shadow-md transition-shadow flex items-center justify-center">
-                        <Chart
+                        <ChartBar
                             className="w-6 h-6 text-white"
                             onClick={() => {
                                 router.push('/analyze');
