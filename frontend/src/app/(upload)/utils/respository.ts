@@ -1,9 +1,13 @@
-import { UploadResponse } from './../types/reponse/reponse-upload';
-import { AxiosInstance } from 'axios';
+import {
+    UploadReciptResponse,
+    AnalyzeReceiptResponse
+} from '../types/reponse/index';
+import { AnalyzeReceiptRequest } from '../types/request/index';
 import { defaultApi } from '@/app/common/util/api';
+import { AxiosInstance } from 'axios';
 
 interface UploadRepository {
-    upload(): Promise<UploadResponse>;
+    upload(): Promise<UploadReciptResponse>;
 }
 
 export class UploadRepositoryImpl implements UploadRepository {
@@ -21,8 +25,17 @@ export class UploadRepositoryImpl implements UploadRepository {
         return UploadRepositoryImpl.instance;
     }
 
-    async upload(): Promise<UploadResponse> {
+    async upload(): Promise<UploadReciptResponse> {
         const { data } = await this.api.get('/upload/presigned-url');
+        return data;
+    }
+
+    async analyze({
+        accessUrl
+    }: AnalyzeReceiptRequest): Promise<AnalyzeReceiptResponse> {
+        const { data } = await this.api.post('/workflows/receipt-process', {
+            accessUrl
+        });
         return data;
     }
 }

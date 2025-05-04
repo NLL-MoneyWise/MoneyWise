@@ -15,7 +15,8 @@ const UploadPage = () => {
 
     const { addToast } = useToastStore();
     const {
-        uploadRecipt: { data }
+        uploadRecipt: { data, refetch },
+        analyzeRecipt
     } = useUpload();
 
     const handleReciptUpload = (newFiles: File[]) => {
@@ -57,10 +58,8 @@ const UploadPage = () => {
             }
 
             // data가 없으면 리턴
-            if (!data || !data.preSignedUrl) {
-                console.log(data);
-                console.log(data?.preSignedUrl);
-                addToast('프리사인드 URL이 없음', 'error');
+            if (!data) {
+                addToast('에러가 발생했습니다.', 'error');
                 return;
             }
 
@@ -80,7 +79,7 @@ const UploadPage = () => {
                     throw new Error('업로드 실패');
                 }
 
-                addToast('파일 업로드 성공!', 'success');
+                await analyzeRecipt.mutate({ accessUrl: data.accessUrl });
             }
             // .preSignedUrl이 배열인 경우 (여러 URL)
             else if (Array.isArray(data.preSignedUrl)) {
@@ -101,14 +100,16 @@ const UploadPage = () => {
                 const results = await Promise.all(uploadPromises);
 
                 if (results.every((res) => res!.ok)) {
-                    addToast('모든 파일 업로드 성공!', 'success');
+                    await analyzeRecipt.mutate({
+                        accessUrl: data.accessUrl
+                    });
                 } else {
                     throw new Error('일부 파일 업로드 실패');
                 }
             }
         } catch (error) {
-            console.error('업로드 에러:', error);
-            addToast('업로드 중 오류 발생', 'error');
+            refetch();
+            return;
         }
     };
 
@@ -121,7 +122,7 @@ const UploadPage = () => {
     return (
         <>
             <div className="bg-white w-[800px] rounded-lg shadow-lg p-8 mx-auto my-10 border border-gray-100 overflow">
-                <Text.Title className="flex justify-center mb-4">
+                <Text.Title className="flex justify-center mb-4  text-gray-500">
                     파일 업로드
                 </Text.Title>
 
