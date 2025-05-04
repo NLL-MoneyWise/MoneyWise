@@ -33,3 +33,10 @@ export const removeAccessToken = async () => {
 
     cookieStore.delete('accessToken');
 };
+
+export const checkAccessToken = async () => {
+    const token = await getAccessToken();
+
+    if (token) return true;
+    return false;
+};
