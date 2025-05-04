@@ -165,6 +165,7 @@ public class AuthController {
         refreshTokenCookie.setSecure(false); //HTTPS에서만 전송되도록 설정
         refreshTokenCookie.setPath("/"); //모든 경로에서 쿠키 사용
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7일을 초로 변환
+        refreshTokenCookie.setAttribute("SameSite", "none");
 
         response.addCookie(refreshTokenCookie);
 
