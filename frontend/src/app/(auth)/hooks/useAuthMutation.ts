@@ -1,9 +1,9 @@
 'use client';
 
 import { useToastStore } from '@/app/common/hooks/useToastStore';
-import { AuthRepositoryImpl } from '../respository';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { AuthRepositoryImpl } from '../util/respository';
 
 const useAuthMutation = () => {
     const { addToast } = useToastStore();

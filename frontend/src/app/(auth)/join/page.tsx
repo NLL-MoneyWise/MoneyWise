@@ -1,4 +1,4 @@
-import SignUpForm from '@/app/auth/components/SignUpForm/SignUpForm';
+import SignUpForm from '../components/SignUpForm/SignUpForm';
 
 export default function JoinPage() {
     return (

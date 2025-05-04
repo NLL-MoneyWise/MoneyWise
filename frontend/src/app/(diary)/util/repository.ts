@@ -1,6 +1,6 @@
 import { defaultApi } from './../../common/util/api';
 import { AxiosInstance } from 'axios';
-import { MemoRequest, DeleteMemoRequest } from './types/request';
+import { MemoRequest, DeleteMemoRequest } from '../types/request';
 import {
     SaveMemoResponse,
     GetMemoResponse,
