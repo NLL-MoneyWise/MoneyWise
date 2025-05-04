@@ -15,9 +15,15 @@ const UploadPage = () => {
 
     const { addToast } = useToastStore();
     const {
-        uploadRecipt: { data, refetch },
+        uploadRecipt: { data, isLoading, refetch },
         analyzeRecipt
     } = useUpload();
+
+    if (isLoading) {
+        <div>로딩</div>;
+    }
+
+    // const { isPending } = analyzeRecipt;
 
     const handleReciptUpload = (newFiles: File[]) => {
         const isDuplicate = newFiles.some((newFile) =>
@@ -78,8 +84,7 @@ const UploadPage = () => {
                 if (!response.ok) {
                     throw new Error('업로드 실패');
                 }
-
-                await analyzeRecipt.mutate({ accessUrl: data.accessUrl });
+                await analyzeRecipt.mutateAsync({ accessUrl: data.accessUrl });
             }
             // .preSignedUrl이 배열인 경우 (여러 URL)
             else if (Array.isArray(data.preSignedUrl)) {
@@ -100,9 +105,11 @@ const UploadPage = () => {
                 const results = await Promise.all(uploadPromises);
 
                 if (results.every((res) => res!.ok)) {
-                    await analyzeRecipt.mutate({
+                    await analyzeRecipt.mutateAsync({
                         accessUrl: data.accessUrl
                     });
+
+                    addToast('모든 파일 업로드 성공!', 'success');
                 } else {
                     throw new Error('일부 파일 업로드 실패');
                 }

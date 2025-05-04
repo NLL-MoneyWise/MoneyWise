@@ -23,6 +23,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -122,25 +124,23 @@ public class AuthController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\n\"typeName\": \"NOT_FOUND_ERROR\",\n\"message\": \"가입되지 않은 이메일 입니다.\"\n}"))),
 
-            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다.",
+            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다./카카오 API호출에 실패했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "DATABASE_ERROR",
-                                    "message": "회원가입에 실패했습니다."
-                                    }
-                                    """))),
-
-            @ApiResponse(responseCode = "500", description = "카카오 API호출에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "API_ERROR",
-                                    "message": "카카오 API호출에 실패했습니다."
-                                    }
-                                    """))),
+                            examples = {
+                                    @ExampleObject(name = "kakao: 자동 회원가입 오류", value = """
+                                            {
+                                            "typeName": "DATABASE_ERROR",
+                                            "message": "회원가입에 실패했습니다."
+                                            }
+                                            """),
+                                    @ExampleObject("""
+                                            {
+                                            "typeName": "API_ERROR",
+                                            "message": "카카오 API호출에 실패했습니다."
+                                            }
+                                            """)}
+                    )),
 
             @ApiResponse(responseCode = "503", description = "카카오 서버에 연결할 수 없습니다.",
                     content = @Content(mediaType = "application/json",
@@ -163,6 +163,7 @@ public class AuthController {
         refreshTokenCookie.setSecure(false); //HTTPS에서만 전송되도록 설정
         refreshTokenCookie.setPath("/"); //모든 경로에서 쿠키 사용
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7일을 초로 변환
+        refreshTokenCookie.setAttribute("SameSite", "none");
 
         response.addCookie(refreshTokenCookie);
 
@@ -311,5 +312,40 @@ public class AuthController {
             return ResponseEntity.ok(TokenValidationResponse.builder().message("유효한 토큰입니다.").build());
         }
         throw new AuthException("검증에 실패했습니다.");
+    }
+
+    @Operation(summary = "유저 삭제", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자의 모든 정보가 삭제되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DeleteUserResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "사용자의 모든 정보가 삭제되었습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 입니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "존재하지 않는 사용자 입니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "500", description = "사용자 삭제에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = "{\n\"typeName\": \"DATABASE_ERROR\",\n\"message\": \"사용자 삭제에 실패했습니다.\"\n}")))
+    })
+    @DeleteMapping("/delete")
+    public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal String email) {
+        authService.deleteUser(email);
+        DeleteUserResponse response = new DeleteUserResponse();
+        response.setMessage("사용자의 모든 정보가 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
     }
 }

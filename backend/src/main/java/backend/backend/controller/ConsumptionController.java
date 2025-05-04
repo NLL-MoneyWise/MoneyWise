@@ -60,7 +60,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(consumptionsSaveResponse);
     }
 
-    @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 기간 소비 내역 분석이 완료되었습니다.",
                 content = @Content(mediaType = "apllication/json",
@@ -88,7 +88,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "특정 년도 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "특정 년도 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{year}년의 소비 내역 분석이 완료되었습니다.",
             content = @Content(mediaType = "apllication/json",
@@ -116,7 +116,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "특정 년월 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "특정 년월 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{year}년 {month}월 소비 내역 분석이 완료되었습니다.",
             content = @Content(mediaType = "apllication/json",
@@ -144,7 +144,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "특정 년, 월, 일 소비 내역 분석", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "특정 년, 월, 일 소비 내역 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{year}년 {month}월 {day}일 소비 내역 분석이 완료되었습니다.",
             content = @Content(mediaType = "application/json",

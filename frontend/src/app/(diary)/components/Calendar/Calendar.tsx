@@ -27,12 +27,8 @@ const Calendar = () => {
     } = useModal();
 
     const {
-        getMemo: { data: response, refetch, isLoading }
+        getMemo: { data: response, refetch }
     } = useDiary();
-
-    if (isLoading) {
-        return <div>로딩중</div>;
-    }
 
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);

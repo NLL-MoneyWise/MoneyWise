@@ -48,7 +48,9 @@ public class SecurityConfig{
                 // /api/auth/* 에는 누구나 인증없이 접근 가능 그 외 모든 요청은 인증되어야 접근가능함
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/signup",
+                                "/auth/login/**",
+                                "/auth/validate",
                                 "/auth/refresh",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

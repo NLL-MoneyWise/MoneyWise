@@ -82,10 +82,12 @@ export const defaultApi = (
                     });
 
                     if (!response.ok) {
-                        throw new CustomError(
-                            '세션이 만료되었습니다.',
-                            401,
-                            ErrorType.API
+                        return Promise.reject(
+                            new CustomError(
+                                '세션이 만료됬습니다.',
+                                401,
+                                ErrorType.API
+                            )
                         );
                     }
 
