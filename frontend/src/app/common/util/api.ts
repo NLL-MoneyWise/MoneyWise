@@ -102,20 +102,8 @@ export const defaultApi = (
                 } catch (refreshError) {
                     await removeAccessToken();
 
-                    if (typeof window !== 'undefined') {
-                        window.location.href = `/login?callbackUrl=${window.location.pathname}&error=token_expired`;
-                    }
-
-                    const errorMessage =
-                        error.response?.data?.message ||
-                        '알 수 없는 에러입니다.';
-                    const errorStatus = error.response?.status || 500;
-                    const errorType =
-                        error.response?.data?.typeName || 'UNKNOWN';
-
-                    return Promise.reject(
-                        new CustomError(errorMessage, errorStatus, errorType)
-                    );
+                    const currentPath = window.location.pathname;
+                    redirectToLogin(currentPath);
                 }
             }
 
