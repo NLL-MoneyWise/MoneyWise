@@ -49,10 +49,14 @@ const EventForm: React.FC<EventFormProps> = ({
             return;
         }
 
-        await saveMemo.mutateAsync({
-            date: formatDate(selectedDate),
-            content: content
-        });
+        await saveMemo
+            .mutateAsync({
+                date: formatDate(selectedDate),
+                content: content
+            })
+            .catch((error) => {
+                return;
+            });
 
         closeModal();
     };
@@ -67,10 +71,14 @@ const EventForm: React.FC<EventFormProps> = ({
             return;
         }
 
-        await editMemo.mutateAsync({
-            date: formatDate(initalDate),
-            content: content
-        });
+        await editMemo
+            .mutateAsync({
+                date: formatDate(initalDate),
+                content: content
+            })
+            .catch((error) => {
+                return;
+            });
 
         closeModal();
     };
