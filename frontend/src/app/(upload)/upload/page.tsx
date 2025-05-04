@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
-import PreviewImg from '@/app/upload/components/PreviewImg/PreviewImg';
 import Button from '@/app/common/components/Button/Button';
 import Text from '@/app/common/components/Text/Text';
-import FileUpload from '@/app/upload/components/FileUpload/UploadButton';
-import useUpload from '@/app/upload/hooks/useUpload';
+import PreviewImg from '../components/PreviewImg/PreviewImg';
+import FileUpload from '../components/FileUpload/UploadButton';
+import useUpload from '../hooks/useUpload';
 
 const UploadPage = () => {
     const [receipt, setReceipt] = useState<File[]>([]);
@@ -129,7 +129,7 @@ const UploadPage = () => {
     return (
         <>
             <div className="bg-white w-[800px] rounded-lg shadow-lg p-8 mx-auto my-10 border border-gray-100 overflow">
-                <Text.Title className="flex justify-center mb-4">
+                <Text.Title className="flex justify-center mb-4  text-gray-500">
                     파일 업로드
                 </Text.Title>
 

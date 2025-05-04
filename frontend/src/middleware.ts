@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getAccessToken } from './app/auth/util/toekn';
+import { getAccessToken } from './app/(auth)/util/toekn';
 
 // 추가예정
-const protectedRoutes = ['/calendar', '/upload', '/history'];
+const protectedRoutes = ['/calendar', '/upload', '/analyze'];
 
 export async function middleware(request: NextRequest) {
     const token = await getAccessToken();
@@ -22,5 +22,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/calendar', '/upload', '/history']
+    matcher: ['/calendar', '/upload', '/analyze']
 };

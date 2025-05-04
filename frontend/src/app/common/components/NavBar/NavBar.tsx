@@ -5,7 +5,7 @@ const navLinks = [
     { href: '/upload', label: '업로드' },
     { href: '/mypage', label: '개인 정보' },
     { href: '/calendar', label: '달력' },
-    { href: '/history', label: '분석' }
+    { href: '/analyze', label: '분석' }
 ];
 
 const NavBar = () => {

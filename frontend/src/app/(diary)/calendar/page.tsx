@@ -1,6 +1,6 @@
 'use client';
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
-import Calendar from '@/app/diary/components/Calendar/Calendar';
+import Calendar from '../components/Calendar/Calendar';
 
 const CalendarPage = () => {
     return (

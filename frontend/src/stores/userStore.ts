@@ -1,4 +1,3 @@
-import { getAccessToken } from '@/app/auth/util/toekn';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
