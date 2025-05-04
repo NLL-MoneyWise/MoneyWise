@@ -7,7 +7,6 @@ import {
     saveAccessToken,
     removeAccessToken
 } from '@/app/(auth)/util/toekn';
-import { constrainPoint } from '@fullcalendar/core/internal';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
