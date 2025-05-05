@@ -4,9 +4,11 @@ import backend.backend.domain.Consumption;
 import backend.backend.domain.Receipt;
 import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.model.ByCategory;
+import backend.backend.dto.consumption.model.ConsumptionDTO;
 import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
+import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.repository.ConsumptionRepository;
@@ -17,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +28,17 @@ public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final ReceiptRepository receiptRepository;
 
-    public void save(String email, ConsumptionsSaveRequest request) {
+    public ConsumptionsSaveResponse save(String email, ConsumptionsSaveRequest request) {
+        ConsumptionsSaveResponse response = new ConsumptionsSaveResponse();
+        List<ConsumptionDTO> consumptionDTOList = new ArrayList<>();
+        Consumption result;
+
         Map<String, Long> categoryMap = getCategoryMap();
 
         try {
+            String date_string = request.getDate();
             //request의 date는 String이므로 localDate로 변환 필요
-            LocalDate localDate = LocalDate.parse(request.getDate());
+            LocalDate localDate = LocalDate.parse(date_string);
 
             //공통 입력 사항
             Consumption consumption = Consumption.builder()
@@ -49,18 +53,37 @@ public class ConsumptionService {
 
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 for (Item item : request.getItems()) {
-                    Long categoryId = categoryMap.get(item.getCategory());
+                    String category_string = item.getCategory();
+                    Long categoryId = categoryMap.get(category_string);
 
-                    consumption.setAmount(item.getAmount());
+                    consumption.setAmount(item.getAmount() * item.getQuantity());
                     consumption.setCategory_id(categoryId);
                     consumption.setItem_name(item.getName());
                     consumption.setQuantity(item.getQuantity());
-                    consumptionRepository.save(consumption);
+                    result = consumptionRepository.save(consumption);
+
+                    ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+
+                    consumptionDTO.setCategory(category_string);
+                    consumptionDTO.setQuantity(result.getQuantity());
+                    consumptionDTO.setAmount(result.getAmount());
+                    consumptionDTO.setId(result.getId());
+                    consumptionDTO.setName(result.getItem_name());
+
+                    consumptionDTOList.add(consumptionDTO);
                 }
             } else {
                 consumption.setAmount(receipt.getTotal_amount());
-                consumptionRepository.save(consumption);
+                result = consumptionRepository.save(consumption);
+
+                ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+                consumptionDTO.setId(result.getId());
+                consumptionDTO.setAmount(result.getAmount());
+
+                consumptionDTOList.add(consumptionDTO);
             }
+            response.setConsumptionDTOList(consumptionDTOList);
+            return response;
         } catch (DataAccessException e) {
             throw new DatabaseException(
                     "소비 저장 중 오류가 발생했습니다." + e.getMessage());

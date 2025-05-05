@@ -35,10 +35,10 @@ public class FacadeController {
             schema = @Schema(implementation = FacadeReceiptProcessResponse.class),
             examples = @ExampleObject("""
                     {
-                    "receiptId": "1024",
                     "date": "2015/11/19",
-                    "totalAmount": "4500",
-                    "items": [{"category": "잡화", "name": "말보로레드", "amount": "4500"}, {"category": "문구", "name": "컴퓨터용싸인펜", "amount": "500"}],
+                    "totalAmount": "5500",
+                    "store_name": "GS25",
+                    "consumptionDTOList": [{"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"}],
                     "message": "영수증 분석 및 소비 내역 저장이 완료 되었습니다."
                     }
                     """))),

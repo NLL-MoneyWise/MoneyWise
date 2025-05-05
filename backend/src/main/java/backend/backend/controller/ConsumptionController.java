@@ -24,14 +24,17 @@ import org.springframework.web.bind.annotation.*;
 public class ConsumptionController {
     private final ConsumptionService consumptionService;
 
-    @Operation(summary = "소비 저장 기능", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "소비 저장 기능", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소비 내역 저장이 완료되었습니다.",
             content = @Content(mediaType = "apllication/json",
             schema = @Schema(implementation = ConsumptionsSaveResponse.class),
-            examples = @ExampleObject("{\n" +
-                    "\"message\": \"소비 내역 저장이 완료되었습니다.\",\n" +
-                    "}"))),
+            examples = @ExampleObject("""
+                    {
+                    "consumptionDTOList": [{"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"}],
+                    "message": "소비 내역 저장이 완료되었습니다."
+                    }
+                    """))),
 
             @ApiResponse(responseCode = "404", description = "해당하는 영수증이 없습니다.",
             content = @Content(mediaType = "application/json",
@@ -54,10 +57,9 @@ public class ConsumptionController {
     @PostMapping("/save")
     public ResponseEntity<ConsumptionsSaveResponse> consumptionSave(@AuthenticationPrincipal String email
             ,@RequestBody ConsumptionsSaveRequest request) {
-        consumptionService.save(email, request);
-        ConsumptionsSaveResponse consumptionsSaveResponse = ConsumptionsSaveResponse.builder()
-                .message("소비 내역 저장이 완료되었습니다.").build();
-        return ResponseEntity.ok(consumptionsSaveResponse);
+        ConsumptionsSaveResponse response = consumptionService.save(email, request);
+        response.setMessage("소비 내역 저장이 완료되었습니다.");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)

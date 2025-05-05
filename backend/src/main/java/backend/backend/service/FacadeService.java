@@ -2,6 +2,7 @@ package backend.backend.service;
 
 import backend.backend.dto.auth.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
+import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
 import backend.backend.dto.facade.request.FacadeConsumptionsAnalyzeRequest;
 import backend.backend.dto.facade.response.FacadeConsumptionsAnalyzeResponse;
 import backend.backend.dto.facade.response.FacadeReceiptProcessResponse;
@@ -22,9 +23,9 @@ public class FacadeService {
         ConsumptionsSaveRequest consumptionsSaveRequest = ConsumptionsSaveRequest.fromReceiptAnalyzeResponse(receiptAnalyzeResponse);
         consumptionsSaveRequest.setAccess_url(accessUrl);
 
-        consumptionService.save(email, consumptionsSaveRequest);
+        ConsumptionsSaveResponse consumptionsSaveResponse = consumptionService.save(email, consumptionsSaveRequest);
 
-        return FacadeReceiptProcessResponse.fromReceiptAnalyzeResponse(receiptAnalyzeResponse);
+        return FacadeReceiptProcessResponse.fromReceiptAnalyzeAndConsumptionSaveResponse(receiptAnalyzeResponse, consumptionsSaveResponse);
     }
 
     public FacadeConsumptionsAnalyzeResponse consumptionsAnalyzeProcess(String email, Long year, Long month, Long day) {
