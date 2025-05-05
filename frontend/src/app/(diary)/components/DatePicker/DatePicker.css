@@ -1,0 +1,14 @@
+.rdp-root {
+    --rdp-accent-color: #6baf2f !important;
+}
+
+.rdp-months,
+.rdp-month_grid {
+    gap: 0 !important;
+}
+
+.rdp-selected .rdp-day_button {
+    background-color: #6baf2f;
+    color: white;
+    font-weight: 500;
+}

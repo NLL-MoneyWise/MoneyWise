@@ -1,5 +1,5 @@
 'use client';
-import { kakaoLogin } from '@/app/auth/api/action';
+import { kakaoLogin } from '@/app/(auth)/api/action';
 import Text from '@/app/common/components/Text/Text';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import Image from 'next/image';

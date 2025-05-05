@@ -16,10 +16,7 @@ const Text = ({ children, className, ...props }: TextProps) => {
 // Title 컴포넌트
 const Title = ({ children, className, ...props }: TextProps) => {
     return (
-        <h1
-            className={clsx('text-2xl font-bold text-gray-500', className)}
-            {...props}
-        >
+        <h1 className={clsx('text-2xl font-bold', className)} {...props}>
             {children}
         </h1>
     );
@@ -43,7 +40,7 @@ SubTitle.displayName = 'Text.SubTitle';
 // BoldText 컴포넌트
 const BoldText = ({ children, className, ...props }: TextProps) => {
     return (
-        <span className={clsx('font-bold', className)} {...props}>
+        <span className={clsx('font-bold text-xl', className)} {...props}>
             {children}
         </span>
     );
@@ -53,11 +50,12 @@ BoldText.displayName = 'Text.BoldText';
 // SemiBoldText 컴포넌트
 const SemiBoldText = ({ children, className, ...props }: TextProps) => {
     return (
-        <span className={clsx('font-semibold', className)} {...props}>
+        <span className={clsx('font-semibold text-xl', className)} {...props}>
             {children}
         </span>
     );
 };
+SemiBoldText.displayName = 'Text.SemiBoldText';
 
 // SmallText 컴포넌트
 const SmallText = ({ children, className, ...props }: TextProps) => {
@@ -67,8 +65,17 @@ const SmallText = ({ children, className, ...props }: TextProps) => {
         </h2>
     );
 };
+SmallText.displayName = 'Text.SmallText';
 
-SemiBoldText.displayName = 'Text.SemiBoldText';
+// LagreText 컴포넌트
+const LagreText = ({ children, className, ...props }: TextProps) => {
+    return (
+        <h2 className={clsx('text-xl', className)} {...props}>
+            {children}
+        </h2>
+    );
+};
+LagreText.displayName = 'Text.LagreText';
 
 // 컴포넌트 연결
 Text.Title = Title;
@@ -76,4 +83,5 @@ Text.SubTitle = SubTitle;
 Text.BoldText = BoldText;
 Text.SemiBoldText = SemiBoldText;
 Text.SmallText = SmallText;
+Text.LagreText = LagreText;
 export default Text;
