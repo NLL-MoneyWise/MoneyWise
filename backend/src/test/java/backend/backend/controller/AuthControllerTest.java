@@ -56,7 +56,7 @@ class AuthControllerTest {
         System.out.println(jwtUtils.getUserNameFromToken(access_token));
 
         // when & then
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request)))
                         .andDo(print())

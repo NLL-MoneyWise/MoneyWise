@@ -1,6 +1,5 @@
 package backend.backend.service;
 
-import backend.backend.dto.receipt.request.ReceiptAnalyzeRequest;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
