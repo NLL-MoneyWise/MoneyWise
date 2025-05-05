@@ -124,121 +124,120 @@ public class AuthController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\n\"typeName\": \"NOT_FOUND_ERROR\",\n\"message\": \"가입되지 않은 이메일 입니다.\"\n}"))),
 
-            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "DATABASE_ERROR",
-                                    "message": "회원가입에 실패했습니다."
-                                    }
-                                    """))),
-
-            @ApiResponse(responseCode = "500", description = "카카오 API호출에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "API_ERROR",
-                                    "message": "카카오 API호출에 실패했습니다."
-                                    }
-                                    """))),
-
-            @ApiResponse(responseCode = "503", description = "카카오 서버에 연결할 수 없습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "NETWORK_ERROR",
-                                    "message": "카카오 서버에 연결할 수 없습니다."
-                                    }
-                                    """)))
-    })
-    @PostMapping("/login/{provider}")
-    public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestBody Object request, HttpServletResponse response) {
-        LoginResponse loginResponse = authService.login(provider, request);
-        String message = "반갑습니다 " + loginResponse.getName() + "님";
-        loginResponse.setMessage(message);
-
-        Cookie refreshTokenCookie = new Cookie("refresh_token", jwtUtils.generateRefreshToken(loginResponse.getEmail()));
-        refreshTokenCookie.setHttpOnly(true); //JavaScript에서 접근 불가능하게 설정
-        refreshTokenCookie.setSecure(false); //HTTPS에서만 전송되도록 설정
-        refreshTokenCookie.setPath("/"); //모든 경로에서 쿠키 사용
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7일을 초로 변환
-        refreshTokenCookie.setAttribute("SameSite", "none");
-
-        response.addCookie(refreshTokenCookie);
-
-        //return ResponseEntity.ok(loginResponse);
-        //두 방식은 동일한 결과임
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(loginResponse);
-    }
-
-    @Operation(summary = "액세스 토큰 재발급")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "access_token이 재발급 되었습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TokenResponse.class),
-                            examples = @ExampleObject("{\n" +
-                                    "\"access_token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG5hdmVyLmNvbSIsIm5hbWUiOiLthYzsiqTtirgiLCJuaWNrTmFtZSI6Iu2FjOyKpO2KuOuLieuEpOyehCIsImV4cCI6MTczOTEwODQ4MH0.ZaMBUEGyEf0vs2ebstGvIiBH0AhE2eWLBacn7Ex1TRA\",\n" +
-                                    "\"message\": \"access_token이 재발급 되었습니다.\"\n" +
-                                    "}"))),
-
-            @ApiResponse(responseCode = "401", description =
-                    "refresh_token을 찾지 못했습니다. / refresh_token 검증에 실패했습니다. / 잘못된 서명입니다. / 만료된 인증입니다. / 지원하지 않는 인증입니다. / 잘못된 인증입니다.",
+            @ApiResponse(responseCode = "500", description = "회원가입에 실패했습니다./카카오 API호출에 실패했습니다.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = {
-                                    @ExampleObject(name = "refresh_token이 없음", value = "{\n" +
-                                            "\"typeName\": \"AUTH_ERROR\",\n" +
-                                            "\"message\": \"refresh_token을 찾지 못했습니다.\"\n" +
-                                            "}"),
-                                    @ExampleObject(name = "refresh_token은 있지만 기타의 사유로 검증에 실패", value = "{\n" +
-                                            "\"typeName\": \"AUTH_ERROR\",\n" +
-                                            "\"message\": \"refresh_token 검증에 실패했습니다.\"\n" +
-                                            "}"),
-                                    @ExampleObject(name = "잘못된 서명일 경우", value = """
+                                    @ExampleObject(name = "kakao: 자동 회원가입 오류", value = """
                                             {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "잘못된 서명입니다."
+                                            "typeName": "DATABASE_ERROR",
+                                            "message": "회원가입에 실패했습니다."
                                             }
                                             """),
-                                    @ExampleObject(name = "인증이 만료되었을 경우", value = """
+                                    @ExampleObject("""
                                             {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "만료된 인증입니다."
+                                            "typeName": "API_ERROR",
+                                            "message": "카카오 API호출에 실패했습니다."
                                             }
-                                            """),
-                                    @ExampleObject(name = "지원하지 않는 인증 형식일 경우", value = """
+                                            """)}
+                    )),
+
+                    @ApiResponse(responseCode = "503", description = "카카오 서버에 연결할 수 없습니다.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class),
+                                    examples = @ExampleObject("""
                                             {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "지원하지 않는 인증입니다."
+                                            "typeName": "NETWORK_ERROR",
+                                            "message": "카카오 서버에 연결할 수 없습니다."
                                             }
-                                            """),
-                                    @ExampleObject(name = "부적절한 인자가 전달되었을 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "잘못된 인증입니다."
-                                            }
-                                            """)
-                            }
-                    ))
-    })
-    @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            throw new AuthException("refresh_token을 찾지 못했습니다.");
-        }
-        //refreshToken을 Cookie에서 찾는 2가지 방식
-        //1방식
-        String refresh_token = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("refresh_token"))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElseThrow(() -> new AuthException("refresh_token을 찾지 못했습니다."));
-        //2방식
+                                            """)))
+})
+
+@PostMapping("/login/{provider}")
+public ResponseEntity<LoginResponse> login(@PathVariable String provider, @RequestBody Object request, HttpServletResponse response) {
+    LoginResponse loginResponse = authService.login(provider, request);
+    String message = "반갑습니다 " + loginResponse.getName() + "님";
+    loginResponse.setMessage(message);
+
+    Cookie refreshTokenCookie = new Cookie("refresh_token", jwtUtils.generateRefreshToken(loginResponse.getEmail()));
+    refreshTokenCookie.setHttpOnly(true); //JavaScript에서 접근 불가능하게 설정
+    refreshTokenCookie.setSecure(false); //HTTPS에서만 전송되도록 설정
+    refreshTokenCookie.setPath("/"); //모든 경로에서 쿠키 사용
+    refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7일을 초로 변환
+    refreshTokenCookie.setAttribute("SameSite", "none");
+
+    response.addCookie(refreshTokenCookie);
+
+    //return ResponseEntity.ok(loginResponse);
+    //두 방식은 동일한 결과임
+    return ResponseEntity.status(HttpStatus.OK)
+            .body(loginResponse);
+}
+
+@Operation(summary = "액세스 토큰 재발급")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "access_token이 재발급 되었습니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TokenResponse.class),
+                        examples = @ExampleObject("{\n" +
+                                "\"access_token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG5hdmVyLmNvbSIsIm5hbWUiOiLthYzsiqTtirgiLCJuaWNrTmFtZSI6Iu2FjOyKpO2KuOuLieuEpOyehCIsImV4cCI6MTczOTEwODQ4MH0.ZaMBUEGyEf0vs2ebstGvIiBH0AhE2eWLBacn7Ex1TRA\",\n" +
+                                "\"message\": \"access_token이 재발급 되었습니다.\"\n" +
+                                "}"))),
+
+        @ApiResponse(responseCode = "401", description =
+                "refresh_token을 찾지 못했습니다. / refresh_token 검증에 실패했습니다. / 잘못된 서명입니다. / 만료된 인증입니다. / 지원하지 않는 인증입니다. / 잘못된 인증입니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = {
+                                @ExampleObject(name = "refresh_token이 없음", value = "{\n" +
+                                        "\"typeName\": \"AUTH_ERROR\",\n" +
+                                        "\"message\": \"refresh_token을 찾지 못했습니다.\"\n" +
+                                        "}"),
+                                @ExampleObject(name = "refresh_token은 있지만 기타의 사유로 검증에 실패", value = "{\n" +
+                                        "\"typeName\": \"AUTH_ERROR\",\n" +
+                                        "\"message\": \"refresh_token 검증에 실패했습니다.\"\n" +
+                                        "}"),
+                                @ExampleObject(name = "잘못된 서명일 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "잘못된 서명입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "인증이 만료되었을 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "만료된 인증입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "지원하지 않는 인증 형식일 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "지원하지 않는 인증입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "부적절한 인자가 전달되었을 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "잘못된 인증입니다."
+                                        }
+                                        """)
+                        }
+                ))
+})
+@PostMapping("/refresh")
+public ResponseEntity<TokenResponse> refresh(HttpServletRequest request) {
+    Cookie[] cookies = request.getCookies();
+    if (cookies == null) {
+        throw new AuthException("refresh_token을 찾지 못했습니다.");
+    }
+    //refreshToken을 Cookie에서 찾는 2가지 방식
+    //1방식
+    String refresh_token = Arrays.stream(cookies)
+            .filter(cookie -> cookie.getName().equals("refresh_token"))
+            .findFirst()
+            .map(Cookie::getValue)
+            .orElseThrow(() -> new AuthException("refresh_token을 찾지 못했습니다."));
+    //2방식
 //        Cookie[] cookies = request.getCookies();
 //        String refreshToken = null;
 //        for (Cookie cookie : cookies) {
@@ -251,103 +250,103 @@ public class AuthController {
 //            throw new IllegalArgumentException("Refresh token not found");
 //        }
 
-        if (jwtUtils.validateToken(refresh_token)) {
-            String email = jwtUtils.getUserEmailFromToken(refresh_token);
-            User user = userService.findByEmail(email);
-            String access_token = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
+    if (jwtUtils.validateToken(refresh_token)) {
+        String email = jwtUtils.getUserEmailFromToken(refresh_token);
+        User user = userService.findByEmail(email);
+        String access_token = jwtUtils.generateAccessToken(email, user.getName(), user.getNickname());
 
-            return ResponseEntity.ok(TokenResponse.builder().access_token(access_token)
-                    .message("access_token이 재발급 되었습니다.").build());
-        }
-        throw new AuthException("refresh_token 검증에 실패했습니다.");
+        return ResponseEntity.ok(TokenResponse.builder().access_token(access_token)
+                .message("access_token이 재발급 되었습니다.").build());
     }
+    throw new AuthException("refresh_token 검증에 실패했습니다.");
+}
 
-    @Operation(summary = "access_token이 유효한지 확인")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "유효한 토큰입니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TokenValidationResponse.class),
-                            examples = @ExampleObject("{\n" +
-                                    "\"message\": \"유효한 토큰입니다.\"\n" +
-                                    "}"))),
+@Operation(summary = "access_token이 유효한지 확인")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유효한 토큰입니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TokenValidationResponse.class),
+                        examples = @ExampleObject("{\n" +
+                                "\"message\": \"유효한 토큰입니다.\"\n" +
+                                "}"))),
 
-            @ApiResponse(responseCode = "401", description =
-                    "잘못된 서명입니다. / 만료된 인증입니다. / 지원하지 않는 인증입니다. / 잘못된 인증입니다. / 검증에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = {
-                                    @ExampleObject(name = "잘못된 서명일 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "잘못된 서명입니다."
-                                            }
-                                            """),
-                                    @ExampleObject(name = "인증이 만료되었을 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "만료된 인증입니다."
-                                            }
-                                            """),
-                                    @ExampleObject(name = "지원하지 않는 인증 형식일 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "지원하지 않는 인증입니다."
-                                            }
-                                            """),
-                                    @ExampleObject(name = "부적절한 인자가 전달되었을 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "잘못된 인증입니다."
-                                            }
-                                            """),
-                                    @ExampleObject(name = "기타의 사유로 검증에 실패한 경우", value = """
-                                            {
-                                            "typeName": "AUTH_ERROR",
-                                            "message": "검증에 실패했습니다."
-                                            }
-                                            """)
-                            }))
-    })
-    @PostMapping("/validate")
-    public ResponseEntity<TokenValidationResponse> validation_access_token(@RequestBody AccessTokenValidationRequest request) {
-        if (jwtUtils.validateToken(request.getAccess_token())) {
-            return ResponseEntity.ok(TokenValidationResponse.builder().message("유효한 토큰입니다.").build());
-        }
-        throw new AuthException("검증에 실패했습니다.");
+        @ApiResponse(responseCode = "401", description =
+                "잘못된 서명입니다. / 만료된 인증입니다. / 지원하지 않는 인증입니다. / 잘못된 인증입니다. / 검증에 실패했습니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = {
+                                @ExampleObject(name = "잘못된 서명일 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "잘못된 서명입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "인증이 만료되었을 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "만료된 인증입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "지원하지 않는 인증 형식일 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "지원하지 않는 인증입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "부적절한 인자가 전달되었을 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "잘못된 인증입니다."
+                                        }
+                                        """),
+                                @ExampleObject(name = "기타의 사유로 검증에 실패한 경우", value = """
+                                        {
+                                        "typeName": "AUTH_ERROR",
+                                        "message": "검증에 실패했습니다."
+                                        }
+                                        """)
+                        }))
+})
+@PostMapping("/validate")
+public ResponseEntity<TokenValidationResponse> validation_access_token(@RequestBody AccessTokenValidationRequest request) {
+    if (jwtUtils.validateToken(request.getAccess_token())) {
+        return ResponseEntity.ok(TokenValidationResponse.builder().message("유효한 토큰입니다.").build());
     }
+    throw new AuthException("검증에 실패했습니다.");
+}
 
-    @Operation(summary = "유저 삭제", security = {@SecurityRequirement(name = "JWT")})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사용자의 모든 정보가 삭제되었습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DeleteUserResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "message": "사용자의 모든 정보가 삭제되었습니다."
-                                    }
-                                    """))),
+@Operation(summary = "유저 삭제", security = {@SecurityRequirement(name = "JWT")})
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "사용자의 모든 정보가 삭제되었습니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = DeleteUserResponse.class),
+                        examples = @ExampleObject("""
+                                {
+                                "message": "사용자의 모든 정보가 삭제되었습니다."
+                                }
+                                """))),
 
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 입니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject("""
-                                    {
-                                    "typeName": "NOT_FOUND_ERROR",
-                                    "message": "존재하지 않는 사용자 입니다."
-                                    }
-                                    """))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자 입니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject("""
+                                {
+                                "typeName": "NOT_FOUND_ERROR",
+                                "message": "존재하지 않는 사용자 입니다."
+                                }
+                                """))),
 
-            @ApiResponse(responseCode = "500", description = "사용자 삭제에 실패했습니다.",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = "{\n\"typeName\": \"DATABASE_ERROR\",\n\"message\": \"사용자 삭제에 실패했습니다.\"\n}")))
-    })
-    @DeleteMapping("/delete")
-    public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal String email) {
-        authService.deleteUser(email);
-        DeleteUserResponse response = new DeleteUserResponse();
-        response.setMessage("사용자의 모든 정보가 삭제되었습니다.");
+        @ApiResponse(responseCode = "500", description = "사용자 삭제에 실패했습니다.",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject(value = "{\n\"typeName\": \"DATABASE_ERROR\",\n\"message\": \"사용자 삭제에 실패했습니다.\"\n}")))
+})
+@DeleteMapping("/delete")
+public ResponseEntity<DeleteUserResponse> deleteUser(@AuthenticationPrincipal String email) {
+    authService.deleteUser(email);
+    DeleteUserResponse response = new DeleteUserResponse();
+    response.setMessage("사용자의 모든 정보가 삭제되었습니다.");
 
-        return ResponseEntity.ok(response);
-    }
+    return ResponseEntity.ok(response);
+}
 }
