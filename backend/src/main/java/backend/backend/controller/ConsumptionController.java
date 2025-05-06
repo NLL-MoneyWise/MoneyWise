@@ -111,6 +111,70 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "소비 내역 조회", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "해당 영수증에 대한 모든 소비 내역을 불러왔습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "consumptionDTOList": [{"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"}],
+                                    "store_name": "CU",
+                                    "date": "2025-05-06",
+                                    "message": "해당 영수증에 대한 모든 소비 내역을 불러왔습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "404", description = "해당 영수증의 소비 내역을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당 영수증의 소비 내역을 찾을 수 없습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/find/all/{access_url}")
+    public ResponseEntity<ConsumptionsFindAllResponse> consumptionFindAll(@AuthenticationPrincipal String email, @PathVariable String access_url) {
+        ConsumptionsFindAllResponse response = consumptionService.findAll(email, access_url);
+
+        response.setMessage("해당 영수증에 대한 모든 소비 내역을 불러왔습니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "소비 내역 id로 조회(단일)", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "{id}번의 소비 내용이 조회되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "consumptionDTO": {"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"},
+                                    "store_name": "CU",
+                                    "date": "2025-05-06",
+                                    "message": "해당 영수증에 대한 모든 소비 내역을 불러왔습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "404", description = "해당 id의 소비 내역이 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당 id의 소비 내역이 없습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/find/one/{id}")
+    public ResponseEntity<ConsumptionsFindOneResponse> consumptionFindOne(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        ConsumptionsFindOneResponse response = consumptionService.findOne(email, id);
+
+        response.setMessage(id + "번의 소비 내용이 조회되었습니다.");
+        return ResponseEntity.ok(response);
+    }
+
 
 
     @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)

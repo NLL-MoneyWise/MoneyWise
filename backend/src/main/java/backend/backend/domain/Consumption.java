@@ -18,8 +18,8 @@ public class Consumption {
     private Long id;
     @Column
     private String email;
-    @Column
-    private String access_url;
+    @Column(name = "access_url")
+    private String accessUrl;
     @Column
     private Long category_id;
     @Column
