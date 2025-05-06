@@ -8,9 +8,13 @@ import backend.backend.dto.consumption.model.ConsumptionDTO;
 import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
+import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
 import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.response.ConsumptionsUpdateResponse;
+import backend.backend.exception.AuthException;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
+import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -85,8 +90,43 @@ public class ConsumptionService {
             response.setConsumptionDTOList(consumptionDTOList);
             return response;
         } catch (DataAccessException e) {
-            throw new DatabaseException(
-                    "소비 저장 중 오류가 발생했습니다." + e.getMessage());
+            throw new DatabaseException("소비 저장 중 오류가 발생했습니다." + e.getMessage());
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
+        }
+    }
+
+
+    public ConsumptionsUpdateResponse update(String email, ConsumptionsUpdateRequest request) {
+        try {
+            Map<String, Long> categoryMap = getCategoryMap();
+
+            LocalDate localDate = LocalDate.parse(request.getDate());
+            String store_name = request.getStore_name();
+
+            for (ConsumptionDTO consumptionDTO : request.getConsumptionDTOList()) {
+                Consumption consumption = consumptionRepository.findById(consumptionDTO.getId())
+                        .orElseThrow(() -> new NotFoundException(consumptionDTO.getId() + "번의 소비 내역이 없습니다."));
+
+                if (!consumption.getEmail().equals(email)) {
+                    throw new NotFoundException(consumptionDTO.getId() + "번의 소비 내역이 없습니다.");
+                }
+
+                consumption.setConsumption_date(localDate);
+                consumption.setStoreName(store_name);
+                consumption.setAmount(consumptionDTO.getAmount() * consumptionDTO.getQuantity());
+                consumption.setCategory_id(categoryMap.get(consumptionDTO.getCategory()));
+                consumption.setQuantity(consumptionDTO.getQuantity());
+                consumption.setItem_name(consumptionDTO.getName());
+
+                consumptionRepository.save(consumption);
+            }
+
+            return new ConsumptionsUpdateResponse();
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 변경에 실패했습니다.");
         }
     }
 
