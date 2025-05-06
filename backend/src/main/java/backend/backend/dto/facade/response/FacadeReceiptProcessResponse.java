@@ -1,6 +1,8 @@
 package backend.backend.dto.facade.response;
 
 import backend.backend.dto.common.model.Item;
+import backend.backend.dto.consumption.model.ConsumptionDTO;
+import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
 import lombok.*;
 
@@ -13,16 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 public class FacadeReceiptProcessResponse {
     private String date;
-    private Long total_amount;
-    private List<Item> items;
-    private String message;
+    private Long totalAmount;
     private String store_name;
+    private List<ConsumptionDTO> consumptionDTOList;
+    private String message;
 
-    public static FacadeReceiptProcessResponse fromReceiptAnalyzeResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse) {
+    public static FacadeReceiptProcessResponse fromReceiptAnalyzeAndConsumptionSaveResponse(ReceiptAnalyzeResponse receiptAnalyzeResponse, ConsumptionsSaveResponse consumptionsSaveResponse) {
         return FacadeReceiptProcessResponse.builder()
                 .date(receiptAnalyzeResponse.getDate())
-                .items(receiptAnalyzeResponse.getItems())
-                .total_amount(receiptAnalyzeResponse.getTotalAmount())
+                .consumptionDTOList(consumptionsSaveResponse.getConsumptionDTOList())
+                .totalAmount(receiptAnalyzeResponse.getTotalAmount())
                 .store_name(receiptAnalyzeResponse.getStoreName())
                 .build();
     }

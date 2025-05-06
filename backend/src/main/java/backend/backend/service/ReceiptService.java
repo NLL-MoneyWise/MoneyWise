@@ -60,7 +60,7 @@ public class ReceiptService {
             3. items: 상품 목록 배열
             - category: 위 카테고리 목록 참조
             - name: 상품명
-            - amount: 상품 금액(숫자만)
+            - amount: 상품 금액(단가, 숫자만)
             - quantity: 상품 수량(숫자만)
             4. totalAmount: 총 구매액(숫자만)
             5. error: 가게 이름과 상품이 모두 없을 경우 true로 설정 이외에는 false
