@@ -175,7 +175,83 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "소비 내역 전체 삭제", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 소비 내역이 삭제되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsDeleteAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "전체 소비 내역이 삭제되었습니다."
+                                    }
+                                    """))),
 
+            @ApiResponse(responseCode = "404", description = "소비 내역을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "소비 내역을 찾을 수 없습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "500", description = "소비 내역 삭제에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "소비 내역 삭제에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @DeleteMapping("delete/all/{access_url}")
+    public ResponseEntity<ConsumptionsDeleteAllResponse> ConsumptionDeleteAll(@AuthenticationPrincipal String email, @PathVariable(name = "access_url") String accessUrl) {
+        ConsumptionsDeleteAllResponse response = consumptionService.deleteAll(email, accessUrl);
+        response.setMessage("전체 소비 내역이 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "소비 내역 삭제(단일)", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "소비 내역이 삭제되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsDeleteOneResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "소비 내역이 삭제되었습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "404", description = "해당 소비 내역을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당 소비 내역을 찾을 수 없습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "500", description = "소비 내역 삭제에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "소비 내역 삭제에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @DeleteMapping("delete/one/{id}")
+    public ResponseEntity<ConsumptionsDeleteOneResponse> ConsumptionDeleteAll(@AuthenticationPrincipal String email, @PathVariable(name = "id") Long id) {
+        ConsumptionsDeleteOneResponse response = consumptionService.deleteOne(email, id);
+        response.setMessage("소비 내역이 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {

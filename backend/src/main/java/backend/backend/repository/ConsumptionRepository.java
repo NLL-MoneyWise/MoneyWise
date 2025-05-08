@@ -21,6 +21,11 @@ public interface ConsumptionRepository extends JpaRepository<Consumption, Long>,
 //    Optional<Long> sumAmountByEmailAndYearAndMonth(String email, Long year, Long month);
 
     List<Consumption> findByEmailAndAccessUrl(String email, String accessUrl);
+
+    int deleteByEmailAndAccessUrl(String email, String accessUrl);
+
+    int deleteByEmailAndId(String email, Long id);
+
     @Query("SELECT SUM(c.amount) FROM Consumption c WHERE c.accessUrl = :accessUrl")
     Optional<Long> sumAmountByAccessUrl(@Param("accessUrl") String accessUrl);
 }

@@ -9,11 +9,7 @@ import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
-import backend.backend.dto.consumption.response.ConsumptionsFindAllResponse;
-import backend.backend.dto.consumption.response.ConsumptionsFindOneResponse;
-import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
-import backend.backend.dto.consumption.response.ConsumptionsUpdateResponse;
-import backend.backend.exception.AuthException;
+import backend.backend.dto.consumption.response.*;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.exception.ValidationException;
@@ -212,6 +208,45 @@ public class ConsumptionService {
         response.setStore_name(consumption.getStoreName());
 
         return response;
+    }
+
+
+    public ConsumptionsDeleteAllResponse deleteAll(String email, String accessUrl) {
+        try {
+            int d_cnt =  consumptionRepository.deleteByEmailAndAccessUrl(email, accessUrl);
+
+            if (d_cnt > 0) {
+                receiptRepository.deleteById(accessUrl);
+            } else {
+                throw new NotFoundException("소비 내역을 찾을 수 없습니다.");
+            }
+
+            return new ConsumptionsDeleteAllResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 삭제에 실패했습니다.");
+        }
+    }
+
+
+    public ConsumptionsDeleteOneResponse deleteOne(String email, Long id) {
+        try {
+            Consumption consumption = consumptionRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("해당 소비 내역을 찾을 수 없습니다."));
+
+            if (!consumption.getEmail().equals(email)) {
+                throw new NotFoundException("해당 소비 내역을 찾을 수 없습니다.");
+            }
+
+            int d_cnt = consumptionRepository.deleteByEmailAndId(email, id);
+
+            if (d_cnt > 0) {
+                updateReceiptTotalAmount(consumption.getAccessUrl());
+            }
+
+            return new ConsumptionsDeleteOneResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 삭제에 실패했습니다.");
+        }
     }
 
     private static Map<String, Long> getCategoryMap() {
