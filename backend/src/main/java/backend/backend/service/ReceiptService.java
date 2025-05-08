@@ -151,10 +151,10 @@ public class ReceiptService {
         LocalDate localDate = LocalDate.parse(receiptAnalyzeResponse.getDate());
 
         Receipt receipt = Receipt.builder()
-                .access_url(accessUrl)
+                .accessUrl(accessUrl)
                 .email(email)
                 .date(localDate)
-                .total_amount(receiptAnalyzeResponse.getTotalAmount())
+                .totalAmount(receiptAnalyzeResponse.getTotalAmount())
                 .build();
         try {
             receiptRepository.save(receipt);
@@ -192,7 +192,7 @@ public class ReceiptService {
         List<ReceiptUrlInfo> allReceiptUrlInfo = new ArrayList<>();
 
         for(Receipt receipt : receipts) {
-            String accessUrl = receipt.getAccess_url();
+            String accessUrl = receipt.getAccessUrl();
             ReceiptUrlInfo receiptUrlInfo = ReceiptUrlInfo.builder()
                     .accessUrl(accessUrl)
                     .cdnSignedUrl(s3Service.generateGetSignedUrlWithCloudFront(accessUrl))

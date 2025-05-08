@@ -1,9 +1,7 @@
 package backend.backend.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,6 +9,8 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Consumption {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CONSUMPTION_SEQ_GEN")
@@ -18,8 +18,8 @@ public class Consumption {
     private Long id;
     @Column
     private String email;
-    @Column
-    private String access_url;
+    @Column(name = "access_url")
+    private String accessUrl;
     @Column
     private Long category_id;
     @Column

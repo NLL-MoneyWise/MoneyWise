@@ -8,9 +8,11 @@ import backend.backend.dto.consumption.model.ConsumptionDTO;
 import backend.backend.dto.consumption.model.StoreExpense;
 import backend.backend.dto.consumption.model.TopExpense;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
-import backend.backend.dto.consumption.response.ConsumptionsSaveResponse;
+import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
+import backend.backend.dto.consumption.response.*;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
+import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -44,7 +47,7 @@ public class ConsumptionService {
             Consumption consumption = Consumption.builder()
                     .consumption_date(localDate)
                     .email(email)
-                    .access_url(request.getAccess_url())
+                    .accessUrl(request.getAccess_url())
                     .storeName(request.getStoreName())
                     .build();
 
@@ -73,7 +76,7 @@ public class ConsumptionService {
                     consumptionDTOList.add(consumptionDTO);
                 }
             } else {
-                consumption.setAmount(receipt.getTotal_amount());
+                consumption.setAmount(receipt.getTotalAmount());
                 result = consumptionRepository.save(consumption);
 
                 ConsumptionDTO consumptionDTO = new ConsumptionDTO();
@@ -85,8 +88,164 @@ public class ConsumptionService {
             response.setConsumptionDTOList(consumptionDTOList);
             return response;
         } catch (DataAccessException e) {
-            throw new DatabaseException(
-                    "소비 저장 중 오류가 발생했습니다." + e.getMessage());
+            throw new DatabaseException("소비 저장 중 오류가 발생했습니다." + e.getMessage());
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
+        }
+    }
+
+
+    public ConsumptionsUpdateResponse update(String email, ConsumptionsUpdateRequest request) {
+        try {
+            Map<String, Long> categoryMap = getCategoryMap();
+
+            LocalDate localDate = LocalDate.parse(request.getDate());
+            String store_name = request.getStore_name();
+
+            // 모든 소비 내역의 첫 번째 항목에서 access_url 가져오기
+            Consumption firstConsumption = consumptionRepository.findById(request.getConsumptionDTOList().get(0).getId())
+                    .orElseThrow(() -> new NotFoundException("소비 내역을 찾을 수 없습니다."));
+
+            String accessUrl = firstConsumption.getAccessUrl();
+
+            // 소비 내역 업데이트
+            for (ConsumptionDTO consumptionDTO : request.getConsumptionDTOList()) {
+                Consumption consumption = consumptionRepository.findById(consumptionDTO.getId())
+                        .orElseThrow(() -> new NotFoundException(consumptionDTO.getId() + "번의 소비 내역이 없습니다."));
+
+                if (!consumption.getEmail().equals(email)) {
+                    throw new NotFoundException(consumptionDTO.getId() + "번의 소비 내역이 없습니다.");
+                }
+
+                consumption.setConsumption_date(localDate);
+                consumption.setStoreName(store_name);
+                consumption.setAmount(consumptionDTO.getAmount() * consumptionDTO.getQuantity());
+                consumption.setCategory_id(categoryMap.get(consumptionDTO.getCategory()));
+                consumption.setQuantity(consumptionDTO.getQuantity());
+                consumption.setItem_name(consumptionDTO.getName());
+
+                consumptionRepository.save(consumption);
+            }
+
+            // 영수증 테이블 업데이트
+            updateReceiptTotalAmount(accessUrl);
+
+            return new ConsumptionsUpdateResponse();
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 변경에 실패했습니다.");
+        }
+    }
+
+    // 영수증 합계 업데이트 메서드 추가
+    private void updateReceiptTotalAmount(String accessUrl) {
+        Long totalAmount = consumptionRepository.sumAmountByAccessUrl(accessUrl).orElse(0L);
+
+        if (totalAmount > 0) {
+            // 소비 내역이 있는 경우 합계 업데이트
+            receiptRepository.updateTotalAmountByAccessUrl(accessUrl, totalAmount);
+        } else {
+            // 소비 내역이 없는 경우 영수증 삭제
+            receiptRepository.deleteById(accessUrl);
+        }
+    }
+
+
+    public ConsumptionsFindAllResponse findAll(String email, String access_url) {
+        try {
+            List<Consumption> consumptions = consumptionRepository.findByEmailAndAccessUrl(email, access_url);
+            ConsumptionsFindAllResponse response = new ConsumptionsFindAllResponse();
+            List<ConsumptionDTO> consumptionDTOList = new ArrayList<>();
+
+            if (!consumptions.isEmpty()) {
+                Map<Long, String> categoryMap = getReverseCategoryMap();
+
+                String date = consumptions.get(0).getConsumption_date().toString();
+                String store_name = consumptions.get(0).getStoreName();
+
+                response.setDate(date);
+                response.setStore_name(store_name);
+
+                for (Consumption consumption : consumptions) {
+                    ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+
+                    consumptionDTO.setName(consumption.getItem_name());
+                    consumptionDTO.setQuantity(consumption.getQuantity());
+                    consumptionDTO.setCategory(categoryMap.get(consumption.getCategory_id()));
+                    consumptionDTO.setId(consumption.getId());
+                    consumptionDTO.setAmount(consumption.getAmount());
+
+                    consumptionDTOList.add(consumptionDTO);
+                }
+
+                response.setConsumptionDTOList(consumptionDTOList);
+            }
+            return response;
+        } catch (DataAccessException e) {
+            throw new NotFoundException("해당 영수증의 소비 내역을 찾을 수 없습니다.");
+        }
+    }
+
+
+    public ConsumptionsFindOneResponse findOne(String email, Long id) {
+        Consumption consumption = consumptionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 id의 소비 내역이 없습니다."));
+
+        ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+        ConsumptionsFindOneResponse response = new ConsumptionsFindOneResponse();
+
+        Map<Long, String> categoryReverseMap = getReverseCategoryMap();
+
+        consumptionDTO.setAmount(consumption.getAmount());
+        consumptionDTO.setName(consumption.getItem_name());
+        consumptionDTO.setQuantity(consumption.getQuantity());
+        consumptionDTO.setId(consumption.getId());
+        consumptionDTO.setCategory(categoryReverseMap.get(consumption.getCategory_id()));
+
+        response.setConsumptionDTO(consumptionDTO);
+        response.setDate(consumption.getConsumption_date().toString());
+        response.setStore_name(consumption.getStoreName());
+
+        return response;
+    }
+
+
+    public ConsumptionsDeleteAllResponse deleteAll(String email, String accessUrl) {
+        try {
+            int d_cnt =  consumptionRepository.deleteByEmailAndAccessUrl(email, accessUrl);
+
+            if (d_cnt > 0) {
+                receiptRepository.deleteById(accessUrl);
+            } else {
+                throw new NotFoundException("소비 내역을 찾을 수 없습니다.");
+            }
+
+            return new ConsumptionsDeleteAllResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 삭제에 실패했습니다.");
+        }
+    }
+
+
+    public ConsumptionsDeleteOneResponse deleteOne(String email, Long id) {
+        try {
+            Consumption consumption = consumptionRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("해당 소비 내역을 찾을 수 없습니다."));
+
+            if (!consumption.getEmail().equals(email)) {
+                throw new NotFoundException("해당 소비 내역을 찾을 수 없습니다.");
+            }
+
+            int d_cnt = consumptionRepository.deleteByEmailAndId(email, id);
+
+            if (d_cnt > 0) {
+                updateReceiptTotalAmount(consumption.getAccessUrl());
+            }
+
+            return new ConsumptionsDeleteOneResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 내역 삭제에 실패했습니다.");
         }
     }
 
@@ -107,6 +266,25 @@ public class ConsumptionService {
         categoryMap.put("반려동물", 13L);
         categoryMap.put("유아/아동", 14L);
         return categoryMap;
+    }
+
+    private static Map<Long, String> getReverseCategoryMap() {
+        Map<Long, String> reverseCategoryMap = new HashMap<>();
+        reverseCategoryMap.put(1L, "문구");
+        reverseCategoryMap.put(2L, "식품");
+        reverseCategoryMap.put(3L, "음료");
+        reverseCategoryMap.put(4L, "기타");
+        reverseCategoryMap.put(5L, "생활용품");
+        reverseCategoryMap.put(6L, "패션/의류");
+        reverseCategoryMap.put(7L, "건강/의약품");
+        reverseCategoryMap.put(8L, "미용/화장품");
+        reverseCategoryMap.put(9L, "전자기기");
+        reverseCategoryMap.put(10L, "교통/주유");
+        reverseCategoryMap.put(11L, "서비스");
+        reverseCategoryMap.put(12L, "취미/여가");
+        reverseCategoryMap.put(13L, "반려동물");
+        reverseCategoryMap.put(14L, "유아/아동");
+        return reverseCategoryMap;
     }
 
     public Long getTotalAmountByEmail(String email, Long year, Long month, Long day) {
