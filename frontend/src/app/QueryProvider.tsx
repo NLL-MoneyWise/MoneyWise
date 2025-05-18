@@ -8,7 +8,7 @@ import { useToastStore } from './common/hooks/useToastStore';
 import { CustomError } from './common/types/error/error';
 
 export function QueryProviders({ children }: { children: React.ReactNode }) {
-    const { addToast } = useToastStore();
+    const addToast = useToastStore((state) => state.addToast);
 
     const mutationCache = new MutationCache({
         onError: (error) => {

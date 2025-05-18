@@ -25,7 +25,7 @@ const EventForm: React.FC<EventFormProps> = ({
 
     const contentRef = useRef<HTMLInputElement | null>(null);
 
-    const { addToast } = useToastStore();
+    const addToast = useToastStore((state) => state.addToast);
     const { saveMemo, editMemo, deleteMemo } = useDiary();
 
     // 날짜 변경 처리

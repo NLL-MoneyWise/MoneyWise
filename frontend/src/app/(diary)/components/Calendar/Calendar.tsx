@@ -36,8 +36,8 @@ const Calendar = () => {
     };
 
     const setMemo = () => {
-        refetch();
         closeEventModal();
+        refetch();
     };
 
     return (
