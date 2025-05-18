@@ -26,7 +26,12 @@ const EventForm: React.FC<EventFormProps> = ({
     const contentRef = useRef<HTMLInputElement | null>(null);
 
     const addToast = useToastStore((state) => state.addToast);
-    const { saveMemo, editMemo, deleteMemo } = useDiary();
+    const {
+        saveMemo,
+        editMemo,
+        deleteMemo,
+        getMemo: { refetch }
+    } = useDiary();
 
     // 날짜 변경 처리
     const handleDateSelect = (date: Date | undefined) => {
@@ -54,11 +59,10 @@ const EventForm: React.FC<EventFormProps> = ({
                 date: formatDate(selectedDate),
                 content: content
             })
+            .then(() => refetchCalendar())
             .catch((error) => {
                 return;
             });
-
-        closeModal();
     };
 
     const handleModifySubmit = async (e: FormEvent) => {
@@ -76,6 +80,7 @@ const EventForm: React.FC<EventFormProps> = ({
                 date: formatDate(initalDate),
                 content: content
             })
+            .then(() => refetchCalendar())
             .catch((error) => {
                 return;
             });
@@ -85,7 +90,17 @@ const EventForm: React.FC<EventFormProps> = ({
 
     const handelDelete = async (e: FormEvent) => {
         e.stopPropagation();
-        await deleteMemo.mutateAsync({ date: formatDate(initalDate) });
+        await deleteMemo
+            .mutateAsync({ date: formatDate(initalDate) })
+            .then(() => refetchCalendar())
+            .catch((error) => {
+                return;
+            });
+        closeModal();
+    };
+
+    const refetchCalendar = async () => {
+        await refetch();
         closeModal();
     };
 

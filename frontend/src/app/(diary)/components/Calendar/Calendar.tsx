@@ -27,17 +27,12 @@ const Calendar = () => {
     } = useModal();
 
     const {
-        getMemo: { data: response, refetch }
+        getMemo: { data: response }
     } = useDiary();
 
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);
         console.log('현재 뷰 타입:', arg.view.type);
-    };
-
-    const setMemo = () => {
-        closeEventModal();
-        refetch();
     };
 
     return (
@@ -100,7 +95,7 @@ const Calendar = () => {
             <EventModal>
                 <EventForm
                     initalDate={selectedDate}
-                    closeModal={setMemo}
+                    closeModal={closeEventModal}
                     editMode={editMode}
                 />
             </EventModal>
