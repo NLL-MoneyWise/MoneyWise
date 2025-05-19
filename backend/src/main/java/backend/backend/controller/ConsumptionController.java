@@ -245,10 +245,155 @@ public class ConsumptionController {
                                     }
                                     """)))
     })
-    @DeleteMapping("delete/one/{id}")
-    public ResponseEntity<ConsumptionsDeleteOneResponse> ConsumptionDeleteAll(@AuthenticationPrincipal String email, @PathVariable(name = "id") Long id) {
+    @DeleteMapping("/delete/one/{id}")
+    public ResponseEntity<ConsumptionsDeleteOneResponse> consumptionDeleteAll(@AuthenticationPrincipal String email, @PathVariable(name = "id") Long id) {
         ConsumptionsDeleteOneResponse response = consumptionService.deleteOne(email, id);
         response.setMessage("소비 내역이 삭제되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "특정 기간 소비 일별 분석", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "2015년 11월의 일별 소비 분석이 완료되었습니다./2015년 11월 1일부터 10일 까지의 일별 소비 분석이 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsDailyAnalyzeResponse.class),
+                            examples = {
+                                    @ExampleObject(name = "year과 month만 지정한 경우", value = """
+                                            {
+                                              "dailyList": [
+                                                {
+                                                  "totalAmount": 252300,
+                                                  "date": "2015-11-01",
+                                                  "byCategory": [
+                                                    {
+                                                      "name": "기타",
+                                                      "amount": 250000
+                                                    },
+                                                    {
+                                                      "name": "음료",
+                                                      "amount": 2300
+                                                    }
+                                                  ],
+                                                  "topExpenses": [
+                                                    {
+                                                      "name": "말보로레드보루",
+                                                      "amount": 250000
+                                                    }
+                                                  ],
+                                                  "storeExpenses": [
+                                                    {
+                                                      "name": "CU",
+                                                      "amount": 250000
+                                                    },
+                                                    {
+                                                      "name": "GS25",
+                                                      "amount": 2300
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "totalAmount": 4500,
+                                                  "date": "2015-11-20",
+                                                  "byCategory": [
+                                                    {
+                                                      "name": "기타",
+                                                      "amount": 4500
+                                                    }
+                                                  ],
+                                                  "topExpenses": [
+                                                    {
+                                                      "name": "말보로레드",
+                                                      "amount": 4500
+                                                    }
+                                                  ],
+                                                  "storeExpenses": [
+                                                    {
+                                                      "name": "GS25",
+                                                      "amount": 4500
+                                                    }
+                                                  ]
+                                                }
+                                              ],
+                                              "message": "2015년 11월의 일별 소비 분석이 완료되었습니다."
+                                            }
+                                            """),
+                                    @ExampleObject(name = "start_day와 last_day를 지정한 경우", value = """
+                                            {
+                                              "dailyList": [
+                                                {
+                                                  "totalAmount": 2300,
+                                                  "date": "2015-11-15",
+                                                  "byCategory": [
+                                                    {
+                                                      "name": "음료",
+                                                      "amount": 2300
+                                                    }
+                                                  ],
+                                                  "topExpenses": [
+                                                    {
+                                                      "name": "파워에이드",
+                                                      "amount": 2300
+                                                    }
+                                                  ],
+                                                  "storeExpenses": [
+                                                    {
+                                                      "name": "CU",
+                                                      "amount": 2300
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "totalAmount": 4500,
+                                                  "date": "2015-11-20",
+                                                  "byCategory": [
+                                                    {
+                                                      "name": "기타",
+                                                      "amount": 4500
+                                                    }
+                                                  ],
+                                                  "topExpenses": [
+                                                    {
+                                                      "name": "말보로레드",
+                                                      "amount": 4500
+                                                    }
+                                                  ],
+                                                  "storeExpenses": [
+                                                    {
+                                                      "name": "GS25",
+                                                      "amount": 4500
+                                                    }
+                                                  ]
+                                                }
+                                              ],
+                                              "message": "2015년 11월 15일 부터 20일 까지의 일별 소비 분석이 완료되었습니다."
+                                            }
+                                            """)
+                            })),
+
+            @ApiResponse(responseCode = "500", description = "소비 분석에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "소비 분석에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/analyze/daily/{year}/{month}/{start_day}/{last_day}")
+    public ResponseEntity<ConsumptionsDailyAnalyzeResponse> consumptionDailyAnalyze(
+            @AuthenticationPrincipal String email,
+            @RequestParam(name = "year") Long year,
+            @RequestParam(name = "month") Long month,
+            @RequestParam(name = "start_day", required = false) Long startDay,
+            @RequestParam(name = "last_day", required = false) Long lastDay) {
+        ConsumptionsDailyAnalyzeResponse response = consumptionService.getDailyAnalyze(email, year, month, startDay, lastDay);
+        if (startDay == null || lastDay == null) {
+            response.setMessage(year + "년 " + month + "월의 일별 소비 분석이 완료되었습니다.");
+        } else {
+            response.setMessage(year + "년 " + month + "월 " + startDay + "일 부터 " + lastDay + "일 까지의 일별 소비 분석이 완료되었습니다.");
+        }
 
         return ResponseEntity.ok(response);
     }

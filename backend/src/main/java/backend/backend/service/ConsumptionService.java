@@ -3,10 +3,7 @@ package backend.backend.service;
 import backend.backend.domain.Consumption;
 import backend.backend.domain.Receipt;
 import backend.backend.dto.common.model.Item;
-import backend.backend.dto.consumption.model.ByCategory;
-import backend.backend.dto.consumption.model.ConsumptionDTO;
-import backend.backend.dto.consumption.model.StoreExpense;
-import backend.backend.dto.consumption.model.TopExpense;
+import backend.backend.dto.consumption.model.*;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
 import backend.backend.dto.consumption.response.*;
@@ -16,6 +13,7 @@ import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
 import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -305,5 +304,103 @@ public class ConsumptionService {
         List<StoreExpense> result = consumptionRepository.findStoreExpenseByStoreName(email, year, month, day);
         //jpa나 querydsl은 리스트를 조회할 때 값을 찾지못하면 null이 아니라 빈 리스트를 반환함
         return result;
+    }
+
+    public ConsumptionsDailyAnalyzeResponse getDailyAnalyze(String email, Long year, Long month, Long startDay, Long lastDay) {
+        try {
+            Map<LocalDate, Long> totalAmountMap = getTotalAmountMap(consumptionRepository.dailySumAmountByEmail(email, year, month, startDay, lastDay));
+            Map<LocalDate, List<ByCategory>> byCategoryMap = getByCategoryMap(consumptionRepository.dailyFindByCategoryAndEmail(email, year, month, startDay, lastDay));
+            Map<LocalDate, List<TopExpense>> topExpenseMap = getTopExpenseMap(consumptionRepository.dailyFindTopExpenseByEmail(email, year, month, startDay, lastDay));
+            Map<LocalDate, List<StoreExpense>> storeExpenseMap = getStoreExpenseMap(consumptionRepository.dailyFindStoreExpenseByStoreName(email, year, month, startDay, lastDay));
+
+            Set<LocalDate> allDates = new HashSet<>();
+            allDates.addAll(totalAmountMap.keySet());
+            allDates.addAll(byCategoryMap.keySet());
+            allDates.addAll(topExpenseMap.keySet());
+            allDates.addAll(storeExpenseMap.keySet());
+
+            List<DailyList> dailyLists = new ArrayList<>();
+
+            for (LocalDate date : allDates) {
+                DailyList dailyList = new DailyList();
+                dailyList.setDate(date.toString());
+
+                dailyList.setTotalAmount(totalAmountMap.getOrDefault(date, 0L));
+                dailyList.setByCategory(byCategoryMap.getOrDefault(date, new ArrayList<>()));
+                dailyList.setTopExpenses(topExpenseMap.getOrDefault(date, new ArrayList<>()));
+                dailyList.setStoreExpenses(storeExpenseMap.getOrDefault(date, new ArrayList<>()));
+
+                dailyLists.add(dailyList);
+            }
+
+            dailyLists.sort(Comparator.comparing(dailyList -> LocalDate.parse(dailyList.getDate())));
+
+            ConsumptionsDailyAnalyzeResponse response = new ConsumptionsDailyAnalyzeResponse();
+            response.setDailyList(dailyLists);
+
+            return response;
+        } catch (DataAccessException e) {
+            throw new DatabaseException("소비 분석에 실패했습니다.");
+        }
+    }
+
+    public Map<LocalDate, Long> getTotalAmountMap(List<DailySumAmountQueryDTO> sumAmountQueryDTOList) {
+        Map<LocalDate, Long> totalAmountMap = sumAmountQueryDTOList.stream()
+                .collect(Collectors.toMap(
+                        DailySumAmountQueryDTO::getDate,
+                        DailySumAmountQueryDTO::getTotalAmount
+                ));
+
+        return totalAmountMap;
+    }
+
+    public Map<LocalDate, List<ByCategory>> getByCategoryMap(List<DailyFindByCategoryQueryDTO> byCategoryQueryDTOList) {
+        Map<LocalDate, List<ByCategory>> byCategoryMap = byCategoryQueryDTOList.stream()
+                .collect(Collectors.groupingBy(
+                        DailyFindByCategoryQueryDTO::getDate,
+                        Collectors.mapping(
+                                dto -> {
+                                    ByCategory category = new ByCategory();
+                                    category.setName(dto.getName());
+                                    category.setAmount(dto.getAmount());
+                                    return category;
+                                },
+                                Collectors.toList()
+                        )
+                ));
+
+        return byCategoryMap;
+    }
+
+    public Map<LocalDate, List<TopExpense>> getTopExpenseMap(List<DailyFindTopExpenseQueryDTO> topExpenseQueryDTOList) {
+        Map<LocalDate, List<TopExpense>> topExpenseMap = topExpenseQueryDTOList.stream()
+                .collect(Collectors.groupingBy(
+                        DailyFindTopExpenseQueryDTO::getDate,
+                        Collectors.mapping(dto -> {
+                            TopExpense topExpense = new TopExpense();
+                            topExpense.setName(dto.getName());
+                            topExpense.setAmount(dto.getAmount());
+                            return topExpense;
+                        },
+                        Collectors.toList())
+                ));
+
+        return topExpenseMap;
+    }
+
+    public Map<LocalDate, List<StoreExpense>> getStoreExpenseMap(List<DailyFindStoreExpenseQueryDTO> storeExpenseQueryDTOList) {
+        Map<LocalDate, List<StoreExpense>> storeExpenseMap = storeExpenseQueryDTOList.stream()
+                .collect(Collectors.groupingBy(
+                        DailyFindStoreExpenseQueryDTO::getDate,
+                        Collectors.mapping(dto -> {
+                            StoreExpense storeExpense = new StoreExpense();
+                            storeExpense.setName(dto.getName());
+                            storeExpense.setAmount(dto.getAmount());
+                            return storeExpense;
+                        },
+                        Collectors.toList())
+                ));
+
+        return storeExpenseMap;
     }
 }

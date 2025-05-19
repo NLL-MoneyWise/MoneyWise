@@ -9,6 +9,7 @@ import backend.backend.exception.response.ErrorResponse;
 import backend.backend.security.jwt.JwtUtils;
 import backend.backend.service.AuthService;
 import backend.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
