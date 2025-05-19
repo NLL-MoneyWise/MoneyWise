@@ -1,26 +1,22 @@
 package backend.backend.repository;
 
-import backend.backend.dto.consumption.model.ByCategory;
-import backend.backend.dto.consumption.model.StoreExpense;
-import backend.backend.dto.consumption.model.TopExpense;
-import backend.backend.dto.consumption.response.ConsumptionsSummaryResponse;
+import backend.backend.dto.consumption.model.*;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import static backend.backend.domain.QConsumption.consumption;
 import static backend.backend.domain.QCategory.category;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,6 +42,10 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
     //Math.toIntExact는 Long타입만 Integer로 변환해줌
     private BooleanExpression dayEq(Long day) {
         return day != null ? consumption.consumption_date.dayOfMonth().eq(Math.toIntExact(day)) : null;
+    }
+
+    private BooleanExpression dayBetween(Long startDay, Long lastDay) {
+        return startDay != null && lastDay != null ? consumption.consumption_date.dayOfMonth().between(startDay, lastDay) : null;
     }
 
     @Override
@@ -141,6 +141,122 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                 .from(consumption)
                 .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day), consumption.storeName.isNotNull())
                 .groupBy(consumption.storeName)
+                .orderBy(consumption.amount.sum().desc())
+                .fetch();
+
+        return result;
+    }
+
+    @Override
+    public List<DailySumAmountQueryDTO> dailySumAmountByEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
+        List<DailySumAmountQueryDTO> result = queryFactory
+                .select(Projections.constructor(DailySumAmountQueryDTO.class, consumption.consumption_date, consumption.amount.sum()))
+                .from(consumption)
+                .where(consumption.email.eq(email),
+                        consumption.consumption_date.year().eq(Math.toIntExact(year)),
+                        consumption.consumption_date.month().eq(Math.toIntExact(month)),
+                        dayBetween(startDay, lastDay))
+                .groupBy(consumption.consumption_date)
+                .orderBy(consumption.consumption_date.asc())
+                .fetch();
+
+        return result;
+    }
+
+    @Override
+    public List<DailyFindByCategoryQueryDTO> dailyFindByCategoryAndEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
+        List<DailyFindByCategoryQueryDTO> result = queryFactory
+                .select(Projections.constructor(DailyFindByCategoryQueryDTO.class, consumption.consumption_date, category.name, consumption.amount.sum()))
+                .from(consumption)
+                .join(category).on(consumption.category_id.eq(category.id))
+                .where(consumption.email.eq(email),
+                        consumption.consumption_date.year().eq(Math.toIntExact(year)),
+                        consumption.consumption_date.month().eq(Math.toIntExact(month)),
+                        dayBetween(startDay, lastDay))
+                .groupBy(consumption.consumption_date, category.name)
+                .orderBy(consumption.consumption_date.asc())
+                .fetch();
+
+        return result;
+    }
+
+    @Override
+    public List<DailyFindTopExpenseQueryDTO> dailyFindTopExpenseByEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
+        // 1. 날짜와 아이템별 총 지출 금액 계산
+        List<Tuple> dateItemTotals = queryFactory
+                .select(consumption.consumption_date, consumption.item_name, consumption.amount.sum())
+                .from(consumption)
+                .where(consumption.email.eq(email),
+                        consumption.consumption_date.year().eq(Math.toIntExact(year)),
+                        consumption.consumption_date.month().eq(Math.toIntExact(month)),
+                        dayBetween(startDay, lastDay),
+                        consumption.item_name.isNotNull())
+                .groupBy(consumption.consumption_date, consumption.item_name)
+                .fetch();
+
+        if (dateItemTotals.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2. 날짜별로 그룹화하고 최대 금액 찾기
+        Map<LocalDate, Long> dateToMaxAmountMap = new HashMap<>();
+        Map<LocalDate, List<Tuple>> dateToItemsMap = new HashMap<>();
+
+        // 날짜별로 아이템 리스트 그룹화
+        for (Tuple tuple : dateItemTotals) {
+            LocalDate date = tuple.get(consumption.consumption_date);
+            dateToItemsMap.computeIfAbsent(date, k -> new ArrayList<>()).add(tuple);
+        }
+
+        // 각 날짜별 최대 금액 계산
+        for (Map.Entry<LocalDate, List<Tuple>> entry : dateToItemsMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<Tuple> items = entry.getValue();
+
+            // 해당 날짜의 아이템 중 최대 금액 찾기
+            Long maxAmount = items.stream()
+                    .mapToLong(tuple -> tuple.get(consumption.amount.sum()))
+                    .max()
+                    .orElse(0L);
+
+            dateToMaxAmountMap.put(date, maxAmount);
+        }
+
+        // 3. 각 날짜별로 최대 금액과 일치하는 아이템 찾기
+        List<DailyFindTopExpenseQueryDTO> result = new ArrayList<>();
+
+        for (Map.Entry<LocalDate, List<Tuple>> entry : dateToItemsMap.entrySet()) {
+            LocalDate date = entry.getKey();
+            List<Tuple> items = entry.getValue();
+            Long maxAmount = dateToMaxAmountMap.get(date);
+
+            // 최대 금액과 일치하는 아이템만 선택
+            for (Tuple tuple : items) {
+                Long amount = tuple.get(consumption.amount.sum());
+                if (maxAmount.equals(amount)) {
+                    String itemName = tuple.get(consumption.item_name);
+                    result.add(new DailyFindTopExpenseQueryDTO(date, itemName, amount));
+                }
+            }
+        }
+
+        // 4. 날짜 기준으로 정렬
+        result.sort(Comparator.comparing(DailyFindTopExpenseQueryDTO::getDate));
+
+        return result;
+    }
+
+    @Override
+    public List<DailyFindStoreExpenseQueryDTO> dailyFindStoreExpenseByStoreName(String email, Long year, Long month, Long startDay, Long lastDay) {
+        List<DailyFindStoreExpenseQueryDTO> result = queryFactory
+                .select(Projections.constructor(DailyFindStoreExpenseQueryDTO.class, consumption.consumption_date, consumption.storeName, consumption.amount.sum()))
+                .from(consumption)
+                .where(consumption.email.eq(email),
+                        consumption.consumption_date.year().eq(Math.toIntExact(year)),
+                        consumption.consumption_date.month().eq(Math.toIntExact(month)),
+                        dayBetween(startDay, lastDay),
+                        consumption.storeName.isNotNull())
+                .groupBy(consumption.consumption_date, consumption.storeName)
                 .orderBy(consumption.amount.sum().desc())
                 .fetch();
 

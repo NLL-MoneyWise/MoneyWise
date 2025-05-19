@@ -1,14 +1,12 @@
 package backend.backend.dto.consumption.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class TopExpense {
     private String name;
     private Long amount;
