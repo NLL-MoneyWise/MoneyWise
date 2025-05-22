@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useDiary from '../../hooks/useDiary';
 import Calendar from '../Calendar/Calendar';
 import formatDate from '../../util/formatDate';

@@ -8,7 +8,7 @@ import { DateClickArg } from '@fullcalendar/interaction';
 
 import './calendar.css';
 
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { DatesSetArg } from '@fullcalendar/core';
 
 import DayCell from '../DayCell/DayCell';
