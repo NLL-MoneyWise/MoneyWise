@@ -7,7 +7,11 @@ import {
     GetMemoResponse,
     DeleteResponse
 } from './../types/response/reponse-memo';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+    useMutation,
+    useQueryClient,
+    useSuspenseQuery
+} from '@tanstack/react-query';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { DiaryRepositoryImpl } from '../util/repository';
 
@@ -17,14 +21,14 @@ const useDiary = () => {
 
     const queryClient = useQueryClient();
 
-    const getMemo = useQuery<GetMemoResponse, Error>({
+    const getMemo = useSuspenseQuery<GetMemoResponse, Error>({
         queryKey: ['memo'],
         queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl),
         staleTime: 60,
         gcTime: 300
     });
 
-    const saveMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
+    const createMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
         mutationFn: diaryRepositoryImpl.saveMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
@@ -36,6 +40,7 @@ const useDiary = () => {
         mutationFn: diaryRepositoryImpl.editMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['memo'] });
         }
     });
 
@@ -43,11 +48,12 @@ const useDiary = () => {
         mutationFn: diaryRepositoryImpl.deleteMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['memo'] });
         }
     });
 
     return {
-        saveMemo,
+        createMemo,
         getMemo,
         editMemo,
         deleteMemo

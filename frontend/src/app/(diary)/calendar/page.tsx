@@ -1,13 +1,17 @@
 'use client';
+import { Fragment } from 'react';
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
-import Calendar from '../components/Calendar/Calendar';
 
+import SSRSafeSuspense from '@/app/common/components/SSRSafeSuspense/SSRSafeSuspense';
+import CalendarContainer from '../components/CalendarCotainer/CalendarContainer';
 const CalendarPage = () => {
     return (
-        <div>
-            <Calendar />
+        <Fragment>
+            <SSRSafeSuspense fallback={'로딩 중'}>
+                <CalendarContainer />
+            </SSRSafeSuspense>
             <FloatingActionButton />
-        </div>
+        </Fragment>
     );
 };
 

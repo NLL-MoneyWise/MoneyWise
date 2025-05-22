@@ -16,6 +16,7 @@ export default {
                 hilight: '#3C8224',
                 mockupbg: '#D1DCFF'
             },
+
             keyframes: {
                 'toast-slide-in': {
                     '0%': { opacity: '0', transform: 'translateY(-20px)' },
