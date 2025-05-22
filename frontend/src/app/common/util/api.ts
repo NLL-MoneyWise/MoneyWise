@@ -64,8 +64,10 @@ export const defaultApi = (
                     });
 
                     if (!response.ok) {
-                        //window.location.replace(  'http://localhost:3000/login?error=token_expired');
-                        //await removeAccessToken();
+                        window.location.replace(
+                            'http://localhost:3000/login?error=token_expired'
+                        );
+                        await removeAccessToken();
 
                         return Promise.reject(
                             new CustomError(
