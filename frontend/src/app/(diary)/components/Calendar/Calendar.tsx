@@ -12,6 +12,8 @@ import useModal from '@/app/common/hooks/useModal';
 import EventForm from '../EventForm/EventForm';
 import useDiary from '../../hooks/useDiary';
 import formatDate from '../../util/formatDate';
+import { useAuth } from '@/app/common/components/AuthProvider/AuthProvider';
+import useCounsumption from '@/app/(user)/hooks/useCounsumption';
 
 const Calendar = () => {
     const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
@@ -29,6 +31,14 @@ const Calendar = () => {
     const {
         getMemo: { data: response }
     } = useDiary();
+
+    const {
+        getAllIncome: { data: income },
+        getFiexedCost: { data: fixedCost }
+    } = useCounsumption();
+
+    console.log(income);
+    console.log(fixedCost);
 
     const handleDatesSet = (arg: DatesSetArg) => {
         setCurrentViewType(arg.view.type);

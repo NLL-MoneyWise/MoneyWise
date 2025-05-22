@@ -2,6 +2,7 @@ import { ConsumptionRequest } from './../types/request/requset-consumptione';
 import { ConsumptioneResponse } from '../types/reponse/response-consumptione';
 import { AxiosInstance } from 'axios';
 import { defaultApi } from '@/app/common/util/api';
+import { AllConsumptionResponse } from '../types/reponse/response-consumptione';
 
 interface ConsumptionRepository {
     analyeConsumption(data: ConsumptionRequest): Promise<ConsumptioneResponse>;
@@ -21,6 +22,18 @@ export class ConsumptionRepositoryImpl implements ConsumptionRepository {
                 new ConsumptionRepositoryImpl();
         }
         return ConsumptionRepositoryImpl.instance;
+    }
+
+    async getAllIncome(): Promise<AllConsumptionResponse> {
+        const { data } = await this.api.get(`/income/find/all`);
+
+        return data;
+    }
+
+    async getAllFiexedCost(): Promise<AllConsumptionResponse> {
+        const { data } = await this.api.get(`/fixed-cost/find/all`);
+
+        return data;
     }
 
     async analyeConsumption({

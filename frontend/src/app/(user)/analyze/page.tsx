@@ -11,6 +11,7 @@ import { PeriodType } from '../types/request/requset-consumptione';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import Text from '@/app/common/components/Text/Text';
 import Ranking from '../components/Ranking/Ranking';
+import useAnalyzeConsumption from '../hooks/useAnalyzeCounsumption';
 
 const AnalyzePage = () => {
     const [currentDate, setCurrentDate] = useState<Date>(new Date(2024, 8));
@@ -65,9 +66,7 @@ const CONVERT_NAMING_TO_KO: ConverterType = Object.freeze({
 });
 
 const AnalyzeContent = ({ date, viewType }: AnalyzeContentProps) => {
-    const {
-        analyzeCounsumption: { data, isLoading }
-    } = useCounsumption({
+    const { data, isLoading } = useAnalyzeConsumption({
         period: CONVERT_NAMING_TO_KO[viewType],
         year: date.getFullYear().toString(),
         month:
