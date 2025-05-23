@@ -104,13 +104,17 @@ const DateNavigator = ({
                     onClick={handleNext}
                 />
             </div>
-
-            <DateSelector
-                isOpen={isDropDonwOpen}
-                handleIsOpenChange={setIsDropDonwOpen}
-                viewType={viewType}
-                handleViewTypeChange={setViewType}
-            />
+            <div className="flex">
+                <button className="flex items-center border border-white  gap-2 relative p-2 rounded-md  w-20 justify-center mr-4">
+                    <Text>{'등록'}</Text>
+                </button>
+                <DateSelector
+                    isOpen={isDropDonwOpen}
+                    handleIsOpenChange={setIsDropDonwOpen}
+                    viewType={viewType}
+                    handleViewTypeChange={setViewType}
+                />
+            </div>
         </header>
     );
 };

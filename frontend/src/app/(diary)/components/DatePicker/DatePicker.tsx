@@ -29,6 +29,7 @@ const DatePicker = ({ className, selected, onDateChange }: DatePickerProps) => {
                 selected={selected}
                 onSelect={(date) => {
                     if (onDateChange) {
+                        if (!date) return;
                         onDateChange(date);
                     }
                 }}
