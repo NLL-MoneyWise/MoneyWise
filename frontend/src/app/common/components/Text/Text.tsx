@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 interface TextProps extends HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
+    ref?: React.Ref<HTMLHeadingElement>;
 }
 
 const Text = ({ children, className, ...props }: TextProps) => {
@@ -24,10 +25,11 @@ const Title = ({ children, className, ...props }: TextProps) => {
 Title.displayName = 'Text.Title';
 
 // SubTitle 컴포넌트
-const SubTitle = ({ children, className, ...props }: TextProps) => {
+const SubTitle = ({ children, className, ref, ...props }: TextProps) => {
     return (
         <h2
             className={clsx('text-xl font-bold text-gray-400', className)}
+            ref={ref}
             {...props}
         >
             {children}
