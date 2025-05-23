@@ -23,7 +23,9 @@ export interface AllConsumptionResponse extends Response {
     store_nam: string;
 }
 
-export interface AllFiexedCost extends Response {
+export interface AllFiexedConsumption extends Response {
     date: string;
     cost: string;
 }
+
+export interface PostFixedConsumptionResponse extends Response {}
