@@ -5,6 +5,8 @@ export interface Income {
     cost: number;
 }
 
-export interface GetAllIncome extends Response {
+export interface GetAllIncomeResponse extends Response {
     incomeDTOList: Income[];
 }
+
+export interface PostIncomeResponse extends Response {}

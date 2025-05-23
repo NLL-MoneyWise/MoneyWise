@@ -86,7 +86,9 @@ export const defaultApi = (
                         `Bearer ${data.access_token}`;
 
                     return instance(originalRequest);
-                } catch (refreshError) {}
+                } catch (refreshError) {
+                    console.log(refreshError);
+                }
             }
 
             const errorMessage =

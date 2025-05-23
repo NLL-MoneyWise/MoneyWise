@@ -1,24 +1,28 @@
-import React, { useEffect } from 'react';
-import { GetMemoResponse } from '../../types/response';
+import React from 'react';
+import { GetMemoResponse as Memo } from '../../types/response';
+import { GetAllIncomeResponse as Income } from '@/app/(user)/types/reponse';
+
 import { DayCellContentArg } from '@fullcalendar/core/index.js';
+import { getDay } from '../../util/formatDate';
 interface DayCellProps {
-    memo: GetMemoResponse;
+    memo: Memo;
     arg: DayCellContentArg;
+    income: Income;
 }
 
-const DayCell = ({ arg, memo }: DayCellProps) => {
-    useEffect(() => {
-        console.log('데이 셀 리렌더링!');
-    }, []);
-
+const DayCell = ({ arg, memo, income }: DayCellProps) => {
     const memoForDate = memo.memoDTOList.find(
         (memo) => new Date(memo.date).toDateString() === arg.date.toDateString()
     );
+    const inComeForDate = income.incomeDTOList.find(
+        (income) => income.day.toString() === getDay(arg.date)
+    );
+    console.log(income);
 
     return (
         <div className="fc-daygrid-day-frame">
             <div className="fc-daygrid-day-top">
-                <span className="fc-daygrid-day-number">
+                <span className="fc-daygrid-day-number ">
                     {arg.dayNumberText}
                 </span>
             </div>
@@ -27,6 +31,9 @@ const DayCell = ({ arg, memo }: DayCellProps) => {
                     {memoForDate.content.slice(0, 20)}
                     {memoForDate.content.length > 20 ? '...' : ''}
                 </div>
+            )}
+            {inComeForDate && (
+                <div className=" flex text-blue-700">{inComeForDate.cost}</div>
             )}
         </div>
     );

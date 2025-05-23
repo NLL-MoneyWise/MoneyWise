@@ -6,3 +6,8 @@ export interface ConsumptionRequest {
     month?: string;
     day?: string;
 }
+
+export interface PostFixedConsumptionRequest {
+    day: string;
+    cost: string;
+}

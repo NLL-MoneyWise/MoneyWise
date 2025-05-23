@@ -1,8 +1,16 @@
-import React, { useState, ReactNode, FormEvent } from 'react';
+import React, {
+    useState,
+    ReactNode,
+    FormEvent,
+    ChangeEvent,
+    useRef,
+    useEffect
+} from 'react';
 import InputField from '@/app/common/components/Input/InputField';
 import Button from '@/app/common/components/Button/Button';
 import Text from '@/app/common/components/Text/Text';
 import CalendarButton from '../CalendarButton/CalendarButton';
+import { formatNumber } from '../../util/formatComma';
 
 interface EventFormProps {
     handleEvent: () => void;
@@ -22,9 +30,29 @@ const EventForm = ({ handleEvent, children }: EventFormProps) => {
     );
 };
 
-const Title = ({ children }: { children: ReactNode }) => {
+const Title = ({ children }: { children: string }) => {
+    const ref = useRef<HTMLHeadingElement>(null);
+    const prevTitle = useRef(children);
+
+    useEffect(() => {
+        if (prevTitle.current !== children && ref.current) {
+            const el = ref.current;
+            el.classList.add('highlight');
+
+            const timeout = setTimeout(() => {
+                el.classList.remove('highlight');
+            }, 500);
+
+            prevTitle.current = children;
+
+            return () => clearTimeout(timeout);
+        }
+    }, [children]);
+
     return (
-        <Text.SubTitle className="mb-6 text-black">{children}</Text.SubTitle>
+        <Text.Title className="mb-6  text-gray-500" ref={ref}>
+            {children}
+        </Text.Title>
     );
 };
 
@@ -69,6 +97,29 @@ const Content = ({ contentRef }: ContentProps) => {
     );
 };
 
+interface InputProps {
+    value: string;
+    handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    placeholder: string;
+    lable: string;
+}
+
+const Input = ({ value, placeholder, handleChange, lable }: InputProps) => {
+    return (
+        <div className="mb-4">
+            <Text.SemiBoldText className="mb-2">{lable}</Text.SemiBoldText>
+            <InputField
+                value={formatNumber(value)}
+                placeholder={placeholder}
+                element="input"
+                className="w-full"
+                type="text"
+                onInputChange={handleChange}
+            />
+        </div>
+    );
+};
+
 interface BaseActionProps {
     handleClose: () => void;
 }
@@ -76,8 +127,10 @@ interface BaseActionProps {
 interface SaveActionButtonsProps extends BaseActionProps {}
 
 interface EditCreateActionButtonsProps extends BaseActionProps {
-    handleDelete: () => Promise<void>;
+    handleDelete: () => void;
 }
+
+// 차후에 리펙
 
 const SaveActionButtons = ({ handleClose }: SaveActionButtonsProps) => {
     return (
@@ -112,10 +165,37 @@ const EditCreateActionButtons = ({
     );
 };
 
+interface BudgetButtonsProps extends BaseActionProps {
+    handleChange: () => void;
+    lable: string;
+}
+
+const BudgetButtons = ({
+    handleClose,
+    handleChange,
+    lable
+}: BudgetButtonsProps) => {
+    return (
+        <div className="modalbuttoncontainer">
+            <Button type="button" onClick={handleClose} variant="secondary">
+                취소
+            </Button>
+
+            <Button variant="modify" onClick={handleChange} type="button">
+                {lable}
+            </Button>
+
+            <Button type="submit">저장</Button>
+        </div>
+    );
+};
+
 EventForm.Title = Title;
 EventForm.DaySelector = DaySelector;
 EventForm.Content = Content;
+EventForm.Input = Input;
 EventForm.EditCreateActionButtons = EditCreateActionButtons;
 EventForm.SaveActionButtons = SaveActionButtons;
+EventForm.BudgetButtons = BudgetButtons;
 
 export default EventForm;
