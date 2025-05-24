@@ -26,3 +26,8 @@
         scrollbar-width: none;
     }
 }
+
+.modalbuttoncontainer {
+    /*모달 버튼 공통 스타일*/
+    @apply flex justify-end space-x-2 mt-6;
+}

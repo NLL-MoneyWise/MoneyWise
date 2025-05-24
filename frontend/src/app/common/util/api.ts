@@ -10,12 +10,6 @@ import {
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const redirectToLogin = (path: string) => {
-    if (typeof window !== 'undefined') {
-        window.location.href = `/login?callbackUrl=${encodeURIComponent(path)}&error=token_expired`;
-    }
-};
-
 export const defaultApi = (
     option?: InternalAxiosRequestConfig
 ): AxiosInstance => {
@@ -55,18 +49,6 @@ export const defaultApi = (
             return response;
         },
         async (error) => {
-            const isServer = typeof window === 'undefined';
-            if (isServer) {
-                const errorMessage =
-                    error.response?.data?.message || '알 수 없는 에러입니다.';
-                const errorStatus = error.response?.status || 500;
-                const errorType = error.response?.data?.typeName || 'UNKNOWN';
-
-                return Promise.reject(
-                    new CustomError(errorMessage, errorStatus, errorType)
-                );
-            }
-
             const originalRequest = error.config;
 
             if (error.response?.status === 401 && !originalRequest._retry) {
@@ -82,6 +64,11 @@ export const defaultApi = (
                     });
 
                     if (!response.ok) {
+                        window.location.replace(
+                            'http://localhost:3000/login?error=token_expired'
+                        );
+                        await removeAccessToken();
+
                         return Promise.reject(
                             new CustomError(
                                 '세션이 만료됬습니다.',
@@ -100,10 +87,7 @@ export const defaultApi = (
 
                     return instance(originalRequest);
                 } catch (refreshError) {
-                    await removeAccessToken();
-
-                    const currentPath = window.location.pathname;
-                    redirectToLogin(currentPath);
+                    console.log(refreshError);
                 }
             }
 

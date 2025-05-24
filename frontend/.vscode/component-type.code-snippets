@@ -1,0 +1,12 @@
+{
+    "Type Component Props": {
+        "prefix": "typeprops",
+        "body": ["type ${TM_FILENAME_BASE}Props = {};"],
+        "description": "리액트 컴포넌트의 Props 타입 정의"
+    },
+    "Type Component Props Interface": {
+        "prefix": "interfaceprops",
+        "body": ["interface ${TM_FILENAME_BASE}Props { };"],
+        "description": "리액트 컴포넌트의 Props 인터페이스 정의"
+    }
+}

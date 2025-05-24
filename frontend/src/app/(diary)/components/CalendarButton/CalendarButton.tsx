@@ -8,14 +8,14 @@ interface CalendarButtonProps {
     className?: string;
     selectedDate: Date | undefined;
     onDateSelect: (date: Date | undefined) => void;
-    editMode: 'create' | 'edit';
+    isBlock: boolean;
 }
 
 const CalendarButton = ({
     className,
     selectedDate,
     onDateSelect,
-    editMode
+    isBlock = false
 }: CalendarButtonProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -43,13 +43,13 @@ const CalendarButton = ({
     };
 
     return (
-        <div className={clsx(className)}>
+        <div className={clsx(className, 'w-full')}>
             <Button
-                className={clsx('flex items-center justify-center px-4 py-2')}
+                className={'flex items-center justify-center px-4 py-2 '}
                 onClick={toggleCalendar}
                 type="button"
-                disabled={editMode === 'edit' && true}
-                variant={editMode === 'edit' ? 'block' : 'primary'}
+                disabled={isBlock}
+                variant={isBlock ? 'block' : 'primary'}
             >
                 <Calendar1 className="mr-3" />
                 {formatDate(selectedDate)}

@@ -1,5 +1,5 @@
 'use server';
-import { checkAccessToken } from '@/app/(auth)/util/toekn';
+import { checkAccessToken, getAccessToken } from '@/app/(auth)/util/toekn';
 import { Suspense } from 'react';
 import AuthProvider from '../AuthProvider/AuthProvider';
 
@@ -9,10 +9,12 @@ interface AuthWrapperProps {
 
 const AuthWrapper = async ({ children }: AuthWrapperProps) => {
     const isLoggedIn = await checkAccessToken();
-
+    const accessUrl = await getAccessToken();
     return (
         <Suspense fallback={<div>로딩 중..</div>}>
-            <AuthProvider isLoggedIn={isLoggedIn}>{children}</AuthProvider>
+            <AuthProvider isLoggedIn={isLoggedIn} accessUrl={accessUrl}>
+                {children}
+            </AuthProvider>
         </Suspense>
     );
 };

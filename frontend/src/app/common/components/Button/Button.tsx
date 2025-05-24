@@ -36,7 +36,7 @@ const Button = ({
     return (
         <button
             className={clsx(
-                'flex justify-center items-center py-2 rounded-xl cursor-pointer font-medium',
+                'flex justify-center items-center py-2 rounded-xl cursor-pointer font-medium px-4 py-2"',
                 {
                     'bg-primary/80 text-white    hover:bg-primary':
                         variant === 'primary',

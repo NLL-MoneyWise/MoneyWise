@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ModalContainerProps } from '../types';
 import Modal from '../components/Modal/Modal';
 
 const useModal = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const openModal = () => {
+    const openModal = useCallback(() => {
         setIsOpen(true);
-    };
+    }, []);
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         setIsOpen(false);
-    };
+    }, []);
 
     const ModalWrapper = ({ children }: ModalContainerProps) => {
         return (

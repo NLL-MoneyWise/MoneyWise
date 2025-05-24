@@ -16,7 +16,9 @@
 .fc .fc-toolbar-title {
     font-weight: normal;
 }
-
+.fc-daygrid-day-frame {
+    padding: 4px !important;
+}
 /* 일정표 툴 바  */
 .fc .fc-toolbar.fc-header-toolbar {
     margin: 0;
