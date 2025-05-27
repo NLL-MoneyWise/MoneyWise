@@ -342,11 +342,11 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "소비 내역 조회", security = {@SecurityRequirement(name = "JWT")})
+    @Operation(summary = "소비 내역 영수증으로 조회", security = {@SecurityRequirement(name = "JWT")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "해당 영수증에 대한 모든 소비 내역을 불러왔습니다.",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
+                            schema = @Schema(implementation = ConsumptionsFindAccessUrlResponse.class),
                             examples = @ExampleObject("""
                                     {
                                     "consumptionDTOList": [{"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"}],
@@ -364,13 +364,108 @@ public class ConsumptionController {
                                     "typeName": "NOT_FOUND_ERROR",
                                     "message": "해당 영수증의 소비 내역을 찾을 수 없습니다."
                                     }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "조회에 실패했습니다."
+                                    }
                                     """)))
     })
     @GetMapping("/find/all/{access_url}")
-    public ResponseEntity<ConsumptionsFindAllResponse> consumptionFindAll(@AuthenticationPrincipal String email, @PathVariable String access_url) {
-        ConsumptionsFindAllResponse response = consumptionService.findAll(email, access_url);
+    public ResponseEntity<ConsumptionsFindAccessUrlResponse> consumptionFindAll(@AuthenticationPrincipal String email, @PathVariable String access_url) {
+        ConsumptionsFindAccessUrlResponse response = consumptionService.findAll(email, access_url);
 
         response.setMessage("해당 영수증에 대한 모든 소비 내역을 불러왔습니다.");
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "소비 내역 이메일로 전체 조회", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자의 모든 소비 내역을 불러왔습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                      "consumptionDTOList": [
+                                        {
+                                          "id": 2061,
+                                          "category": "기타",
+                                          "name": "기타지출",
+                                          "amount": 150000,
+                                          "quantity": 1,
+                                          "storeName": null,
+                                          "date": "2025-05-10",
+                                          "accessUrl": null,
+                                          "sortation": "고정"
+                                        },
+                                        {
+                                          "id": 2062,
+                                          "category": "교통/주유",
+                                          "name": "버스비",
+                                          "amount": 50000,
+                                          "quantity": 1,
+                                          "storeName": null,
+                                          "date": "2025-05-10",
+                                          "accessUrl": null,
+                                          "sortation": "고정"
+                                        },
+                                        {
+                                          "id": 2053,
+                                          "category": "기타",
+                                          "name": "말보로레드보루",
+                                          "amount": 250000,
+                                          "quantity": 5,
+                                          "storeName": "CU",
+                                          "date": "2015-11-01",
+                                          "accessUrl": "receipt.jpeg",
+                                          "sortation": "변동"
+                                        },
+                                        {
+                                          "id": 2060,
+                                          "category": "식품",
+                                          "name": "음식지출",
+                                          "amount": 50000,
+                                          "quantity": null,
+                                          "storeName": null,
+                                          "date": "2025-05-10",
+                                          "accessUrl": null,
+                                          "sortation": "고정"
+                                        },
+                                        {
+                                          "id": 2058,
+                                          "category": "기타",
+                                          "name": "말보로레드",
+                                          "amount": 4500,
+                                          "quantity": 1,
+                                          "storeName": "GS25",
+                                          "date": "2015-11-20",
+                                          "accessUrl": "receipt.jpeg",
+                                          "sortation": "변동"
+                                        }
+                                      ],
+                                      "message": "사용자의 모든 소비 내역을 불러왔습니다."
+                                    }
+                                    """))),
+
+            @ApiResponse(responseCode = "500", description = "조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "조회에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/find/all")
+    public ResponseEntity<ConsumptionsFindAllResponse> consumptionFindAllEmail(@AuthenticationPrincipal String email) {
+        ConsumptionsFindAllResponse response = consumptionService.findAllEmail(email);
+
+        response.setMessage("사용자의 모든 소비 내역을 불러왔습니다.");
         return ResponseEntity.ok(response);
     }
 
@@ -378,7 +473,7 @@ public class ConsumptionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "{id}번의 소비 내용이 조회되었습니다.",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
+                            schema = @Schema(implementation = ConsumptionsFindAccessUrlResponse.class),
                             examples = @ExampleObject("""
                                     {
                                     "consumptionDTO": {"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"},

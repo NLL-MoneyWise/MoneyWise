@@ -150,7 +150,7 @@ public class ConsumptionService {
 
     public ConsumptionsSaveResponse save(String email, ConsumptionsSaveRequest request) {
         ConsumptionsSaveResponse response = new ConsumptionsSaveResponse();
-        List<ConsumptionDTO> consumptionDTOList = new ArrayList<>();
+        List<ConsumptionFindAccessUrlDTO> consumptionDTOList = new ArrayList<>();
         Consumption result;
 
         Map<String, Long> categoryMap = getCategoryMap();
@@ -182,7 +182,7 @@ public class ConsumptionService {
                     consumption.setQuantity(item.getQuantity());
                     result = consumptionRepository.save(consumption);
 
-                    ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+                    ConsumptionFindAccessUrlDTO consumptionDTO = new ConsumptionFindAccessUrlDTO();
 
                     consumptionDTO.setCategory(category_string);
                     consumptionDTO.setQuantity(result.getQuantity());
@@ -196,7 +196,7 @@ public class ConsumptionService {
                 consumption.setAmount(receipt.getTotalAmount());
                 result = consumptionRepository.save(consumption);
 
-                ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+                ConsumptionFindAccessUrlDTO consumptionDTO = new ConsumptionFindAccessUrlDTO();
                 consumptionDTO.setId(result.getId());
                 consumptionDTO.setAmount(result.getAmount());
 
@@ -225,7 +225,7 @@ public class ConsumptionService {
             String accessUrl = firstConsumption.getAccessUrl();
 
             // 소비 내역 업데이트
-            for (ConsumptionDTO consumptionDTO : request.getConsumptionDTOList()) {
+            for (ConsumptionFindAccessUrlDTO consumptionDTO : request.getConsumptionDTOList()) {
                 Consumption consumption = consumptionRepository.findById(consumptionDTO.getId())
                         .orElseThrow(() -> new NotFoundException(consumptionDTO.getId() + "번의 소비 내역이 없습니다."));
 
@@ -268,11 +268,11 @@ public class ConsumptionService {
     }
 
 
-    public ConsumptionsFindAllResponse findAll(String email, String access_url) {
+    public ConsumptionsFindAccessUrlResponse findAll(String email, String access_url) {
         try {
             List<Consumption> consumptions = consumptionRepository.findByEmailAndAccessUrl(email, access_url);
-            ConsumptionsFindAllResponse response = new ConsumptionsFindAllResponse();
-            List<ConsumptionDTO> consumptionDTOList = new ArrayList<>();
+            ConsumptionsFindAccessUrlResponse response = new ConsumptionsFindAccessUrlResponse();
+            List<ConsumptionFindAccessUrlDTO> consumptionDTOList = new ArrayList<>();
 
             if (!consumptions.isEmpty()) {
                 Map<Long, String> categoryMap = getReverseCategoryMap();
@@ -284,7 +284,7 @@ public class ConsumptionService {
                 response.setStore_name(store_name);
 
                 for (Consumption consumption : consumptions) {
-                    ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+                    ConsumptionFindAccessUrlDTO consumptionDTO = new ConsumptionFindAccessUrlDTO();
 
                     consumptionDTO.setName(consumption.getName());
                     consumptionDTO.setQuantity(consumption.getQuantity());
@@ -299,7 +299,7 @@ public class ConsumptionService {
             }
             return response;
         } catch (DataAccessException e) {
-            throw new NotFoundException("해당 영수증의 소비 내역을 찾을 수 없습니다.");
+            throw new NotFoundException("조회에 실패했습니다.");
         }
     }
 
@@ -308,7 +308,7 @@ public class ConsumptionService {
         Consumption consumption = consumptionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("해당 id의 소비 내역이 없습니다."));
 
-        ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+        ConsumptionFindAccessUrlDTO consumptionDTO = new ConsumptionFindAccessUrlDTO();
         ConsumptionsFindOneResponse response = new ConsumptionsFindOneResponse();
 
         Map<Long, String> categoryReverseMap = getReverseCategoryMap();
@@ -604,5 +604,36 @@ public class ConsumptionService {
         }
 
         return weeks;
+    }
+
+    public ConsumptionsFindAllResponse findAllEmail(String email) {
+        try {
+            List<Consumption> consumptionList = consumptionRepository.findByEmail(email);
+            List<ConsumptionDTO> consumptionDTOList = new ArrayList<>();
+            ConsumptionsFindAllResponse response = new ConsumptionsFindAllResponse();
+
+            Map<Long, String> reverseCategoryMap = getReverseCategoryMap();
+
+            for (Consumption consumption : consumptionList) {
+                ConsumptionDTO consumptionDTO = new ConsumptionDTO();
+
+                consumptionDTO.setCategory(reverseCategoryMap.get(consumption.getCategory_id()));
+                consumptionDTO.setAmount(consumption.getAmount());
+                consumptionDTO.setName(consumption.getName());
+                consumptionDTO.setId(consumption.getId());
+                consumptionDTO.setQuantity(consumption.getQuantity());
+                consumptionDTO.setDate(consumption.getConsumption_date().toString());
+                consumptionDTO.setAccessUrl(consumption.getAccessUrl());
+                consumptionDTO.setStoreName(consumption.getStoreName());
+                consumptionDTO.setSortation(consumption.getSortation());
+
+                consumptionDTOList.add(consumptionDTO);
+            }
+            response.setConsumptionDTOList(consumptionDTOList);
+
+            return response;
+        } catch (DataAccessException e) {
+            throw new DatabaseException("조회에 실패했습니다.");
+        }
     }
 }

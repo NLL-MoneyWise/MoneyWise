@@ -39,6 +39,7 @@ public class FixedCostScheduler {
                 consumption.setAmount(fixedCost.getAmount());
                 consumption.setConsumption_date(fixedCost.getFixedCostDate()); // 원래 예정일로 기록
                 consumption.setQuantity(1L); // 기본값
+                consumption.setSortation("고정");
 
                 consumptionRepository.save(consumption);
                 log.info("고정지출 소비 기록 생성: {} - {}", fixedCost.getName(), fixedCost.getAmount());

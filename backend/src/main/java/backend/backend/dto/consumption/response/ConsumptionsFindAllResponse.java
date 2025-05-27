@@ -10,7 +10,5 @@ import java.util.List;
 @Setter
 public class ConsumptionsFindAllResponse {
     private List<ConsumptionDTO> consumptionDTOList;
-    private String store_name;
-    private String date;
     private String message;
 }

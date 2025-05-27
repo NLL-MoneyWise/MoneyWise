@@ -32,4 +32,6 @@ public class Consumption {
     private String storeName;
     @Column
     private Long quantity;
+    @Column
+    private String sortation;
 }

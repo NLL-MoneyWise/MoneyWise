@@ -28,8 +28,8 @@ public class IncomeService {
 
     public IncomeSaveAndUpdateResponse save(String email, IncomeSaveAndUpdateRequest request) {
         try {
-            if (request.getDay() < 1 || request.getDay() > 31) {
-                throw new ValidationException("잘못된 day 값 입니다.");
+            if (request.getDay() < 1 || request.getDay() > 28) {
+                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
             }
 
             IncomeId id = new IncomeId();
@@ -74,8 +74,8 @@ public class IncomeService {
 
     public IncomeFindOneResponse findOne(String email, Long day) {
         try {
-            if (day < 1 || day > 31) {
-                throw new ValidationException("잘못된 day 값 입니다.");
+            if (day < 1 || day > 28) {
+                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
             }
 
             IncomeId id = new IncomeId();
@@ -106,8 +106,8 @@ public class IncomeService {
 
     public IncomeDeleteOneResponse deleteOne(String email, Long day) {
         try {
-            if (day < 1 || day > 31) {
-                throw new ValidationException("잘못된 day 값 입니다.");
+            if (day < 1 || day > 28) {
+                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
             }
 
             IncomeId id = new IncomeId();

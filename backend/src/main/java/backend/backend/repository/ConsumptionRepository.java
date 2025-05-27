@@ -26,6 +26,8 @@ public interface ConsumptionRepository extends JpaRepository<Consumption, Long>,
 
     int deleteByEmailAndId(String email, Long id);
 
+    List<Consumption> findByEmail(String email);
+
     @Query("SELECT SUM(c.amount) FROM Consumption c WHERE c.accessUrl = :accessUrl")
     Optional<Long> sumAmountByAccessUrl(@Param("accessUrl") String accessUrl);
 }

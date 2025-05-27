@@ -3,18 +3,12 @@ package backend.backend.dto.consumption.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
-public class ConsumptionDTO {
+public class ConsumptionFindAccessUrlDTO {
     private Long id;
     private String category;
     private String name;
     private Long amount;
     private Long quantity;
-    private String storeName;
-    private String date;
-    private String accessUrl;
-    private String sortation;
 }
