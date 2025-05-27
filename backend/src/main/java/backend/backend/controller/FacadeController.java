@@ -153,13 +153,13 @@ public class FacadeController {
                             "message": "2015년 11월 소비 내역 분석이 완료되었습니다."
                             }
                             """),
-                    @ExampleObject(name = "period = day 일 때", value = """
+                    @ExampleObject(name = "period = week 일 때", value = """
                             {
                             "totalAmount": "5000",
                             "byCategory": [{"name": "식품", "amount": "500"}, {"name": "기타", "amount": "4500"}],
                             "topExpenses": [{"name": "말보로레드", "amount": "4500"}],
                             "storeExpenses": [{"name": "GS25", "amount": "5000"}],
-                            "message": "2015년 11월 19일 소비 내역 분석이 완료되었습니다."
+                            "message": "2015년 11월 3번째 주 소비 내역 분석이 완료되었습니다."
                             }
                             """)
                     }
@@ -185,11 +185,11 @@ public class FacadeController {
                             }
                             """),
 
-                    @ExampleObject(name = "period = day이지만 year나 month나 day가 비어있을 때",
+                    @ExampleObject(name = "period = week이지만 year나 month나 week가 비어있을 때",
                             value = """
                             {
                             "typeName": "VALIDATION_ERROR",
-                            "message": "year나 month나 day가 비어있습니다."
+                            "message": "year나 month나 week가 비어있습니다."
                             }
                             """)
             }))
@@ -200,35 +200,32 @@ public class FacadeController {
                 @RequestParam(name = "period") String period,
                 @RequestParam(required = false, name = "year") Long year,
                 @RequestParam(required = false, name = "month") Long month,
-                @RequestParam(required = false, name = "day") Long day) throws BadRequestException {
+                @RequestParam(required = false, name = "week") Long week) {
 
         if (period.equals("year") && year == null) {
             throw new ValidationException("year가 비어있습니다.");
         } else if (period.equals("month") && (year == null || month == null)) {
             throw new ValidationException("year나 month가 비어있습니다.");
-        } else if (period.equals("day") && (year == null || month == null || day == null)) {
-            throw new ValidationException("year나 month나 day가 비어있습니다.");
+        } else if (period.equals("week") && (year == null || month == null || week == null)) {
+            throw new ValidationException("year나 month나 week가 비어있습니다.");
         }
 
-        String message;
+        String message = "";
 
         if (period.equals("all")) {
             message = "전체 기간 소비 내역 분석이 완료되었습니다.";
             year = null;
             month = null;
-            day = null;
         } else if (period.equals("year")) {
             message = year + "년도의 소비 내역 분석이 완료되었습니다.";
             month = null;
-            day = null;
         } else if (period.equals("month")) {
             message = year + "년 " + month + "월 소비 내역 분석이 완료되었습니다.";
-            day = null;
-        } else {
-            message = year + "년 " + month + "월 " + day + "일 소비 내역 분석이 완료되었습니다.";
+        } else if (period.equals("week")) {
+            message = year + "년 " + month + "월 " + week + "번째 주 소비 내역 분석이 완료되었습니다.";
         }
 
-        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(email, year, month, day);
+        FacadeConsumptionsAnalyzeResponse response = facadeService.consumptionsAnalyzeProcess(email, year, month, week);
 
         response.setMessage(message);
 

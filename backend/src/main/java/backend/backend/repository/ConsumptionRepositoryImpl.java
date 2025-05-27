@@ -39,17 +39,12 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         return month != null ? consumption.consumption_date.month().eq(Math.toIntExact(month)) : null;
     }
 
-    //Math.toIntExact는 Long타입만 Integer로 변환해줌
-    private BooleanExpression dayEq(Long day) {
-        return day != null ? consumption.consumption_date.dayOfMonth().eq(Math.toIntExact(day)) : null;
-    }
-
     private BooleanExpression dayBetween(Long startDay, Long lastDay) {
         return startDay != null && lastDay != null ? consumption.consumption_date.dayOfMonth().between(startDay, lastDay) : null;
     }
 
     @Override
-        public List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month, Long day) {
+    public List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
         System.out.println("Email parameter: " + email);
         NumberExpression<Long> totalAmount = consumption.amount.sum();
 
@@ -59,17 +54,17 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
                         totalAmount.as("amount")))
                 .from(consumption)
                 .join(category).on(consumption.category_id.eq(category.id))
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayBetween(startDay, lastDay))
                 .groupBy(category.name)
                 .orderBy(totalAmount.desc())
                 .fetch();
         System.out.println("Query result: " + result);
 
-            return result;
+        return result;
     }
 
     @Override
-    public List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month, Long day) {
+    public List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
         System.out.println("Email parameter: " + email);
 
         NumberExpression<Long> totalAmount = consumption.amount.sum();
@@ -97,8 +92,8 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
         List<Long> maxAmountList = queryFactory
                 .select(totalAmount)
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
-                .groupBy(consumption.item_name)
+                .where(emailEq(email), yearEq(year), monthEq(month), dayBetween(startDay, lastDay))
+                .groupBy(consumption.name)
                 .orderBy(totalAmount.desc())
                 .fetch();
 
@@ -108,10 +103,10 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
 
         List<TopExpense> result = queryFactory
                 .select(Projections.constructor(TopExpense.class,
-                        consumption.item_name, totalAmount))
+                        consumption.name, totalAmount))
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day), consumption.item_name.isNotNull())
-                .groupBy(consumption.item_name)
+                .where(emailEq(email), yearEq(year), monthEq(month), dayBetween(startDay, lastDay), consumption.name.isNotNull())
+                .groupBy(consumption.name)
                 .having(totalAmount.eq(maxAmountList.get(0)))
                 .fetch();
 
@@ -121,25 +116,25 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
     }
 
     @Override
-    public Optional<Long> sumAmountByEmail(String email, Long year, Long month, Long day) {
+    public Optional<Long> sumAmountByEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
         NumberExpression<Long> totalAmount = consumption.amount.sum();
 
         //ofNullable메서드로 null값을 허용하고 서비스단에서 처리
         Optional<Long> result = Optional.ofNullable(queryFactory
                 .select(totalAmount)
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day))
+                .where(emailEq(email), yearEq(year), monthEq(month), dayBetween(startDay, lastDay))
                 .fetchOne());
 
         return result;
     }
 
     @Override
-    public List<StoreExpense> findStoreExpenseByStoreName(String email, Long year, Long month, Long day) {
+    public List<StoreExpense> findStoreExpenseByStoreName(String email, Long year, Long month, Long startDay, Long lastDay) {
         List<StoreExpense> result = queryFactory
                 .select(Projections.constructor(StoreExpense.class, consumption.storeName, consumption.amount.sum()))
                 .from(consumption)
-                .where(emailEq(email), yearEq(year), monthEq(month), dayEq(day), consumption.storeName.isNotNull())
+                .where(emailEq(email), yearEq(year), monthEq(month), dayBetween(startDay, lastDay), consumption.storeName.isNotNull())
                 .groupBy(consumption.storeName)
                 .orderBy(consumption.amount.sum().desc())
                 .fetch();
@@ -184,14 +179,14 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
     public List<DailyFindTopExpenseQueryDTO> dailyFindTopExpenseByEmail(String email, Long year, Long month, Long startDay, Long lastDay) {
         // 1. 날짜와 아이템별 총 지출 금액 계산
         List<Tuple> dateItemTotals = queryFactory
-                .select(consumption.consumption_date, consumption.item_name, consumption.amount.sum())
+                .select(consumption.consumption_date, consumption.name, consumption.amount.sum())
                 .from(consumption)
                 .where(consumption.email.eq(email),
                         consumption.consumption_date.year().eq(Math.toIntExact(year)),
                         consumption.consumption_date.month().eq(Math.toIntExact(month)),
                         dayBetween(startDay, lastDay),
-                        consumption.item_name.isNotNull())
-                .groupBy(consumption.consumption_date, consumption.item_name)
+                        consumption.name.isNotNull())
+                .groupBy(consumption.consumption_date, consumption.name)
                 .fetch();
 
         if (dateItemTotals.isEmpty()) {
@@ -234,7 +229,7 @@ public class ConsumptionRepositoryImpl implements ConsumptionRepositoryCustom {
             for (Tuple tuple : items) {
                 Long amount = tuple.get(consumption.amount.sum());
                 if (maxAmount.equals(amount)) {
-                    String itemName = tuple.get(consumption.item_name);
+                    String itemName = tuple.get(consumption.name);
                     result.add(new DailyFindTopExpenseQueryDTO(date, itemName, amount));
                 }
             }

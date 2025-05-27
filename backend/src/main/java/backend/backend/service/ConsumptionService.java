@@ -2,22 +2,28 @@ package backend.backend.service;
 
 import backend.backend.domain.Consumption;
 import backend.backend.domain.Receipt;
+import backend.backend.domain.fixedCost.FixedCost;
 import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.model.*;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
 import backend.backend.dto.consumption.response.*;
+import backend.backend.dto.fixedCost.model.FixedCostDTO;
+import backend.backend.dto.fixedCost.request.FixedCostSaveRequest;
+import backend.backend.dto.fixedCost.request.FixedCostUpdateRequest;
+import backend.backend.dto.fixedCost.response.*;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
+import backend.backend.repository.FixedCostRepository;
 import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -29,6 +35,118 @@ import java.util.stream.Collectors;
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final ReceiptRepository receiptRepository;
+    private final FixedCostRepository fixedCostRepository;
+
+    public FixedCostSaveResponse createFixedCost(String email, FixedCostSaveRequest request) {
+        try {
+            if (request.getDay() > 28 || request.getDay() < 1) {
+                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
+            }
+
+            Map<String, Long> categoryMap = getCategoryMap();
+
+            LocalDate date = LocalDate.now();
+            LocalDate requestDate = date.withDayOfMonth(request.getDay());
+
+
+            FixedCost fixedCost = new FixedCost();
+            fixedCost.setEmail(email);
+            fixedCost.setCategoryId(categoryMap.get(request.getCategory()));
+            fixedCost.setName(request.getName());
+            fixedCost.setFixedCostDate(requestDate);
+            fixedCost.setAmount(request.getAmount());
+
+            fixedCostRepository.save(fixedCost);
+
+            return new FixedCostSaveResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 저장에 실패했습니다.");
+        }
+    }
+
+    public FIxedCostUpdateResponse updateFixedCost(String email, FixedCostUpdateRequest request) {
+        try {
+            FixedCost fixedCost = fixedCostRepository.findById(request.getId())
+                    .orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
+
+            fixedCost.setAmount(request.getAmount());
+
+            fixedCostRepository.save(fixedCost);
+
+            return new FIxedCostUpdateResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 변경에 실패했습니다.");
+        }
+    }
+
+    public FixedCostFindOneResponse findOneFixedCost(String email, Long id) {
+        try {
+            Map<Long, String> reverceCategoryMap = getReverseCategoryMap();
+
+            FixedCost fixedCost = fixedCostRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
+
+            FixedCostFindOneResponse response = new FixedCostFindOneResponse();
+
+            response.setName(fixedCost.getName());
+            response.setAmount(fixedCost.getAmount());
+            response.setCategory(reverceCategoryMap.get(fixedCost.getCategoryId()));
+            response.setDate(fixedCost.getFixedCostDate().toString());
+
+            return response;
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 조회에 실패했습니다.");
+        }
+    }
+
+    public FixedCostFindAllResponse findAllFixedCost(String email) {
+        try {
+            Map<Long, String> reverseCategoryMap = getReverseCategoryMap();
+
+            List<FixedCost> fixedCostList = fixedCostRepository.findByEmail(email);
+            List<FixedCostDTO> fixedCostDTOList = new ArrayList<>();
+
+            for (FixedCost fixedCost : fixedCostList) {
+                FixedCostDTO fixedCostDTO = new FixedCostDTO();
+
+                fixedCostDTO.setName(fixedCost.getName());
+                fixedCostDTO.setId(fixedCost.getId());
+                fixedCostDTO.setCategory(reverseCategoryMap.get(fixedCost.getCategoryId()));
+                fixedCostDTO.setDate(fixedCost.getFixedCostDate().toString());
+                fixedCostDTO.setAmount(fixedCost.getAmount());
+
+                fixedCostDTOList.add(fixedCostDTO);
+            }
+
+            FixedCostFindAllResponse response = new FixedCostFindAllResponse();
+            response.setFixedCostDTOList(fixedCostDTOList);
+
+            return response;
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 조회에 실패했습니다.");
+        }
+    }
+
+    public FixedCostDeleteOneResponse deleteOneFixedCost(String email, Long id) {
+        try {
+            fixedCostRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
+            fixedCostRepository.deleteById(id);
+
+            return new FixedCostDeleteOneResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 삭제에 실패했습니다.");
+        }
+    }
+
+    public FixedCostDeleteAllResponse deleteAllFixedCost(String email) {
+        try {
+            fixedCostRepository.deleteByEmail(email);
+
+            return new FixedCostDeleteAllResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("고정 지출액 삭제에 실패했습니다.");
+        }
+    }
 
     public ConsumptionsSaveResponse save(String email, ConsumptionsSaveRequest request) {
         ConsumptionsSaveResponse response = new ConsumptionsSaveResponse();
@@ -60,7 +178,7 @@ public class ConsumptionService {
 
                     consumption.setAmount(item.getAmount() * item.getQuantity());
                     consumption.setCategory_id(categoryId);
-                    consumption.setItem_name(item.getName());
+                    consumption.setName(item.getName());
                     consumption.setQuantity(item.getQuantity());
                     result = consumptionRepository.save(consumption);
 
@@ -70,7 +188,7 @@ public class ConsumptionService {
                     consumptionDTO.setQuantity(result.getQuantity());
                     consumptionDTO.setAmount(result.getAmount());
                     consumptionDTO.setId(result.getId());
-                    consumptionDTO.setName(result.getItem_name());
+                    consumptionDTO.setName(result.getName());
 
                     consumptionDTOList.add(consumptionDTO);
                 }
@@ -92,7 +210,6 @@ public class ConsumptionService {
             throw new ValidationException("잘못된 날짜 형식입니다. yyyy-MM-dd를 사용해주세요.");
         }
     }
-
 
     public ConsumptionsUpdateResponse update(String email, ConsumptionsUpdateRequest request) {
         try {
@@ -121,7 +238,7 @@ public class ConsumptionService {
                 consumption.setAmount(consumptionDTO.getAmount() * consumptionDTO.getQuantity());
                 consumption.setCategory_id(categoryMap.get(consumptionDTO.getCategory()));
                 consumption.setQuantity(consumptionDTO.getQuantity());
-                consumption.setItem_name(consumptionDTO.getName());
+                consumption.setName(consumptionDTO.getName());
 
                 consumptionRepository.save(consumption);
             }
@@ -169,7 +286,7 @@ public class ConsumptionService {
                 for (Consumption consumption : consumptions) {
                     ConsumptionDTO consumptionDTO = new ConsumptionDTO();
 
-                    consumptionDTO.setName(consumption.getItem_name());
+                    consumptionDTO.setName(consumption.getName());
                     consumptionDTO.setQuantity(consumption.getQuantity());
                     consumptionDTO.setCategory(categoryMap.get(consumption.getCategory_id()));
                     consumptionDTO.setId(consumption.getId());
@@ -197,7 +314,7 @@ public class ConsumptionService {
         Map<Long, String> categoryReverseMap = getReverseCategoryMap();
 
         consumptionDTO.setAmount(consumption.getAmount());
-        consumptionDTO.setName(consumption.getItem_name());
+        consumptionDTO.setName(consumption.getName());
         consumptionDTO.setQuantity(consumption.getQuantity());
         consumptionDTO.setId(consumption.getId());
         consumptionDTO.setCategory(categoryReverseMap.get(consumption.getCategory_id()));
@@ -286,22 +403,50 @@ public class ConsumptionService {
         return reverseCategoryMap;
     }
 
-    public Long getTotalAmountByEmail(String email, Long year, Long month, Long day) {
-        return consumptionRepository.sumAmountByEmail(email, year, month, day).orElse(0L);
+    public Long getTotalAmountByEmail(String email, Long year, Long month, Long week) {
+        Long startDay = null, lastDay = null;
+
+        if (week != null) {
+            int[] days = calculateWeekDaysMondayStart(year, month, week);
+            startDay = (long) days[0];
+            lastDay = (long) days[1];
+        }
+        return consumptionRepository.sumAmountByEmail(email, year, month, startDay, lastDay).orElse(0L);
     }
 
-    public List<ByCategory> getTotalAmountByEmailAndCategory(String email, Long year, Long month, Long day) {
-        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month, day);
+    public List<ByCategory> getTotalAmountByEmailAndCategory(String email, Long year, Long month, Long week) {
+        Long startDay = null, lastDay = null;
+
+        if (week != null) {
+            int[] days = calculateWeekDaysMondayStart(year, month, week);
+            startDay = (long) days[0];
+            lastDay = (long) days[1];
+        }
+        List<ByCategory> result = consumptionRepository.findByCategoryAndEmail(email, year, month, startDay, lastDay);
         return result != null ? result : Collections.emptyList();
     }
 
-    public List<TopExpense> getMaxAmountByEmailAndItemName(String email, Long year, Long month, Long day) {
-        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month, day);
+    public List<TopExpense> getMaxAmountByEmailAndItemName(String email, Long year, Long month, Long week) {
+        Long startDay = null, lastDay = null;
+
+        if (week != null) {
+            int[] days = calculateWeekDaysMondayStart(year, month, week);
+            startDay = (long) days[0];
+            lastDay = (long) days[1];
+        }
+        List<TopExpense> result = consumptionRepository.findTopExpenseByEmail(email, year, month, startDay, lastDay);
         return result != null ? result : Collections.emptyList();
     }
 
-    public List<StoreExpense> getStoreExpenseListByEmailAndStoreName(String email, Long year, Long month, Long day) {
-        List<StoreExpense> result = consumptionRepository.findStoreExpenseByStoreName(email, year, month, day);
+    public List<StoreExpense> getStoreExpenseListByEmailAndStoreName(String email, Long year, Long month, Long week) {
+        Long startDay = null, lastDay = null;
+
+        if (week != null) {
+            int[] days = calculateWeekDaysMondayStart(year, month, week);
+            startDay = (long) days[0];
+            lastDay = (long) days[1];
+        }
+        List<StoreExpense> result = consumptionRepository.findStoreExpenseByStoreName(email, year, month, startDay, lastDay);
         //jpa나 querydsl은 리스트를 조회할 때 값을 찾지못하면 null이 아니라 빈 리스트를 반환함
         return result;
     }
@@ -402,5 +547,62 @@ public class ConsumptionService {
                 ));
 
         return storeExpenseMap;
+    }
+
+    private int[] calculateWeekDaysMondayStart(Long year, Long month, Long week) {
+        LocalDate firstDayOfMonth = LocalDate.of(year.intValue(), month.intValue(), 1);
+        //firstDayOfMonth.lengthOfMonth()는 해당 월의 총 일수 반환
+        LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
+
+        // 해당 월의 모든 주차 계산
+        List<int[]> allWeeks = calculateAllMondayWeeks(firstDayOfMonth, lastDayOfMonth);
+
+        // 요청한 주차가 유효한지 확인
+        if (week > allWeeks.size() || week < 1) {
+            throw new ValidationException(
+                    String.format("유효하지 않은 주차입니다. %d년 %d월은 1주차부터 %d주차까지 있습니다.",
+                            year, month, allWeeks.size())
+            );
+        }
+
+        return allWeeks.get(week.intValue() - 1);
+    }
+
+    /**
+     * 해당 월의 모든 주차를 월요일 기준으로 계산
+     */
+    private List<int[]> calculateAllMondayWeeks(LocalDate firstDay, LocalDate lastDay) {
+        List<int[]> weeks = new ArrayList<>();
+
+        LocalDate currentMonday = firstDay;
+
+        // 1일이 월요일이 아니면 다음 월요일 찾기
+        //getDayOfWeek()는 해당 날짜의 요일 반환
+        while (currentMonday.getDayOfWeek() != DayOfWeek.MONDAY) {
+            currentMonday = currentMonday.plusDays(1);
+        }
+
+        // 1일이 월요일이 아닌 경우, 1일부터 첫 번째 월요일 전날까지가 첫째주
+        if (!firstDay.equals(currentMonday)) {
+            int firstWeekStart = firstDay.getDayOfMonth();
+            int firstWeekEnd = currentMonday.minusDays(1).getDayOfMonth();
+            weeks.add(new int[]{firstWeekStart, firstWeekEnd});
+        }
+
+        // 월요일부터 시작하는 주차들 계산
+        while (!currentMonday.isAfter(lastDay)) {
+            LocalDate weekEnd = currentMonday.plusDays(6); // 일요일까지
+
+            // 해당 월을 벗어나면 월의 마지막 날까지만
+            if (weekEnd.isAfter(lastDay)) {
+                weekEnd = lastDay;
+            }
+
+            weeks.add(new int[]{currentMonday.getDayOfMonth(), weekEnd.getDayOfMonth()});
+
+            currentMonday = currentMonday.plusDays(7); // 다음 주 월요일
+        }
+
+        return weeks;
     }
 }

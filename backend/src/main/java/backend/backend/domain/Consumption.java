@@ -22,8 +22,8 @@ public class Consumption {
     private String accessUrl;
     @Column
     private Long category_id;
-    @Column
-    private String item_name;
+    @Column(name = "name")
+    private String name;
     @Column
     private Long amount;
     @Column

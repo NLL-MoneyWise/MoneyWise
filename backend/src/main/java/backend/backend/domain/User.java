@@ -32,10 +32,4 @@ public class User {
 
     @Column(name = "kakao_id")
     private Long providerId;
-
-    @Column
-    private Long income = 0L;
-
-    @Column
-    private Long fixed_cost = 0L;
 }

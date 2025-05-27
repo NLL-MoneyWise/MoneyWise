@@ -28,13 +28,13 @@ public class FacadeService {
         return FacadeReceiptProcessResponse.fromReceiptAnalyzeAndConsumptionSaveResponse(receiptAnalyzeResponse, consumptionsSaveResponse);
     }
 
-    public FacadeConsumptionsAnalyzeResponse consumptionsAnalyzeProcess(String email, Long year, Long month, Long day) {
+    public FacadeConsumptionsAnalyzeResponse consumptionsAnalyzeProcess(String email, Long year, Long month, Long week) {
         FacadeConsumptionsAnalyzeResponse response = new FacadeConsumptionsAnalyzeResponse();
 
-        response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, day));
-        response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, day));
-        response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, year, month, day));
-        response.setStoreExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, month, day));
+        response.setByCategory(consumptionService.getTotalAmountByEmailAndCategory(email, year, month, week));
+        response.setTopExpenses(consumptionService.getMaxAmountByEmailAndItemName(email, year, month, week));
+        response.setTotalAmount(consumptionService.getTotalAmountByEmail(email, year, month, week));
+        response.setStoreExpenses(consumptionService.getStoreExpenseListByEmailAndStoreName(email, year, month, week));
 
         return response;
     }

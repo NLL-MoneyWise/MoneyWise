@@ -15,15 +15,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByEmail(String email);
 
     boolean existsByProviderAndProviderId(String provider, Long providerId);
-    Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByProviderId(Long kakaoId);
-
-    @Modifying
-    @Query("UPDATE User u SET u.income = :income WHERE u.email = :email")
-    int updateIncomeByEmail(@Param("email") String email, @Param("income") Long income);
-
-    @Modifying
-    @Query("UPDATE User u SET u.fixed_cost = :fixed_cost WHERE u.email = :email")
-    int updateFixedCostByEmail(@Param("email") String email, @Param("fixed_cost") Long fixed_cost);
 }

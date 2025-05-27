@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConsumptionRepositoryCustom {
-    List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month, Long day);
+    List<ByCategory> findByCategoryAndEmail(String email, Long year, Long month, Long startDay, Long lastDay);
 
-    List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month, Long day);
+    List<TopExpense> findTopExpenseByEmail(String email, Long year, Long month, Long startDay, Long lastDay);
 
-    List<StoreExpense> findStoreExpenseByStoreName(String email, Long year, Long month, Long day);
+    List<StoreExpense> findStoreExpenseByStoreName(String email, Long year, Long month, Long startDay, Long lastDay);
 
-    Optional<Long> sumAmountByEmail(String email, Long year, Long month, Long day);
+    Optional<Long> sumAmountByEmail(String email, Long year, Long month, Long startDay, Long lastDay);
 
     List<DailySumAmountQueryDTO> dailySumAmountByEmail(String email, Long year, Long month, Long startDay, Long lastDay);
 

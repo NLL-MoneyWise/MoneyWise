@@ -3,7 +3,11 @@ package backend.backend.controller;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
 import backend.backend.dto.consumption.response.*;
+import backend.backend.dto.fixedCost.request.FixedCostSaveRequest;
+import backend.backend.dto.fixedCost.request.FixedCostUpdateRequest;
+import backend.backend.dto.fixedCost.response.*;
 import backend.backend.exception.response.ErrorResponse;
+import backend.backend.scheduler.FixedCostScheduler;
 import backend.backend.service.ConsumptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,12 +22,239 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Tag(name = "Consumptions")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/consumptions")
 public class ConsumptionController {
     private final ConsumptionService consumptionService;
+
+    @Operation(summary = "고정 지출액 저장", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 저장이 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedCostSaveResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "고정 지출액 저장이 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "day는 1과 28 사이의 값 이어야 합니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "VALIDATION_ERROR",
+                                    "message": "day는 1과 29 사이의 값 이어야 합니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 저장에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 저장에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @PostMapping("/fixed/save")
+    public ResponseEntity<FixedCostSaveResponse> createFixedCost(@AuthenticationPrincipal String email, @RequestBody FixedCostSaveRequest request) {
+        FixedCostSaveResponse response = consumptionService.createFixedCost(email, request);
+        response.setMessage("고정 지출액 저장이 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "고정 지출액 수정", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 변경이 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FIxedCostUpdateResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "고정 지출액 변경이 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "해당하는 고정 지출을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당하는 고정 지출을 찾을 수 없습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 변경에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 변경에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @PutMapping("/fixed/update")
+    public ResponseEntity<FIxedCostUpdateResponse> updateFixedCost(@AuthenticationPrincipal String email, @RequestBody FixedCostUpdateRequest request) {
+        FIxedCostUpdateResponse response = consumptionService.updateFixedCost(email, request);
+        response.setMessage("고정 지출액 변경이 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "고정 지출액 조회(단일)", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 조회가 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedCostFindOneResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                      "amount": 100000,
+                                      "category": "기타",
+                                      "date": "2025-05-10",
+                                      "name": "기타지출",
+                                      "message": "고정 지출액 조회가 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "해당하는 고정 지출을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당하는 고정 지출을 찾을 수 없습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 조회에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/fixed/one/{id}")
+    public ResponseEntity<FixedCostFindOneResponse> findOneFixedCost(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        FixedCostFindOneResponse response = consumptionService.findOneFixedCost(email, id);
+        response.setMessage("고정 지출액 조회가 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "고정 지출액 전체 조회", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 조회가 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedCostFindAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                      "fixedCostDTOList": [
+                                        {
+                                          "id": 10005,
+                                          "date": "2025-05-10",
+                                          "category": "기타",
+                                          "amount": 100000,
+                                          "name": "기타지출"
+                                        },
+                                        {
+                                          "id": 10006,
+                                          "date": "2025-05-20",
+                                          "category": "교통/주유",
+                                          "amount": 50000,
+                                          "name": "버스비"
+                                        }
+                                      ],
+                                      "message": "고정 지출액 조회가 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 조회에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @GetMapping("/fixed/all")
+    public ResponseEntity<FixedCostFindAllResponse> findAllFixedCost(@AuthenticationPrincipal String email) {
+        FixedCostFindAllResponse response = consumptionService.findAllFixedCost(email);
+        response.setMessage("고정 지출액 조회가 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "고정 지출액 삭제(단일)", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 삭제가 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedCostDeleteOneResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "고정 지출액 삭제가 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "해당하는 고정 지출을 찾을 수 없습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "NOT_FOUND_ERROR",
+                                    "message": "해당하는 고정 지출을 찾을 수 없습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 삭제에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @DeleteMapping("/fixed/one/{id}")
+    public ResponseEntity<FixedCostDeleteOneResponse> deleteOneFixedCost(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        FixedCostDeleteOneResponse response = consumptionService.deleteOneFixedCost(email, id);
+        response.setMessage("고정 지출액 삭제가 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "고정 지출액 전체 삭제", security = {@SecurityRequirement(name = "JWT")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "고정 지출액 삭제가 완료되었습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedCostDeleteAllResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "message": "고정 지출액 삭제가 완료되었습니다."
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "고정 지출액 조회에 실패했습니다.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject("""
+                                    {
+                                    "typeName": "DATABASE_ERROR",
+                                    "message": "고정 지출액 삭제에 실패했습니다."
+                                    }
+                                    """)))
+    })
+    @DeleteMapping("/fixed/all")
+    public ResponseEntity<FixedCostDeleteAllResponse> deleteOneFixedCost(@AuthenticationPrincipal String email) {
+        FixedCostDeleteAllResponse response = consumptionService.deleteAllFixedCost(email);
+        response.setMessage("고정 지출액 삭제가 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "소비 저장 기능", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
@@ -150,10 +381,10 @@ public class ConsumptionController {
                             schema = @Schema(implementation = ConsumptionsFindAllResponse.class),
                             examples = @ExampleObject("""
                                     {
-                                    "consumptionDTO": {"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"}, {"id": "2001", "category": "문구", "name": "컴퓨터용싸인펜", "amount": "1000", "quantity": "2"},
+                                    "consumptionDTO": {"id": "2000", "category": "잡화", "name": "말보로레드", "amount": "4500", "quantity": "1"},
                                     "store_name": "CU",
                                     "date": "2025-05-06",
-                                    "message": "해당 영수증에 대한 모든 소비 내역을 불러왔습니다."
+                                    "message": "2000번의 소비 내용이 조회되었습니다."
                                     }
                                     """))),
 
@@ -381,7 +612,7 @@ public class ConsumptionController {
                                     }
                                     """)))
     })
-    @GetMapping("/analyze/daily/{year}/{month}/{start_day}/{last_day}")
+    @GetMapping("/analyze/daily")
     public ResponseEntity<ConsumptionsDailyAnalyzeResponse> consumptionDailyAnalyze(
             @AuthenticationPrincipal String email,
             @RequestParam(name = "year") Long year,
@@ -398,6 +629,7 @@ public class ConsumptionController {
         return ResponseEntity.ok(response);
     }
 
+    /*
     @Operation(summary = "전체 기간 소비 분석", security = {@SecurityRequirement(name = "JWT")}, hidden = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 기간 소비 내역 분석이 완료되었습니다.",
@@ -512,5 +744,34 @@ public class ConsumptionController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+*/
+
+    private final FixedCostScheduler fixedCostScheduler;
+
+    @Operation(summary = "스케줄러 수동 실행", hidden = true)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스케줄러 수동 실행 성공")
+    })
+    @PostMapping("/fixed-cost/process")
+    public ResponseEntity<Map<String, Object>> testProcessFixedCosts() {
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            // 스케줄러 메서드 직접 호출
+            fixedCostScheduler.processFixedCosts();
+
+            result.put("success", true);
+            result.put("message", "고정지출 처리 테스트 완료");
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "처리 실패: " + e.getMessage());
+            result.put("error", e.getClass().getSimpleName());
+
+            return ResponseEntity.status(500).body(result);
+        }
     }
 }

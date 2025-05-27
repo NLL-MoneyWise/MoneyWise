@@ -163,7 +163,7 @@ public ResponseEntity<LoginResponse> login(@PathVariable String provider, @Reque
 
     Cookie refreshTokenCookie = new Cookie("refresh_token", jwtUtils.generateRefreshToken(loginResponse.getEmail()));
     refreshTokenCookie.setHttpOnly(true); //JavaScript에서 접근 불가능하게 설정
-    refreshTokenCookie.setSecure(false); //HTTPS에서만 전송되도록 설정
+    refreshTokenCookie.setSecure(true); //HTTPS에서만 전송되도록 설정
     refreshTokenCookie.setPath("/"); //모든 경로에서 쿠키 사용
     refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7일을 초로 변환
     refreshTokenCookie.setAttribute("SameSite", "none");

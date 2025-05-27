@@ -38,7 +38,7 @@ public class SecurityConfig{
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
 
         http
-                .cors(Customizer.withDefaults())
+//                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable) //csrf 보호 기능 비활성화
                 .sessionManagement(session -> session //세션을 사용하지 않게 설정
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -71,22 +71,22 @@ public class SecurityConfig{
         return authManagerBuilder.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        // 허용할 Origin (프론트 주소만 열 수도 있음, 예: "http://localhost:3000")
-        config.addAllowedOrigin("http://localhost:3000"); // 로컬 프론트엔드
-        config.addAllowedOrigin("http://localhost:5501"); // Live Server 등
-        config.addAllowedOrigin("http://localhost:5500"); // Live Server 등
-        config.addAllowedOrigin("https://money-wise-delta.vercel.app");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//
+//        // 허용할 Origin (프론트 주소만 열 수도 있음, 예: "http://localhost:3000")
+//        config.addAllowedOrigin("http://localhost:3000"); // 로컬 프론트엔드
+//        config.addAllowedOrigin("http://localhost:5501"); // Live Server 등
+//        config.addAllowedOrigin("http://localhost:5500"); // Live Server 등
+//        config.addAllowedOrigin("https://money-wise-delta.vercel.app");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        config.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return source;
+//    }
 }
