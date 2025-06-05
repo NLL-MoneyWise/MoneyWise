@@ -1,13 +1,14 @@
 'use client';
+import { Fragment } from 'react';
 import FloatingActionButton from '@/app/common/components/FloatingButton/FloatingButton';
-import Calendar from '../components/Calendar/Calendar';
 
+import CalendarContainer from '../components/CalendarCotainer/CalendarContainer';
 const CalendarPage = () => {
     return (
-        <div>
-            <Calendar />
+        <Fragment>
+            <CalendarContainer />
             <FloatingActionButton />
-        </div>
+        </Fragment>
     );
 };
 

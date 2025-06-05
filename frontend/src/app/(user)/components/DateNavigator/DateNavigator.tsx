@@ -8,12 +8,12 @@ import {
     subYears,
     addYears
 } from 'date-fns';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Text from '@/app/common/components/Text/Text';
 
 import DateSelector from '../DateSelector/DateSelector';
 import { Dispatch, useState } from 'react';
 import { ViewType } from '../../types/viewtype';
+import ArrowNavigator from '@/app/common/components/ArrowNavigator/ArrowNavigator';
 
 const dateFormat = (date: Date, viewType: ViewType) => {
     if (viewType === '월간') {
@@ -88,23 +88,17 @@ const DateNavigator = ({
 
     return (
         <header className="w-full bg-primary p-3 rounded-t-2xl flex justify-between text-white items-center">
-            {/* 날짜 변경 요소  */}
-            <div className="flex items-center h-fit gap-3 w-[280px] justify-between">
-                <ChevronLeft
-                    className="h-8 w-8 cursor-pointer"
-                    onClick={handlePrevious}
-                />
+            <ArrowNavigator
+                handleNext={handleNext}
+                handlePrevious={handlePrevious}
+                className="h-fit gap-3 w-[280px]"
+            >
                 <Text.LagreText>
                     {viewType === '전체'
                         ? '전체'
                         : dateFormat(currentDate, viewType)}
                 </Text.LagreText>
-                <ChevronRight
-                    className="h-8 w-8 cursor-pointer"
-                    onClick={handleNext}
-                />
-            </div>
-
+            </ArrowNavigator>
             <DateSelector
                 isOpen={isDropDonwOpen}
                 handleIsOpenChange={setIsDropDonwOpen}

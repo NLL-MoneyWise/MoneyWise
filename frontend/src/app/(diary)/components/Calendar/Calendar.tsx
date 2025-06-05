@@ -4,41 +4,39 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { DateClickArg } from '@fullcalendar/interaction';
+import { DatesSetArg } from '@fullcalendar/core';
+import { ConsumptionDate } from '@/app/(user)/types/reponse';
 import './calendar.css';
 
-import { useRef, useState } from 'react';
-import { DatesSetArg } from '@fullcalendar/core';
-import useModal from '@/app/common/hooks/useModal';
-import EventForm from '../EventForm/EventForm';
-import useDiary from '../../hooks/useDiary';
-import formatDate from '../../util/formatDate';
+import { memo, useRef } from 'react';
 
-const Calendar = () => {
-    const [currentViewType, setCurrentViewType] = useState('dayGridMonth');
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [editMode, setEditMode] = useState<'create' | 'edit'>('create');
+import DayCell from '../DayCell/DayCell';
+import { Memo } from '../../types/response';
+import { Income } from '@/app/(user)/types/reponse';
+import { FixedCost } from '@/app/(user)/types/reponse';
 
+interface CalendarProps {
+    memo: Memo[];
+    dateClick: (arg: DateClickArg) => void;
+    handleDatesSet: (args: DatesSetArg) => void;
+    income: Income[];
+    fixedCost: FixedCost[];
+    initialDate: Date;
+    consumption: ConsumptionDate[];
+    viewType: 'dayGridMonth' | 'dayGridWeek';
+}
+
+const MemoCalendar = ({
+    memo,
+    dateClick,
+    handleDatesSet,
+    income,
+    initialDate,
+    consumption,
+    viewType
+}: CalendarProps) => {
     const calendarRef = useRef<FullCalendar>(null);
-
-    const {
-        ModalComponent: EventModal,
-        closeModal: closeEventModal,
-        openModal: openEventModal
-    } = useModal();
-
-    const {
-        getMemo: { data: response, refetch }
-    } = useDiary();
-
-    const handleDatesSet = (arg: DatesSetArg) => {
-        setCurrentViewType(arg.view.type);
-        console.log('현재 뷰 타입:', arg.view.type);
-    };
-
-    const setMemo = () => {
-        refetch();
-        closeEventModal();
-    };
 
     return (
         <div className="calendar-container m-auto ">
@@ -53,59 +51,27 @@ const Calendar = () => {
                     end: 'dayGridMonth dayGridWeek'
                 }}
                 locale={'ko'}
-                height={'100vh'}
+                dayMaxEvents={true}
                 dayCellContent={(arg) => {
-                    const memoForDate = response?.memoDTOList.find(
-                        (memo) =>
-                            new Date(memo.date).toDateString() ===
-                            arg.date.toDateString()
-                    );
-
                     return (
-                        <div className="fc-daygrid-day-frame">
-                            <div className="fc-daygrid-day-top">
-                                <span className="fc-daygrid-day-number">
-                                    {arg.dayNumberText}
-                                </span>
-                            </div>
-                            {memoForDate && (
-                                <>
-                                    <div className="memo-content flex">
-                                        {memoForDate.content.slice(0, 20)}
-                                        {memoForDate.content.length > 20
-                                            ? '...'
-                                            : ''}
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        <DayCell
+                            arg={arg}
+                            memo={memo}
+                            income={income}
+                            consumption={consumption}
+                            viewType={viewType}
+                        />
                     );
                 }}
-                dateClick={(arg) => {
-                    setSelectedDate(arg.date);
-
-                    const hasMemo = response?.memoDTOList.some(
-                        (memo) => memo.date === formatDate(arg.date)
-                    );
-
-                    if (hasMemo) {
-                        setEditMode('edit');
-                    } else {
-                        setEditMode('create');
-                    }
-
-                    openEventModal();
-                }}
+                dateClick={dateClick}
+                initialDate={initialDate}
+                aspectRatio={1.2}
+                dayMaxEventRows={true}
+                height="100vh"
             />
-            <EventModal>
-                <EventForm
-                    initalDate={selectedDate}
-                    closeModal={setMemo}
-                    editMode={editMode}
-                />
-            </EventModal>
         </div>
     );
 };
 
+const Calendar = memo(MemoCalendar);
 export default Calendar;

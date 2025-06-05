@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { OverlayLoadingSpinner } from '../common/components/LoadingSpinner/LoadingSpinner';
 
 export default function KakaoAuthLayout({
     children
@@ -7,7 +8,7 @@ export default function KakaoAuthLayout({
 }>) {
     return (
         <div className="absolute inset-0 flex justify-center items-center text-xl flex-col ">
-            <Suspense fallback={'로딩 중..'}>{children}</Suspense>
+            <Suspense fallback={<OverlayLoadingSpinner />}>{children}</Suspense>
         </div>
     );
 }

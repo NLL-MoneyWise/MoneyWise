@@ -16,7 +16,9 @@
 .fc .fc-toolbar-title {
     font-weight: normal;
 }
-
+.fc-daygrid-day-frame {
+    padding: 4px !important;
+}
 /* 일정표 툴 바  */
 .fc .fc-toolbar.fc-header-toolbar {
     margin: 0;
@@ -81,6 +83,7 @@
 /* 날짜 Cell 프레임 */
 .fc .fc-daygrid-day-frame {
     padding: 10px;
+    overflow: hidden; /* 자식이 부모보다 커지면 잘림 */
 }
 
 /* 월간,주간 view의 Cell이 시작하는 위치 */
@@ -94,22 +97,23 @@
 .fc .fc-daygrid-day-number {
     z-index: auto !important;
 }
-
+.fc-daygrid-day-events {
+    position: relative !important;
+}
 /* 이벤트 막대 스타일 */
 .fc-event {
-    padding: 5px 10px;
-    margin-bottom: 5px;
-    border-radius: 4px;
-    font-weight: 500;
-    font-size: 14px;
-    background-color: #6baf2f !important;
+    background-color: #ffffff !important;
     border: none !important;
-    color: white !important;
+    font-size: 16px;
+    postion: absolute !important;
+    top: 53 !important;
+    margin-left: 8px !important;
 }
 
 /* 이벤트 스타일 */
 .fc .fc-event-title.fc-sticky {
     text-overflow: ellipsis;
+    color: oklch(50.5% 0.213 27.518) !important;
 }
 
 /* 현재 날짜 배경 */

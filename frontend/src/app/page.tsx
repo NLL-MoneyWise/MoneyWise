@@ -1,7 +1,7 @@
-'use client';
 import ArrowIcon from './common/components/ArrowIcon/ArrowIcon';
 import InstructionArticle from './common/components/Articles/InstructionArticle/InstructionArticle';
 import IntroduceArticle from './common/components/Articles/IntroduceArticle/IntroduceArticle';
+import FloatingActionButton from './common/components/FloatingButton/FloatingButton';
 import Header from './common/components/Header/Header';
 
 export default function Home() {
@@ -11,6 +11,7 @@ export default function Home() {
             <IntroduceArticle />
             <InstructionArticle />
             <ArrowIcon className="animate-bounce" color="#b0aeae" />
+            <FloatingActionButton />
         </div>
     );
 }

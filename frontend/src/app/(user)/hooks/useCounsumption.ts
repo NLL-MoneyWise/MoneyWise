@@ -1,24 +1,87 @@
-import { ConsumptioneResponse } from '../types/reponse/response-consumptione';
-import { useQuery } from '@tanstack/react-query';
+import { DeleteConsumptionRequest } from './../types/request/requset-consumptione';
+import { GetConsumptionRequest } from './../types/request/';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
+import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { ConsumptionRepositoryImpl } from '../util/respository';
-import { ConsumptionRequest } from './../types/request/requset-consumptione';
+import { DeleteConsumptionResponse } from '../types/reponse';
 
-const useCounsumption = (params: ConsumptionRequest) => {
+const useConsumption = (params?: GetConsumptionRequest) => {
     const counsumptionRepository = ConsumptionRepositoryImpl.getInstance();
+    const addToast = useToastStore((state) => state.addToast);
+    const queryClient = useQueryClient();
 
-    const analyzeCounsumption = useQuery<ConsumptioneResponse, Error>({
-        queryKey: ['counsumption', params],
+    const getConsumption = useQuery({
+        queryKey: ['consumptione', params],
         queryFn: () => {
-            return counsumptionRepository.analyeConsumption.bind(
-                counsumptionRepository
-            )(params);
+            if (params) {
+                return counsumptionRepository.getConsumption(params);
+            }
         },
         staleTime: 60000,
         gcTime: 900000,
-        throwOnError: true
+        enabled: !!params
     });
 
-    return { analyzeCounsumption };
+    const prefetchNeighborMonths = (date: Date) => {
+        // 이전 달
+        const prevMonth = new Date(date);
+        prevMonth.setMonth(date.getMonth() - 1);
+        queryClient.prefetchQuery({
+            queryKey: [
+                'consumptione',
+                {
+                    year: prevMonth.getFullYear().toString(),
+                    month: (prevMonth.getMonth() + 1).toString()
+                }
+            ],
+            queryFn: () =>
+                counsumptionRepository.getConsumption({
+                    year: prevMonth.getFullYear().toString(),
+                    month: (prevMonth.getMonth() + 1).toString()
+                }),
+            staleTime: 60000,
+            gcTime: 900000
+        });
+
+        // 다음 달
+        const nextMonth = new Date(date);
+        nextMonth.setMonth(date.getMonth() + 1);
+        queryClient.prefetchQuery({
+            queryKey: [
+                'consumptione',
+                {
+                    year: nextMonth.getFullYear().toString(),
+                    month: (nextMonth.getMonth() + 1).toString()
+                }
+            ],
+            queryFn: () =>
+                counsumptionRepository.getConsumption({
+                    year: nextMonth.getFullYear().toString(),
+                    month: (nextMonth.getMonth() + 1).toString()
+                }),
+            staleTime: 60000,
+            gcTime: 900000
+        });
+    };
+
+    const deleteFixedConsumption = useMutation<
+        DeleteConsumptionResponse,
+        Error,
+        DeleteConsumptionRequest
+    >({
+        mutationFn: counsumptionRepository.deleteFixedConsumption.bind(
+            counsumptionRepository
+        ),
+        onSuccess: (data) => {
+            addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['consumptione'] });
+        }
+    });
+    return {
+        getConsumption,
+        prefetchNeighborMonths,
+        deleteFixedConsumption
+    };
 };
 
-export default useCounsumption;
+export default useConsumption;

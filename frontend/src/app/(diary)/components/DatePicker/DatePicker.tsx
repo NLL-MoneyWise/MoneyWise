@@ -7,7 +7,7 @@ import clsx from 'clsx';
 interface DatePickerProps {
     className?: string;
     selected?: Date;
-    onDateChange?: (date: Date | undefined) => void;
+    onDateChange: (date: Date) => void;
 }
 
 const DatePicker = ({ className, selected, onDateChange }: DatePickerProps) => {
@@ -29,6 +29,7 @@ const DatePicker = ({ className, selected, onDateChange }: DatePickerProps) => {
                 selected={selected}
                 onSelect={(date) => {
                     if (onDateChange) {
+                        if (!date) return;
                         onDateChange(date);
                     }
                 }}

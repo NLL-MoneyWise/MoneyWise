@@ -3,6 +3,8 @@ import clsx from 'clsx';
 
 interface TextProps extends HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
+    ref?: React.Ref<HTMLHeadingElement>;
+    className?: string;
 }
 
 const Text = ({ children, className, ...props }: TextProps) => {
@@ -12,6 +14,16 @@ const Text = ({ children, className, ...props }: TextProps) => {
         </span>
     );
 };
+
+// LaddingSubTitle 컴포넌트
+const LaddingTitle = ({ children, className, ...props }: TextProps) => {
+    return (
+        <h1 className={clsx('text-4xl font-semibold ', className)} {...props}>
+            {children}
+        </h1>
+    );
+};
+LaddingTitle.displayName = 'Text.LaddingSubTitle';
 
 // Title 컴포넌트
 const Title = ({ children, className, ...props }: TextProps) => {
@@ -24,10 +36,11 @@ const Title = ({ children, className, ...props }: TextProps) => {
 Title.displayName = 'Text.Title';
 
 // SubTitle 컴포넌트
-const SubTitle = ({ children, className, ...props }: TextProps) => {
+const SubTitle = ({ children, className, ref, ...props }: TextProps) => {
     return (
         <h2
             className={clsx('text-xl font-bold text-gray-400', className)}
+            ref={ref}
             {...props}
         >
             {children}
@@ -84,4 +97,5 @@ Text.BoldText = BoldText;
 Text.SemiBoldText = SemiBoldText;
 Text.SmallText = SmallText;
 Text.LagreText = LagreText;
+Text.LaddingTitle = LaddingTitle;
 export default Text;

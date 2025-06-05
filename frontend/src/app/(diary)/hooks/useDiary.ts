@@ -7,24 +7,24 @@ import {
     GetMemoResponse,
     DeleteResponse
 } from './../types/response/reponse-memo';
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { DiaryRepositoryImpl } from '../util/repository';
 
 const useDiary = () => {
     const diaryRepositoryImpl = DiaryRepositoryImpl.getInstance();
-    const { addToast } = useToastStore();
+    const addToast = useToastStore((state) => state.addToast);
 
-    const queryClient = new QueryClient();
+    const queryClient = useQueryClient();
 
     const getMemo = useQuery<GetMemoResponse, Error>({
         queryKey: ['memo'],
         queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl),
-        staleTime: 60000,
-        gcTime: 900000
+        staleTime: 60,
+        gcTime: 300
     });
 
-    const saveMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
+    const createMemo = useMutation<SaveMemoResponse, Error, MemoRequest>({
         mutationFn: diaryRepositoryImpl.saveMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
@@ -36,6 +36,7 @@ const useDiary = () => {
         mutationFn: diaryRepositoryImpl.editMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['memo'] });
         }
     });
 
@@ -43,11 +44,12 @@ const useDiary = () => {
         mutationFn: diaryRepositoryImpl.deleteMemo.bind(diaryRepositoryImpl),
         onSuccess: async (data) => {
             addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['memo'] });
         }
     });
 
     return {
-        saveMemo,
+        createMemo,
         getMemo,
         editMemo,
         deleteMemo
