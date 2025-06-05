@@ -11,11 +11,23 @@ export interface ConsumptionsType extends CategoryItem {
     quantity: number;
 }
 
-export interface ConsumptioneResponse extends Response {
+export interface ConsumptionDate {
     totalAmount: number;
     byCategory: CategoryItem[];
     topExpenses: CategoryItem[];
     storeExpenses: CategoryItem[];
+    date: string;
+}
+
+export interface ConsumptioneResponse extends Response, ConsumptionDate {
+    totalAmount: number;
+    byCategory: CategoryItem[];
+    topExpenses: CategoryItem[];
+    storeExpenses: CategoryItem[];
+}
+
+export interface GetConsumptioneResponse extends Response {
+    dailyList: ConsumptionDate[];
 }
 
 export interface AllConsumptionResponse extends Response {
@@ -23,9 +35,18 @@ export interface AllConsumptionResponse extends Response {
     store_nam: string;
 }
 
-export interface AllFiexedConsumption extends Response {
+export interface FixedCost {
+    id: number;
     date: string;
-    cost: string;
+    category: string;
+    amount: number;
+    name: string;
+}
+
+export interface GetAllFiexedCostResponse extends Response {
+    fixedCostDTOList: FixedCost[];
 }
 
 export interface PostFixedConsumptionResponse extends Response {}
+
+export interface DeleteConsumptionResponse extends Response {}

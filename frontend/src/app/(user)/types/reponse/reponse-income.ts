@@ -10,3 +10,5 @@ export interface GetAllIncomeResponse extends Response {
 }
 
 export interface PostIncomeResponse extends Response {}
+
+export interface DeleteIncomeResponse extends Response {}

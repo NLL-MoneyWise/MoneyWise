@@ -1,67 +1,87 @@
-import { useToastStore } from './../../common/hooks/useToastStore';
-import { PostIncomeRequest } from './../types/request/request-income';
-import {
-    useMutation,
-    useQuery,
-    useQueryClient,
-    useSuspenseQuery
-} from '@tanstack/react-query';
+import { DeleteConsumptionRequest } from './../types/request/requset-consumptione';
+import { GetConsumptionRequest } from './../types/request/';
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
+import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { ConsumptionRepositoryImpl } from '../util/respository';
-import {
-    PostFixedConsumptionResponse,
-    PostIncomeResponse
-} from '../types/reponse';
-import { PostFixedConsumptionRequest } from '../types/request';
+import { DeleteConsumptionResponse } from '../types/reponse';
 
-const useCounsumption = () => {
+const useConsumption = (params?: GetConsumptionRequest) => {
     const counsumptionRepository = ConsumptionRepositoryImpl.getInstance();
     const addToast = useToastStore((state) => state.addToast);
     const queryClient = useQueryClient();
 
-    const getAllIncome = useSuspenseQuery({
-        queryKey: ['income'],
-        queryFn: () => counsumptionRepository.getAllIncome(),
-        staleTime: 60000,
-        gcTime: 900000
-    });
-
-    const postIncome = useMutation<
-        PostIncomeResponse,
-        Error,
-        PostIncomeRequest
-    >({
-        mutationFn: counsumptionRepository.postIncome.bind(
-            counsumptionRepository
-        ),
-        onSuccess: (data) => {
-            addToast(data.message, 'success');
-            queryClient.invalidateQueries({ queryKey: ['income'] });
-        }
-    });
-
-    const PostFixedConsumption = useMutation<
-        PostFixedConsumptionResponse,
-        Error,
-        PostFixedConsumptionRequest
-    >({
-        mutationFn: counsumptionRepository.postFiexdConsumption.bind(
-            counsumptionRepository
-        ),
-        onSuccess: (data) => {
-            addToast(data.message, 'success');
-            queryClient.invalidateQueries({ queryKey: ['income'] });
-        }
-    });
-
-    const getFiexedCost = useQuery({
-        queryKey: ['income'],
-        queryFn: () => counsumptionRepository.getAllFiexedCost(),
+    const getConsumption = useQuery({
+        queryKey: ['consumptione', params],
+        queryFn: () => {
+            if (params) {
+                return counsumptionRepository.getConsumption(params);
+            }
+        },
         staleTime: 60000,
         gcTime: 900000,
-        throwOnError: true
+        enabled: !!params
     });
 
-    return { getAllIncome, getFiexedCost, postIncome, PostFixedConsumption };
+    const prefetchNeighborMonths = (date: Date) => {
+        // 이전 달
+        const prevMonth = new Date(date);
+        prevMonth.setMonth(date.getMonth() - 1);
+        queryClient.prefetchQuery({
+            queryKey: [
+                'consumptione',
+                {
+                    year: prevMonth.getFullYear().toString(),
+                    month: (prevMonth.getMonth() + 1).toString()
+                }
+            ],
+            queryFn: () =>
+                counsumptionRepository.getConsumption({
+                    year: prevMonth.getFullYear().toString(),
+                    month: (prevMonth.getMonth() + 1).toString()
+                }),
+            staleTime: 60000,
+            gcTime: 900000
+        });
+
+        // 다음 달
+        const nextMonth = new Date(date);
+        nextMonth.setMonth(date.getMonth() + 1);
+        queryClient.prefetchQuery({
+            queryKey: [
+                'consumptione',
+                {
+                    year: nextMonth.getFullYear().toString(),
+                    month: (nextMonth.getMonth() + 1).toString()
+                }
+            ],
+            queryFn: () =>
+                counsumptionRepository.getConsumption({
+                    year: nextMonth.getFullYear().toString(),
+                    month: (nextMonth.getMonth() + 1).toString()
+                }),
+            staleTime: 60000,
+            gcTime: 900000
+        });
+    };
+
+    const deleteFixedConsumption = useMutation<
+        DeleteConsumptionResponse,
+        Error,
+        DeleteConsumptionRequest
+    >({
+        mutationFn: counsumptionRepository.deleteFixedConsumption.bind(
+            counsumptionRepository
+        ),
+        onSuccess: (data) => {
+            addToast(data.message, 'success');
+            queryClient.invalidateQueries({ queryKey: ['consumptione'] });
+        }
+    });
+    return {
+        getConsumption,
+        prefetchNeighborMonths,
+        deleteFixedConsumption
+    };
 };
 
-export default useCounsumption;
+export default useConsumption;

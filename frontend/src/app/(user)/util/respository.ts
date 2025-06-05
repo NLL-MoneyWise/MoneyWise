@@ -1,16 +1,23 @@
-import { PostIncomeRequest } from './../types/request/request-income';
-import {
-    ConsumptionRequest,
-    PostFixedConsumptionRequest
-} from './../types/request/requset-consumptione';
-import {
-    ConsumptioneResponse,
-    PostFixedConsumptionResponse
-} from '../types/reponse/response-consumptione';
 import { AxiosInstance } from 'axios';
 import { defaultApi } from '@/app/common/util/api';
-import { AllConsumptionResponse } from '../types/reponse/response-consumptione';
-import { GetAllIncomeResponse } from '../types/reponse';
+import {
+    ConsumptionRequest,
+    PostFixedConsumptionRequest,
+    PostIncomeRequest,
+    DeleteIncomeRequest,
+    GetConsumptionRequest,
+    DeleteConsumptionRequest
+} from './../types/request';
+import {
+    GetAllIncomeResponse,
+    ConsumptioneResponse,
+    GetAllFiexedCostResponse,
+    PostFixedConsumptionResponse,
+    AllConsumptionResponse,
+    DeleteConsumptionResponse,
+    DeleteIncomeResponse,
+    GetConsumptioneResponse
+} from '../types/reponse';
 
 interface ConsumptionRepository {
     analyeConsumption(data: ConsumptionRequest): Promise<ConsumptioneResponse>;
@@ -50,20 +57,42 @@ export class ConsumptionRepositoryImpl implements ConsumptionRepository {
         return data;
     }
 
-    async postFiexdConsumption({
-        cost,
+    async deleteIncome({
         day
+    }: DeleteIncomeRequest): Promise<DeleteIncomeResponse> {
+        const { data } = await this.api.delete(`/income/delete/one/${day}`);
+
+        return data;
+    }
+
+    async getAllFiexedCost(): Promise<GetAllFiexedCostResponse> {
+        const { data } = await this.api.get(`/consumptions/fixed/all`);
+
+        return data;
+    }
+
+    async postFiexdConsumption({
+        amount,
+        day,
+        category,
+        name
     }: PostFixedConsumptionRequest): Promise<PostFixedConsumptionResponse> {
-        const { data } = await this.api.post(`/fixed-cost/create-update`, {
-            cost,
-            day
+        const { data } = await this.api.post(`/consumptions/fixed/save`, {
+            amount,
+            day,
+            category,
+            name
         });
 
         return data;
     }
 
-    async getAllFiexedCost(): Promise<AllConsumptionResponse> {
-        const { data } = await this.api.get(`/fixed-cost/find/all`);
+    async deleteFixedConsumption({
+        id
+    }: DeleteConsumptionRequest): Promise<DeleteConsumptionResponse> {
+        const { data } = await this.api.delete(
+            `/consumptions/delete/one/${id}`
+        );
 
         return data;
     }
@@ -72,14 +101,32 @@ export class ConsumptionRepositoryImpl implements ConsumptionRepository {
         period,
         year,
         month,
-        day
+        week
     }: ConsumptionRequest): Promise<ConsumptioneResponse> {
         const { data } = await this.api.get('/workflows/consumptions-analyze', {
             params: {
                 period,
                 year,
                 month,
-                day
+                week
+            }
+        });
+
+        return data;
+    }
+
+    async getConsumption({
+        year,
+        month,
+        start_day,
+        last_day
+    }: GetConsumptionRequest): Promise<GetConsumptioneResponse> {
+        const { data } = await this.api.get('/consumptions/analyze/daily', {
+            params: {
+                year,
+                month,
+                start_day,
+                last_day
             }
         });
 
