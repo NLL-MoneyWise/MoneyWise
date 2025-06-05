@@ -1,16 +1,14 @@
 'use client';
 import React, { useState } from 'react';
 import DateNavigator from '../components/DateNavigator/DateNavigator';
-import IncomeExpenditureReport from '../components/IncomeExpenditureReport/IncomeExpenditureReport';
 import { ErrorBoundary } from 'react-error-boundary';
 import NotFoundData from '../components/NotFoundData/NotFoundData';
 import { ViewType } from '../types/viewtype';
-
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import AnalyzeContent from '../components/AnalyzeContent/AnalyzeContent';
 
 const AnalyzePage = () => {
-    const [currentDate, setCurrentDate] = useState<Date>(new Date(2024, 8));
+    const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const [viewType, setViewType] = useState<ViewType>('전체');
 
     return (
@@ -21,9 +19,6 @@ const AnalyzePage = () => {
                 viewType={viewType}
                 setViewType={setViewType}
             />
-
-            <IncomeExpenditureReport />
-
             <QueryErrorResetBoundary>
                 {({ reset }) => (
                     <ErrorBoundary
