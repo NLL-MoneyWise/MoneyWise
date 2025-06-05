@@ -23,6 +23,7 @@ const KakaoLoginPage = () => {
 
                 const response = await kakaoLogin({ code });
                 addToast(response.message, 'success');
+                router.push('/');
             } catch {
                 router.push('/login-failed');
             }
