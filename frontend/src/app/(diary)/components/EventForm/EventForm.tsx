@@ -1,5 +1,4 @@
 import React, {
-    useState,
     ReactNode,
     FormEvent,
     ChangeEvent,
@@ -24,9 +23,12 @@ const EventForm = ({ handleEvent, children }: EventFormProps) => {
     };
 
     return (
-        <div className="p-6 max-w-md mx-auto ">
-            <form onSubmit={handleSubmit}>{children}</form>
-        </div>
+        <form
+            onSubmit={handleSubmit}
+            className="flex-1 flex flex-col gap-2 justify-between w-10/12 mx-auto"
+        >
+            {children}
+        </form>
     );
 };
 
@@ -50,7 +52,7 @@ const Title = ({ children }: { children: string }) => {
     }, [children]);
 
     return (
-        <Text.Title className="mb-6  text-gray-500" ref={ref}>
+        <Text.Title className=" text-gray-500" ref={ref}>
             {children}
         </Text.Title>
     );
@@ -59,18 +61,19 @@ const Title = ({ children }: { children: string }) => {
 interface DaySelectorProps {
     initalDate: Date;
     isBlock: boolean;
+    setSelectedDate: React.Dispatch<React.SetStateAction<Date>>;
 }
 
-const DaySelector = ({ initalDate, isBlock }: DaySelectorProps) => {
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-        initalDate || new Date()
-    );
-
+const DaySelector = ({
+    initalDate,
+    isBlock,
+    setSelectedDate
+}: DaySelectorProps) => {
     return (
-        <div className="mb-4">
+        <div>
             <Text.SemiBoldText className="mb-2">날짜</Text.SemiBoldText>
             <CalendarButton
-                selectedDate={selectedDate}
+                selectedDate={initalDate}
                 onDateSelect={setSelectedDate}
                 isBlock={isBlock}
             />
@@ -84,7 +87,7 @@ interface ContentProps {
 
 const Content = ({ contentRef }: ContentProps) => {
     return (
-        <div className="mb-4">
+        <div>
             <Text.SemiBoldText className="mb-2">내용</Text.SemiBoldText>
             <InputField
                 ref={contentRef}
@@ -106,7 +109,7 @@ interface InputProps {
 
 const Input = ({ value, placeholder, handleChange, lable }: InputProps) => {
     return (
-        <div className="mb-4">
+        <div>
             <Text.SemiBoldText className="mb-2">{lable}</Text.SemiBoldText>
             <InputField
                 value={formatNumber(value)}
@@ -120,36 +123,46 @@ const Input = ({ value, placeholder, handleChange, lable }: InputProps) => {
     );
 };
 
-interface BaseActionProps {
-    handleClose: () => void;
+interface DropboxProps {
+    label: string;
+    options: string[]; // value/label 쌍 대신 string 배열
+    value: string;
+    onChange: (value: string) => void;
 }
 
-interface SaveActionButtonsProps extends BaseActionProps {}
-
-interface EditCreateActionButtonsProps extends BaseActionProps {
-    handleDelete: () => void;
-}
-
-// 차후에 리펙
-
-const SaveActionButtons = ({ handleClose }: SaveActionButtonsProps) => {
+const Dropbox = ({
+    label = '선택',
+    options,
+    value,
+    onChange
+}: DropboxProps) => {
     return (
-        <div className="modalbuttoncontainer">
-            <Button type="button" onClick={handleClose} variant="secondary">
-                취소
-            </Button>
+        <div>
+            <Text.SemiBoldText className="mb-2">{label}</Text.SemiBoldText>
 
-            <Button type="submit">저장</Button>
+            <select
+                className="w-full border rounded-xl px-3 py-2 focus:outline-none"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            >
+                {options.map((opt) => (
+                    <option key={opt} value={opt}>
+                        {opt}
+                    </option>
+                ))}
+            </select>
         </div>
     );
 };
 
-const EditCreateActionButtons = ({
-    handleClose,
-    handleDelete
-}: EditCreateActionButtonsProps) => {
+interface BaseActionProps {
+    handleClose: () => void;
+    handleDelete: () => void;
+}
+
+const ActionButtons = ({ handleClose, handleDelete }: BaseActionProps) => {
     return (
-        <div className="modalbuttoncontainer">
+        <div className="flex gap-4 mt-2 justify-end">
             <Button type="button" onClick={handleClose} variant="secondary">
                 취소
             </Button>
@@ -159,33 +172,8 @@ const EditCreateActionButtons = ({
             </Button>
 
             <Button variant="modify" type="submit">
-                ✏️ 수정하기
+                ✏️ 저장하기
             </Button>
-        </div>
-    );
-};
-
-interface BudgetButtonsProps extends BaseActionProps {
-    handleChange: () => void;
-    lable: string;
-}
-
-const BudgetButtons = ({
-    handleClose,
-    handleChange,
-    lable
-}: BudgetButtonsProps) => {
-    return (
-        <div className="modalbuttoncontainer">
-            <Button type="button" onClick={handleClose} variant="secondary">
-                취소
-            </Button>
-
-            <Button variant="modify" onClick={handleChange} type="button">
-                {lable}
-            </Button>
-
-            <Button type="submit">저장</Button>
         </div>
     );
 };
@@ -194,8 +182,7 @@ EventForm.Title = Title;
 EventForm.DaySelector = DaySelector;
 EventForm.Content = Content;
 EventForm.Input = Input;
-EventForm.EditCreateActionButtons = EditCreateActionButtons;
-EventForm.SaveActionButtons = SaveActionButtons;
-EventForm.BudgetButtons = BudgetButtons;
+EventForm.ActionButtons = ActionButtons;
+EventForm.Dropbox = Dropbox;
 
 export default EventForm;

@@ -7,11 +7,7 @@ import {
     GetMemoResponse,
     DeleteResponse
 } from './../types/response/reponse-memo';
-import {
-    useMutation,
-    useQueryClient,
-    useSuspenseQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { DiaryRepositoryImpl } from '../util/repository';
 
@@ -21,7 +17,7 @@ const useDiary = () => {
 
     const queryClient = useQueryClient();
 
-    const getMemo = useSuspenseQuery<GetMemoResponse, Error>({
+    const getMemo = useQuery<GetMemoResponse, Error>({
         queryKey: ['memo'],
         queryFn: diaryRepositoryImpl.getMemo.bind(diaryRepositoryImpl),
         staleTime: 60,
