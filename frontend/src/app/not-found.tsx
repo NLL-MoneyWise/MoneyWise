@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import Text from './common/components/Text/Text';
 import Link from '@/app/common/components/Link/Link';
@@ -16,7 +17,9 @@ export default function NotFound() {
 
                 <Text.SubTitle>페이지를 찾을 수 없어요</Text.SubTitle>
 
-                <Link address="/">홈으로 돌아가기</Link>
+                <Link address="/" className="w-full">
+                    홈으로 돌아가기
+                </Link>
             </div>
         </div>
     );

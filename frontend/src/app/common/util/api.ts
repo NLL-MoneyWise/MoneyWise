@@ -29,7 +29,6 @@ export const defaultApi = (
             } catch (error) {
                 console.error('토큰 가져오기 실패:', error);
             }
-
             return config;
         },
         (error) => {
@@ -77,27 +76,19 @@ export const defaultApi = (
                             )
                         );
                     }
-
                     const data: RefreshValidateResponse = await response.json();
-
                     await saveAccessToken(data.access_token);
-
                     originalRequest.headers['Authorization'] =
                         `Bearer ${data.access_token}`;
-
                     return instance(originalRequest);
                 } catch (refreshError) {
                     console.log(refreshError);
                 }
             }
-
             const errorMessage =
                 error.response?.data?.message || '알 수 없는 에러입니다.';
             const errorStatus = error.response?.status || 500;
             const errorType = error.response?.data?.typeName || 'UNKNOWN';
-
-            console.log(error);
-
             return Promise.reject(
                 new CustomError(errorMessage, errorStatus, errorType)
             );

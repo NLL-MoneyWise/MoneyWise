@@ -28,9 +28,9 @@ export default function RootLayout({
                         </main>
                     </AuthWrapper>
                 </QueryProviders>
-                <div id="toast-portal"></div>
+                <div id="toast-portal" />
                 <ToastContainer />
-                <div id="modal-portal"></div>
+                <div id="modal-portal" />
             </body>
         </html>
     );
