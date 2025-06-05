@@ -8,6 +8,7 @@ import Text from '@/app/common/components/Text/Text';
 import PreviewImg from '../components/PreviewImg/PreviewImg';
 import FileUpload from '../components/FileUpload/UploadButton';
 import useUpload from '../hooks/useUpload';
+import { LoadingSpinner } from '@/app/common/components/LoadingSpinner/LoadingSpinner';
 
 const UploadPage = () => {
     const [receipt, setReceipt] = useState<File[]>([]);
@@ -19,9 +20,7 @@ const UploadPage = () => {
         analyzeRecipt
     } = useUpload();
 
-    if (isLoading) {
-        <div>로딩</div>;
-    }
+    if (isLoading) <LoadingSpinner />;
 
     // const { isPending } = analyzeRecipt;
 

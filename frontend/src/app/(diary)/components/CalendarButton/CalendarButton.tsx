@@ -6,8 +6,8 @@ import clsx from 'clsx';
 
 interface CalendarButtonProps {
     className?: string;
-    selectedDate: Date | undefined;
-    onDateSelect: (date: Date | undefined) => void;
+    selectedDate: Date;
+    onDateSelect: (date: Date) => void;
     isBlock: boolean;
 }
 
@@ -19,20 +19,14 @@ const CalendarButton = ({
 }: CalendarButtonProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    // 캘린더 버튼 클릭 시 토글
     const toggleCalendar = () => {
         setIsOpen(!isOpen);
     };
 
-    // 날짜 변경 핸들러
-    const handleDateChange = (date: Date | undefined) => {
-        // 부모 컴포넌트에 선택된 날짜 전달
-        if (onDateSelect) {
-            onDateSelect(date);
-        }
+    const handleDateChange = (date: Date) => {
+        onDateSelect(date);
     };
 
-    // 선택된 날짜를 형식화하는 함수
     const formatDate = (date: Date | undefined) => {
         if (!date) return '날짜 선택';
         return date.toLocaleDateString('ko-KR', {
