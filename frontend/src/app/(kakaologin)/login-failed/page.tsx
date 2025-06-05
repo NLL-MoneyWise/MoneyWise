@@ -14,7 +14,9 @@ const FaildPage = () => {
             />
             <Text.Title>로그인에 실패했습니다..</Text.Title>
             <Text.SubTitle className="mb-4">잠시만 기다려주세요</Text.SubTitle>
-            <Link address="/">홈으로 돌아가기</Link>
+            <Link address="/" className="w-full">
+                홈으로 돌아가기
+            </Link>
         </div>
     );
 };
