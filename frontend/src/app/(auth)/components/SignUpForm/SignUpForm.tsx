@@ -77,7 +77,7 @@ const SignUpForm = () => {
                             placeholder={`${UserDataKorean[val]}를 입력해주세요`}
                             type={checkInputType(val)}
                             value={userData[val]}
-                            onChange={(e) =>
+                            onInputChange={(e) =>
                                 setUserData({
                                     ...userData,
                                     [val]: e.target.value

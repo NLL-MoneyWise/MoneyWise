@@ -1,19 +1,8 @@
-import {
-    useSuspenseQuery,
-    useMutation,
-    useQueryClient,
-    useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useToastStore } from '@/app/common/hooks/useToastStore';
 import { ConsumptionRepositoryImpl } from '../util/respository';
-import {
-    PostFixedConsumptionResponse,
-    DeleteFixedConsumptionResponse
-} from '../types/reponse';
-import {
-    PostFixedConsumptionRequest,
-    DeleteFixedConsumptionRequest
-} from '../types/request';
+import { PostFixedConsumptionResponse } from '../types/reponse';
+import { PostFixedConsumptionRequest } from '../types/request';
 
 const useFiexCost = () => {
     const counsumptionRepository = ConsumptionRepositoryImpl.getInstance();
