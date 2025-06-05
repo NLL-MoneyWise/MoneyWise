@@ -12,10 +12,8 @@ import { DatesSetArg } from '@fullcalendar/core';
 import { OverlayLoadingSpinner } from '@/app/common/components/LoadingSpinner/LoadingSpinner';
 
 const CalendarContainer = () => {
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date(2024, 8));
-    const [currentViewDate, setCurrentViewDate] = useState<Date>(
-        new Date(2024, 8)
-    );
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [currentViewDate, setCurrentViewDate] = useState<Date>(new Date());
     const [viewType, setViewType] = useState<'dayGridMonth' | 'dayGridWeek'>(
         'dayGridMonth'
     );
