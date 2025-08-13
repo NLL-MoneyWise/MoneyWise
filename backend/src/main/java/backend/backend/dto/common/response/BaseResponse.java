@@ -1,10 +1,10 @@
-package backend.backend.dto.income.response;
+package backend.backend.dto.common.response;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class IncomeDeleteOneResponse {
+public class BaseResponse {
     private String message;
 }

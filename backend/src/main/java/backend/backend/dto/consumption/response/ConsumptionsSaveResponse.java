@@ -1,6 +1,7 @@
 package backend.backend.dto.consumption.response;
 
 
+import backend.backend.dto.consumption.model.ConsumptionDTO;
 import backend.backend.dto.consumption.model.ConsumptionFindAccessUrlDTO;
 import lombok.*;
 

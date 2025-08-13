@@ -183,7 +183,7 @@ public class ReceiptService {
             return response.getBody();
 
         } catch (RestClientException e) {
-            throw new BadGateWayException("Open AI API 호출 실패" + e.getMessage());
+            throw new BadGateWayException("Open AI API 호출 실패");
         }
     }
 

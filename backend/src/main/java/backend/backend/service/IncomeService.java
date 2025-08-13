@@ -1,23 +1,24 @@
 package backend.backend.service;
 
 import backend.backend.domain.income.Income;
-import backend.backend.domain.income.primaryKey.IncomeId;
-import backend.backend.dto.income.model.IncomeDTO;
-import backend.backend.dto.income.request.IncomeSaveAndUpdateRequest;
-import backend.backend.dto.income.response.*;
+import backend.backend.dto.common.response.BaseResponse;
+import backend.backend.dto.income.model.IncomeDto;
+import backend.backend.dto.income.request.IncomeSaveRequest;
+import backend.backend.dto.income.request.IncomeUpdateRequest;
+import backend.backend.dto.income.response.IncomeFindAllResponse;
+import backend.backend.dto.income.response.IncomeFindOneResponse;
+import backend.backend.exception.AuthException;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.exception.ValidationException;
 import backend.backend.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,99 +27,121 @@ import java.util.List;
 public class IncomeService {
     private final IncomeRepository incomeRepository;
 
-    public IncomeSaveAndUpdateResponse save(String email, IncomeSaveAndUpdateRequest request) {
+    public BaseResponse create(String email, IncomeSaveRequest request) {
         try {
-            if (request.getDay() < 1 || request.getDay() > 28) {
-                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
-            }
+            LocalDate date = LocalDate.parse(request.getDate());
 
-            IncomeId id = new IncomeId();
             Income income = new Income();
 
-            id.setDay(request.getDay());
-            id.setEmail(email);
-
-            income.setCost(request.getCost());
-            income.setId(id);
+            income.setIncome_date(date);
+            income.setName(request.getName());
+            income.setSortation("변동");
+            income.setAmount(request.getAmount());
+            income.setEmail(email);
 
             incomeRepository.save(income);
 
-            return new IncomeSaveAndUpdateResponse();
+            return new BaseResponse();
         } catch (DataAccessException e) {
-            throw new DatabaseException("소득 저장에 실패했습니다.");
+            throw new DatabaseException("저장에 실패했습니다.");
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 값이나 형식입니다.");
         }
+    }
+
+    public BaseResponse update(String email, IncomeUpdateRequest request) {
+        try {
+            Income income = incomeRepository.findById(request.getId())
+                    .orElseThrow(() -> new NotFoundException("해당하는 소득을 찾을 수 없습니다."));
+
+            if (!income.getEmail().equals(email)) {
+                throw new AuthException("수정 권한이 없습니다.");
+            }
+
+            LocalDate date = LocalDate.parse(request.getDate());
+
+            income.setIncome_date(date);
+            income.setName(request.getName());
+            income.setAmount(request.getAmount());
+
+            return new BaseResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("수정에 실패했습니다.");
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("잘못된 날짜 값이나 형식입니다.");
+        }
+    }
+
+    public IncomeFindOneResponse findOne(String email, Long id) {
+        Income income = incomeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당하는 소득을 찾을 수 없습니다."));
+
+        if (!income.getEmail().equals(email)) {
+            throw new AuthException("접근 권한이 없습니다.");
+        }
+
+        IncomeFindOneResponse response = new IncomeFindOneResponse();
+
+        response.setDate(income.getIncome_date().toString());
+        response.setName(income.getName());
+        response.setSortation(income.getSortation());
+        response.setAmount(income.getAmount());
+
+        return response;
     }
 
     public IncomeFindAllResponse findAll(String email) {
         try {
-            List<Income> incomes = incomeRepository.findById_Email(email);
-            List<IncomeDTO> incomeDTOList = new ArrayList<>();
+            List<Income> incomeList = incomeRepository.findByEmail(email);
 
-            for (Income income : incomes) {
-                IncomeDTO incomeDTO = new IncomeDTO();
+            List<IncomeDto> incomeDtoList = incomeList.stream().map(income -> {
+                IncomeDto incomeDto = new IncomeDto();
 
-                incomeDTO.setCost(income.getCost());
-                incomeDTO.setDay(income.getId().getDay());
+                incomeDto.setSortation(income.getSortation());
+                incomeDto.setName(income.getName());
+                incomeDto.setAmount(income.getAmount());
+                incomeDto.setId(income.getId());
+                incomeDto.setDate(income.getIncome_date().toString());
 
-                incomeDTOList.add(incomeDTO);
-            }
+                return incomeDto;
+            }).toList();
 
             IncomeFindAllResponse response = new IncomeFindAllResponse();
-            response.setIncomeDTOList(incomeDTOList);
+
+            response.setIncomeDtoList(incomeDtoList);
 
             return response;
         } catch (DataAccessException e) {
-            throw new DatabaseException("조회에 실패했습니다.");
+            throw new DatabaseException("조회 중 문제가 발생했습니다.");
         }
     }
 
-    public IncomeFindOneResponse findOne(String email, Long day) {
+    public BaseResponse deleteOne(String email, Long id) {
         try {
-            if (day < 1 || day > 28) {
-                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
-            }
-
-            IncomeId id = new IncomeId();
-            id.setDay(day);
-            id.setEmail(email);
-
             Income income = incomeRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("해당하는 소득액을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new NotFoundException("해당하는 소득을 찾을 수 없습니다."));
 
-            IncomeFindOneResponse response = new IncomeFindOneResponse();
-            response.setCost(income.getCost());
-
-            return response;
-        } catch (DataAccessException e) {
-            throw new DatabaseException("조회에 실패했습니다.");
-        }
-    }
-
-    public IncomeDeleteAllResponse deleteAll(String email) {
-        try {
-            incomeRepository.deleteById_Email(email);
-
-            return new IncomeDeleteAllResponse();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("삭제에 실패했습니다.");
-        }
-    }
-
-    public IncomeDeleteOneResponse deleteOne(String email, Long day) {
-        try {
-            if (day < 1 || day > 28) {
-                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
+            if (!income.getEmail().equals(email)) {
+                throw new AuthException("접근 권한이 없습니다.");
             }
-
-            IncomeId id = new IncomeId();
-            id.setEmail(email);
-            id.setDay(day);
 
             incomeRepository.deleteById(id);
 
-            return new IncomeDeleteOneResponse();
+            return new BaseResponse();
         } catch (DataAccessException e) {
             throw new DatabaseException("삭제에 실패했습니다.");
         }
     }
+
+    public BaseResponse deleteAll(String email) {
+        try {
+            incomeRepository.deleteByEmail(email);
+
+            return new BaseResponse();
+        } catch (DataAccessException e) {
+            throw new DatabaseException("삭제에 실패했습니다.");
+        }
+    }
+
+    public
 }

@@ -1,6 +1,6 @@
 package backend.backend.repository;
 
-import backend.backend.domain.fixedCost.FixedCost;
+import backend.backend.domain.FixedCost;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

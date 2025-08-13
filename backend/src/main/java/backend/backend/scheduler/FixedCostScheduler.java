@@ -1,7 +1,7 @@
 package backend.backend.scheduler;
 
 import backend.backend.domain.Consumption;
-import backend.backend.domain.fixedCost.FixedCost;
+import backend.backend.domain.FixedCost;
 import backend.backend.repository.ConsumptionRepository;
 import backend.backend.repository.FixedCostRepository;
 import lombok.RequiredArgsConstructor;

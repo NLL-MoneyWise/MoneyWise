@@ -21,7 +21,7 @@ public class FacadeService {
         ReceiptAnalyzeResponse receiptAnalyzeResponse = receiptService.receiptAnalyze(email, accessUrl);
 
         ConsumptionsSaveRequest consumptionsSaveRequest = ConsumptionsSaveRequest.fromReceiptAnalyzeResponse(receiptAnalyzeResponse);
-        consumptionsSaveRequest.setAccess_url(accessUrl);
+        consumptionsSaveRequest.setAccessUrl(accessUrl);
 
         ConsumptionsSaveResponse consumptionsSaveResponse = consumptionService.save(email, consumptionsSaveRequest);
 

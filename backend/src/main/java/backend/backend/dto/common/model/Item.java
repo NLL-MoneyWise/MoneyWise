@@ -14,4 +14,5 @@ public class Item {
     private String name;
     private Long amount;
     private Long quantity;
+
 }

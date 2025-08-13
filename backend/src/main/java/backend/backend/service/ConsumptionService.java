@@ -2,21 +2,15 @@ package backend.backend.service;
 
 import backend.backend.domain.Consumption;
 import backend.backend.domain.Receipt;
-import backend.backend.domain.fixedCost.FixedCost;
 import backend.backend.dto.common.model.Item;
 import backend.backend.dto.consumption.model.*;
 import backend.backend.dto.consumption.request.ConsumptionsSaveRequest;
 import backend.backend.dto.consumption.request.ConsumptionsUpdateRequest;
 import backend.backend.dto.consumption.response.*;
-import backend.backend.dto.fixedCost.model.FixedCostDTO;
-import backend.backend.dto.fixedCost.request.FixedCostSaveRequest;
-import backend.backend.dto.fixedCost.request.FixedCostUpdateRequest;
-import backend.backend.dto.fixedCost.response.*;
 import backend.backend.exception.DatabaseException;
 import backend.backend.exception.NotFoundException;
 import backend.backend.exception.ValidationException;
 import backend.backend.repository.ConsumptionRepository;
-import backend.backend.repository.FixedCostRepository;
 import backend.backend.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -35,118 +29,6 @@ import java.util.stream.Collectors;
 public class ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final ReceiptRepository receiptRepository;
-    private final FixedCostRepository fixedCostRepository;
-
-    public FixedCostSaveResponse createFixedCost(String email, FixedCostSaveRequest request) {
-        try {
-            if (request.getDay() > 28 || request.getDay() < 1) {
-                throw new ValidationException("day는 1과 28 사이의 값 이어야 합니다.");
-            }
-
-            Map<String, Long> categoryMap = getCategoryMap();
-
-            LocalDate date = LocalDate.now();
-            LocalDate requestDate = date.withDayOfMonth(request.getDay());
-
-
-            FixedCost fixedCost = new FixedCost();
-            fixedCost.setEmail(email);
-            fixedCost.setCategoryId(categoryMap.get(request.getCategory()));
-            fixedCost.setName(request.getName());
-            fixedCost.setFixedCostDate(requestDate);
-            fixedCost.setAmount(request.getAmount());
-
-            fixedCostRepository.save(fixedCost);
-
-            return new FixedCostSaveResponse();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 저장에 실패했습니다.");
-        }
-    }
-
-    public FIxedCostUpdateResponse updateFixedCost(String email, FixedCostUpdateRequest request) {
-        try {
-            FixedCost fixedCost = fixedCostRepository.findById(request.getId())
-                    .orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
-
-            fixedCost.setAmount(request.getAmount());
-
-            fixedCostRepository.save(fixedCost);
-
-            return new FIxedCostUpdateResponse();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 변경에 실패했습니다.");
-        }
-    }
-
-    public FixedCostFindOneResponse findOneFixedCost(String email, Long id) {
-        try {
-            Map<Long, String> reverceCategoryMap = getReverseCategoryMap();
-
-            FixedCost fixedCost = fixedCostRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
-
-            FixedCostFindOneResponse response = new FixedCostFindOneResponse();
-
-            response.setName(fixedCost.getName());
-            response.setAmount(fixedCost.getAmount());
-            response.setCategory(reverceCategoryMap.get(fixedCost.getCategoryId()));
-            response.setDate(fixedCost.getFixedCostDate().toString());
-
-            return response;
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 조회에 실패했습니다.");
-        }
-    }
-
-    public FixedCostFindAllResponse findAllFixedCost(String email) {
-        try {
-            Map<Long, String> reverseCategoryMap = getReverseCategoryMap();
-
-            List<FixedCost> fixedCostList = fixedCostRepository.findByEmail(email);
-            List<FixedCostDTO> fixedCostDTOList = new ArrayList<>();
-
-            for (FixedCost fixedCost : fixedCostList) {
-                FixedCostDTO fixedCostDTO = new FixedCostDTO();
-
-                fixedCostDTO.setName(fixedCost.getName());
-                fixedCostDTO.setId(fixedCost.getId());
-                fixedCostDTO.setCategory(reverseCategoryMap.get(fixedCost.getCategoryId()));
-                fixedCostDTO.setDate(fixedCost.getFixedCostDate().toString());
-                fixedCostDTO.setAmount(fixedCost.getAmount());
-
-                fixedCostDTOList.add(fixedCostDTO);
-            }
-
-            FixedCostFindAllResponse response = new FixedCostFindAllResponse();
-            response.setFixedCostDTOList(fixedCostDTOList);
-
-            return response;
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 조회에 실패했습니다.");
-        }
-    }
-
-    public FixedCostDeleteOneResponse deleteOneFixedCost(String email, Long id) {
-        try {
-            fixedCostRepository.findById(id).orElseThrow(() -> new NotFoundException("해당하는 고정 지출을 찾을 수 없습니다."));
-            fixedCostRepository.deleteById(id);
-
-            return new FixedCostDeleteOneResponse();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 삭제에 실패했습니다.");
-        }
-    }
-
-    public FixedCostDeleteAllResponse deleteAllFixedCost(String email) {
-        try {
-            fixedCostRepository.deleteByEmail(email);
-
-            return new FixedCostDeleteAllResponse();
-        } catch (DataAccessException e) {
-            throw new DatabaseException("고정 지출액 삭제에 실패했습니다.");
-        }
-    }
 
     public ConsumptionsSaveResponse save(String email, ConsumptionsSaveRequest request) {
         ConsumptionsSaveResponse response = new ConsumptionsSaveResponse();
@@ -160,19 +42,17 @@ public class ConsumptionService {
             //request의 date는 String이므로 localDate로 변환 필요
             LocalDate localDate = LocalDate.parse(date_string);
 
-            //공통 입력 사항
-            Consumption consumption = Consumption.builder()
-                    .consumption_date(localDate)
-                    .email(email)
-                    .accessUrl(request.getAccess_url())
-                    .storeName(request.getStoreName())
-                    .build();
-
-            Receipt receipt = receiptRepository.findById(request.getAccess_url())
-                    .orElseThrow(() -> new NotFoundException("해당하는 영수증이 없습니다."));
-
             if (request.getItems() != null && !request.getItems().isEmpty()) {
                 for (Item item : request.getItems()) {
+                    //공통 입력 사항
+                    Consumption consumption = Consumption.builder()
+                            .consumption_date(localDate)
+                            .email(email)
+                            .accessUrl(request.getAccessUrl())
+                            .storeName(request.getStoreName())
+                            .sortation("변동")
+                            .build();
+
                     String category_string = item.getCategory();
                     Long categoryId = categoryMap.get(category_string);
 
@@ -193,6 +73,18 @@ public class ConsumptionService {
                     consumptionDTOList.add(consumptionDTO);
                 }
             } else {
+                //공통 입력 사항
+                Consumption consumption = Consumption.builder()
+                        .consumption_date(localDate)
+                        .email(email)
+                        .accessUrl(request.getAccessUrl())
+                        .storeName(request.getStoreName())
+                        .sortation("변동")
+                        .build();
+
+                Receipt receipt = receiptRepository.findById(request.getAccessUrl())
+                        .orElseThrow(() -> new NotFoundException("해당하는 영수증이 없습니다."));
+
                 consumption.setAmount(receipt.getTotalAmount());
                 result = consumptionRepository.save(consumption);
 

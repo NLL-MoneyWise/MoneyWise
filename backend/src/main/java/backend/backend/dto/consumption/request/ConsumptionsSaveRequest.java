@@ -2,6 +2,7 @@ package backend.backend.dto.consumption.request;
 
 import backend.backend.dto.common.model.Item;
 import backend.backend.dto.receipt.response.ReceiptAnalyzeResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 public class ConsumptionsSaveRequest {
-    private String access_url;
+    @JsonIgnore
+    private String accessUrl;
     private String date;
     private String storeName;
     private List<Item> items;

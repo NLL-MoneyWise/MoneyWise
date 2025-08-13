@@ -1,4 +1,4 @@
-package backend.backend.domain.fixedCost;
+package backend.backend.domain;
 
 import backend.backend.domain.Category;
 import backend.backend.domain.User;
